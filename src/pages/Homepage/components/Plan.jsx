@@ -1,5 +1,26 @@
 import React, { useState, useEffect } from "react";
 
+
+// import React, { useState, useEffect } from "react";
+
+// const MembershipPlans = () => {
+//   const [plans, setPlans] = useState([]);
+//   const [selectedPlan, setSelectedPlan] = useState(null);
+
+//   useEffect(() => {
+//     // Fetching data from backend (replace with actual API URL)
+//     fetch("/api/membership-plans")
+//       .then((response) => response.json())
+//       .then((data) => {
+//         setPlans(data);
+//         setSelectedPlan(data[0]?.id); // Default selection
+//       })
+//       .catch((error) => console.error("Error fetching plans:", error));
+//   }, []);
+
+
+
+
 const Plan = () => {
   const [plans, setPlans] = useState([]);
   const [selectedPlan, setSelectedPlan] = useState(null);
