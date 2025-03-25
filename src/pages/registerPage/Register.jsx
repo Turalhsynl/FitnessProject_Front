@@ -5,7 +5,7 @@ import download from "../../assets/download.png";
 import { useAuthStore } from "../../common/Store";
 
 const Register = () => {
-  const { setTokens } = useStore(useAuthStore); // setTokens funksiyasını əldə et
+  const { setTokens } = useStore(useAuthStore);
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     firstname: "",
@@ -32,7 +32,7 @@ const Register = () => {
           Accept: "application/json",
           "Content-Type": "application/json",
         },
-        credentials: "include", // Cookie-lərin göndərilməsini təmin edir
+        credentials: "include",
         body: JSON.stringify(formData),
       });
 
@@ -43,7 +43,7 @@ const Register = () => {
         throw new Error(data.message || "Registration failed");
       }
 
-      setTokens(data.accessToken, data.refreshToken); // setTokens funksiyasını istifadə edirik
+      setTokens(data.accessToken, data.refreshToken);
       navigate("/login");
     } catch (error) {
       console.error("Register error:", error.message);
