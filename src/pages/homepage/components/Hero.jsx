@@ -12,9 +12,9 @@ const HeroSection = () => {
         <img
           src="https://ihels.ru/storage/material_images/197464/Uprazhneniya-s-kanatom-krossfit1.jpg"
           alt="Gym Background"
-          className="w-full h-full object-cover"
+          className="w-full h-[1100px] object-cover"
         />
-        <div className="absolute inset-0 bg-black/50"></div>
+        <div className="absolute inset-0 bg-black/30"></div>
       </div>
 
       <div className="relative z-10">
@@ -26,7 +26,7 @@ const HeroSection = () => {
           View Classes <ArrowRight size={20} />
         </button>
       </div>
-      <div className="absolute bottom-[-120px] w-full flex justify-center gap-4 py-6 ">
+      <div className="absolute bottom-[-320px] w-full flex justify-center gap-4 py-6 ">
         <Card image={timetableImage} text="Timetable" />
         <Card image={classesImage} text="Classes" />
         <Card image={joinUsImage} text="Join Us!" />
