@@ -37,7 +37,7 @@ const Header = () => {
           <Link to="/" className="relative hover:text-purple-500 after:block after:h-1 after:bg-purple-500 after:w-full after:scale-x-0 after:transition-transform after:duration-300 hover:after:scale-x-100">Home</Link>
           <Link to="/about" className="relative hover:text-purple-500 after:block after:h-1 after:bg-purple-500 after:w-full after:scale-x-0 after:transition-transform after:duration-300 hover:after:scale-x-100">About Us</Link>
           <Link to="/classes" className="relative hover:text-purple-500 after:block after:h-1 after:bg-purple-500 after:w-full after:scale-x-0 after:transition-transform after:duration-300 hover:after:scale-x-100">Classes</Link>
-          <Link to="/blog" className="relative hover:text-purple-500 after:block after:h-1 after:bg-purple-500 after:w-full after:scale-x-0 after:transition-transform after:duration-300 hover:after:scale-x-100">Blog</Link>
+          <Link to="/contact" className="relative hover:text-purple-500 after:block after:h-1 after:bg-purple-500 after:w-full after:scale-x-0 after:transition-transform after:duration-300 hover:after:scale-x-100">Contact Us</Link>
           <Link to="/shop" className="relative hover:text-purple-500 after:block after:h-1 after:bg-purple-500 after:w-full after:scale-x-0 after:transition-transform after:duration-300 hover:after:scale-x-100">Shop</Link>
         </nav>
         <div className="flex items-center space-x-6 ml-6">
