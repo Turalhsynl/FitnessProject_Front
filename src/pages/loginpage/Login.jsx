@@ -1,11 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {useStore} from 'zustand'
+import { useAuthStore } from "../../common/Store";
 import download from "../../assets/download.png";
-import { themeStore } from '../../common/Store'
 
 const Login = () => {
-  const { addAccesToken } = useStore(themeStore);
+  const { setTokens } = useAuthStore();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -16,17 +15,19 @@ const Login = () => {
       const response = await fetch("https://localhost:7298/api/User/Login", {
         method: "POST",
         headers: {
-          "Accept": "application/json",
+          Accept: "application/json",
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ email, password }),
       });
 
       const data = await response.json();
-      console.log(data);
-      if (response.ok) {
-        addAccesToken(data.token);
-        navigate("/home");
+
+      if (response.ok && data?.data?.accessToken && data?.data?.refreshToken) {
+        setTokens(data?.data?.accessToken, data?.data?.refreshToken);
+        navigate("/");
+      } else {
+        console.error("Tokenlər cavabda yoxdur:", data);
       }
     } catch (error) {
       console.error("Login error:", error);
