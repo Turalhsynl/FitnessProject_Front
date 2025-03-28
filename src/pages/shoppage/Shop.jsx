@@ -1,28 +1,36 @@
 import { useEffect, useState } from 'react';
 import Cart from '../cartpage/Cart';
-
+import Cookies from 'js-cookie';
 const Shop = () => {
   const [products, setProducts] = useState([]);
-
+  const accessToken = Cookies.get("accessToken");
 
   useEffect(() => {
+    if (!accessToken) {
+      console.error("Unauthorized: No token found.");
+      return;
+    }
+
     fetch('https://localhost:7298/api/Product/GetAll', {
       method: 'GET',
       headers: {
-        'Content-Type': 'application/json', 
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${accessToken}`,
       }
     })
     .then(response => {
       if (!response.ok) {
-        throw new Error('Network response was not ok');
+        throw new Error(`HTTP error! Status: ${response.status}`);
       }
       return response.json();
     })
-    .then(data => { console.log(data); setProducts(data)})
-    
+    .then(data => {
+      console.log(data);
+      setProducts(data);
+    })
     .catch(error => console.error('Error fetching products:', error));
-  }, []);
-  
+  }, [accessToken]);
+
   return (
     <div className="min-h-screen bg-white text-black">
       <header className="relative bg-cover bg-center bg-no-repeat h-[610px] bg-[url('https://max-themes.net/demos/gym/gym/gym/upload/page-title.jpg')] text-white bg-black/20 bg-blend-overlay flex flex-col justify-center items-center">
