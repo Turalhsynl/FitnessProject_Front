@@ -15,7 +15,8 @@ const Header = () => {
 
   const [isScrolled, setIsScrolled] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const cartItems = 0;
+  const [cartItems, setCartItems] = useState([]);
+  const [cart, setCart] = useState([])
 
   useEffect(() => {
     const handleScroll = () => {
@@ -68,6 +69,41 @@ const Header = () => {
   }, [accessToken]);
   
 
+  useEffect(() => {
+    if (accessToken) {
+      const decodedToken = jwt_decode(accessToken);
+      const userId = decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"];
+
+      if (userId && isCartOpen) {
+        const fetchCartData = async () => {
+          try {
+            const response = await fetch(`https://localhost:7298/api/Cart/${userId}`);
+
+            if (!response.ok) {
+              throw new Error(`Failed to fetch cart, status: ${response.status}`);
+            }
+
+            const text = await response.text();
+            const data = text.startsWith("{") ? JSON.parse(text) : null;
+
+            if (data) {
+              setCartItems(data.cartLines || []);
+              setCart(data || []);
+            } else {
+              console.error('Unexpected response format:', text);
+            }
+          } catch (error) {
+            console.error('Error fetching cart:', error);
+          }
+        };
+
+        fetchCartData();
+      }
+    }
+  }, [accessToken, isCartOpen]);
+  
+
+
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
@@ -81,9 +117,6 @@ const Header = () => {
   };
 
   return (
-
-
-    
     <header className={`fixed top-0 left-0 w-full z-50 px-6 sm:px-8 md:px-12 py-4 transition-all duration-300 ${isScrolled ? "bg-black" : "bg-transparent"}`}>
       <div className="flex justify-between items-center text-white">
         <h1 className="text-white text-4xl font-extrabold italic">
@@ -140,26 +173,76 @@ const Header = () => {
      </button>
     </div>
     </div>
-        {isCartOpen && (
-      <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black/70 z-50">
-        <div className="bg-white w-full max-w-4xl p-20 rounded-xl shadow-2xl relative">
-          <button className="absolute top-4 right-6 text-gray-500 text-6xl" onClick={() => setIsCartOpen(false)}>
-            &times;
-          </button>
-          <p className="text-2xl font-semibold text-center">
-            You have <span className="font-bold">{cartItems}</span> items in your cart
-          </p>
-          <div className="flex justify-center mt-20">
-            <Link to="/shop" className="bg-black text-white px-6 py-4 rounded-md font-semibold hover:bg-gray-800" onClick={() => setIsCartOpen(false)}>
-              Go to Shopping
-            </Link>
-          </div>
+
+    {isCartOpen && (
+  <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black/70 z-50">
+    <div className="bg-white w-full max-w-4xl p-10 rounded-xl shadow-2xl relative">
+      <button
+        className="absolute top-4 right-6 text-gray-500 text-6xl"
+        onClick={() => setIsCartOpen(false)}
+      >
+        &times;
+      </button>
+
+      <p className="text-2xl font-semibold text-center">
+        You have <span className="font-bold">{cartItems.length}</span> items in your cart
+      </p>
+
+      <div className="mt-6 space-y-4">
+        {cartItems.length > 0 ? (
+          <ul>
+            {cartItems.map((item, index) => (
+              <li key={index} className="flex items-center justify-between py-4 border-b">
+                {/* Product Image */}
+                <img src={item.product.imageUrl} alt={item.productName} className="w-20 h-20 object-cover rounded-lg" />
+
+                {/* Product Info */}
+                <div className="flex-1 ml-4">
+                  <p className="font-medium">{item.productName}</p>
+                  <p className="text-sm text-gray-500">{item.product.description}</p>
+                  <p className="text-sm text-gray-700">Color: {item.product.color === 1 ? "Black" : "Other"}</p>
+                </div>
+
+                {/* Quantity and Price */}
+                <div className="text-right">
+                  <p className="font-semibold">${item.product.price}</p>
+                  <p className="text-sm text-gray-600">Qty: {item.quantity}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="text-center text-gray-500">Your cart is empty</p>
+        )}
+      </div>
+
+      <div className="flex justify-between items-center mt-6">
+        {/* Total Price */}
+        <p className="text-xl font-semibold">Total: ${cart.totalPrice}</p>
+
+        {/* Buttons */}
+        <div className="flex space-x-4">
+          <Link
+            to="/shop"
+            className="bg-black text-white px-6 py-4 rounded-md font-semibold hover:bg-gray-800"
+            onClick={() => setIsCartOpen(false)}
+          >
+            Continue Shopping
+          </Link>
+          <Link
+            to="/checkout"
+            className="bg-purple-600 text-white px-6 py-4 rounded-md font-semibold hover:bg-purple-700"
+            onClick={() => setIsCartOpen(false)}
+          >
+            Checkout
+          </Link>
         </div>
       </div>
-    )}
+    </div>
+  </div>
+)}
 
 
-    
 
    <div className={`sm:hidden fixed top-0 left-0 w-full h-full bg-black text-white text-center transition-all duration-300 transform ${isMenuOpen ? "translate-x-0" : "-translate-x-full"}`}>
        <nav className="space-y-6 py-20">
