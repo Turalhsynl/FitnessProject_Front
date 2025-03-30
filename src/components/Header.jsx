@@ -115,7 +115,17 @@ const Header = () => {
   const toggleProfile = () => {
     setIsProfileOpen(!isProfileOpen);
   };
-
+  useEffect(() => {
+    if (isCartOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+  
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [isCartOpen]);
   return (
     <header className={`fixed top-0 left-0 w-full z-50 px-6 sm:px-8 md:px-12 py-4 transition-all duration-300 ${isScrolled ? "bg-black" : "bg-transparent"}`}>
       <div className="flex justify-between items-center text-white">
@@ -176,69 +186,59 @@ const Header = () => {
 
     {isCartOpen && (
   <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black/70 z-50">
-    <div className="bg-white w-full max-w-4xl p-10 rounded-xl shadow-2xl relative">
-      <button
-        className="absolute top-4 right-6 text-gray-500 text-6xl"
-        onClick={() => setIsCartOpen(false)}
-      >
-        &times;
-      </button>
-
-      <p className="text-2xl font-semibold text-center">
-        You have <span className="font-bold">{cartItems.length}</span> items in your cart
-      </p>
-
-      <div className="mt-6 space-y-4">
-        {cartItems.length > 0 ? (
-          <ul>
-            {cartItems.map((item, index) => (
-              <li key={index} className="flex items-center justify-between py-4 border-b">
-                {/* Product Image */}
-                <img src={item.product.imageUrl} alt={item.productName} className="w-20 h-20 object-cover rounded-lg" />
-
-                {/* Product Info */}
-                <div className="flex-1 ml-4">
-                  <p className="font-medium">{item.productName}</p>
-                  <p className="text-sm text-gray-500">{item.product.description}</p>
-                  <p className="text-sm text-gray-700">Color: {item.product.color === 1 ? "Black" : "Other"}</p>
-                </div>
-
-                {/* Quantity and Price */}
-                <div className="text-right">
-                  <p className="font-semibold">${item.product.price}</p>
-                  <p className="text-sm text-gray-600">Qty: {item.quantity}</p>
-                </div>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="text-center text-gray-500">Your cart is empty</p>
-        )}
+    <div className="fixed top-0 right-0 w-full md:w-[400px] h-full bg-white shadow-lg z-50 transition-transform transform translate-x-0">
+    <div className="flex flex-col h-full">
+      {/* Sepet Başlık */}
+      <div className="flex items-center justify-between p-6 border-b">
+        <h2 className="text-lg font-bold">YOUR BAG</h2>
+        <button onClick={() => setIsCartOpen(false)} className="text-3xl cursor-pointer">&times;</button>
       </div>
 
-      <div className="flex justify-between items-center mt-6">
-        {/* Total Price */}
-        <p className="text-xl font-semibold">Total: ${cart.totalPrice}</p>
-
-        {/* Buttons */}
-        <div className="flex space-x-4">
-          <Link
-            to="/shop"
-            className="bg-black text-white px-6 py-4 rounded-md font-semibold hover:bg-gray-800"
-            onClick={() => setIsCartOpen(false)}
-          >
-            Continue Shopping
-          </Link>
-          <Link
-            to="/checkout"
-            className="bg-purple-600 text-white px-6 py-4 rounded-md font-semibold hover:bg-purple-700"
-            onClick={() => setIsCartOpen(false)}
-          >
-            Checkout
-          </Link>
+      {/* Boş Sepet Durumu */}
+      {cartItems.length === 0 ? (
+        <div className="flex flex-col items-center justify-center flex-1 p-6 text-center">
+          <img src="https://www.gymshark.com/images/empty-bag.svg" alt="Empty Cart" className="w-24 h-24 mb-4" />
+          <h3 className="text-lg font-bold">YOUR BAG IS EMPTY</h3>
+          <p className="text-gray-500 text-sm">There are no products in your bag</p>
+          <button className="mt-4 w-full bg-black text-white py-2 rounded-md font-semibold">
+            SHOP MENS
+          </button>
+          <button className="mt-2 w-full bg-black text-white py-2 rounded-md font-semibold">
+            SHOP WOMENS
+          </button>
         </div>
-      </div>
+      ) : (
+        <div className="flex-1 overflow-y-auto p-6 space-y-4">
+          {cartItems.map((item, index) => (
+            <div key={index} className="flex items-center justify-between border-b pb-4">
+              <img src={item.product.imageUrl} alt={item.productName} className="w-16 h-16 rounded" />
+              <div className="flex-1 ml-4">
+                <p className="font-medium">{item.productName}</p>
+                <p className="text-gray-500 text-sm">{item.product.description}</p>
+                <p className="text-gray-700 text-sm">Qty: {item.quantity}</p>
+              </div>
+              <p className="font-bold">${item.product.price}</p>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Footer - Toplam ve Ödeme */}
+      {cartItems.length > 0 && (
+        <div className="p-6 border-t">
+          <p className="text-lg font-bold">Total: ${cart.totalPrice}</p>
+          <div className="mt-4 flex flex-col space-y-2">
+            <Link to="/shop" className="bg-black text-white py-3 rounded-md text-center font-semibold">
+              Continue Shopping
+            </Link>
+            <Link to="/checkout" className="bg-purple-600 text-white py-3 rounded-md text-center font-semibold">
+              Checkout
+            </Link>
+          </div>
+        </div>
+      )}
     </div>
+  </div>
   </div>
 )}
 
