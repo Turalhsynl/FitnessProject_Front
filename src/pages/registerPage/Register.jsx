@@ -43,7 +43,7 @@ const Register = () => {
         throw new Error(data.message || "Registration failed");
       }
 
-      setTokens(data.accessToken, data.refreshToken);
+      // setTokens(data?.data?.accessToken, data?.data?.refreshToken);
       navigate("/login");
     } catch (error) {
       console.error("Register error:", error.message);
