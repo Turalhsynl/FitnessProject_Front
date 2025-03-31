@@ -67,6 +67,7 @@
 // };
 
 // export default Shop;
+
 import { useEffect, useState } from 'react';
 import Cookies from 'js-cookie';
 import jwt_decode from "jwt-decode";
@@ -106,7 +107,7 @@ const Shop = () => {
       })
       .catch(error => console.error('Error fetching products:', error));
 
-    fetch(`https://localhost:7298/api/Cart/${userId}`, {
+    fetch(`https://localhost:7298/api/Cart/get/${userId}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -115,15 +116,14 @@ const Shop = () => {
     })
       .then(response => response.json())
       .then(cart => {
-        if (cart) {
+        if (cart && cart.id) {
           setCartId(cart.id);
         } else {
-          console.log("Səbət tapılmadı");
+          console.log("Səbət tapılmadı, yeni səbət yaradılacaq");
         }
       })
       .catch(error => console.error('Error fetching cart:', error));
-
-  }, [accessToken]);
+  }, [accessToken, userId]);
 
   const handleAddToCart = (productId) => {
     setLoading(productId);
@@ -152,7 +152,7 @@ const Shop = () => {
         setLoading(null);
       });
   };
-  
+
   return (
     <div className="min-h-screen bg-white text-black">
       <header className="relative bg-cover bg-center bg-no-repeat h-[610px] bg-[url('https://max-themes.net/demos/gym/gym/gym/upload/page-title.jpg')] text-white bg-black/20 bg-blend-overlay flex flex-col justify-center items-center">
@@ -198,3 +198,4 @@ const Shop = () => {
 };
 
 export default Shop;
+

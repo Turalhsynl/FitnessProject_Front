@@ -37,13 +37,10 @@ const Register = () => {
       });
 
       const data = await response.json();
-      console.log(data);
 
       if (!response.ok) {
         throw new Error(data.message || "Registration failed");
       }
-
-      // setTokens(data?.data?.accessToken, data?.data?.refreshToken);
       navigate("/login");
     } catch (error) {
       console.error("Register error:", error.message);

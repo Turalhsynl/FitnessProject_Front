@@ -78,30 +78,62 @@ const Header = () => {
     if (accessToken) {
       const decodedToken = jwt_decode(accessToken);
       const userId = decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"];
-      if (userId && isCartOpen) {
-        const fetchCartData = async () => {
-          try {
-            const response = await fetch(`https://localhost:7298/api/Cart/${userId}`);
-            if (!response.ok) {
-              throw new Error(`Failed to fetch cart, status: ${response.status}`);
-            }
-            const text = await response.text();
-            const data = text.startsWith("{") ? JSON.parse(text) : null;
-            if (data) {
-              setCartItems(data.cartLines || []);
-              setCart(data || []);
-            } else {
-              console.error('Unexpected response format:', text);
-            }
-          } catch (error) {
-            console.error('Error fetching cart:', error);
+  
+      const fetchCartId = async () => {
+        try {
+          const response = await fetch(`https://localhost:7298/api/Cart/get/${userId}`, {
+            method: 'GET',
+            headers: {
+              'Authorization': `Bearer ${accessToken}`,
+            },
+          });
+  
+          if (!response.ok) {
+            throw new Error(`Səbət ID-si alınmadı, status: ${response.status}`);
           }
-        };
-
-        fetchCartData();
+  
+          const data = await response.json();
+          const cartId = data.id;
+  
+          if (cartId) {
+            const fetchCartData = async () => {
+              try {
+                const cartResponse = await fetch(`https://localhost:7298/api/Cart/${cartId}`, {
+                  method: 'GET',
+                  headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                  },
+                });
+  
+                if (!cartResponse.ok) {
+                  throw new Error(`Səbət məlumatları alınmadı, status: ${cartResponse.status}`);
+                }
+  
+                const cartData = await cartResponse.json();
+                setCartItems(cartData.cartLines || []);
+                setCart(cartData);
+              } catch (error) {
+                console.error('Səbət məlumatları alınarkən xəta:', error);
+              }
+            };
+  
+            fetchCartData();
+          } else {
+            console.error("Cart ID mövcud deyil.");
+          }
+        } catch (error) {
+          console.error('Cart ID alınarkən xəta:', error);
+        }
+      };
+  
+      if (userId && isCartOpen) {
+        fetchCartId();
       }
     }
   }, [accessToken, isCartOpen]);
+  
+
+
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const closeMenu = () => setIsMenuOpen(false);
   const handleRemoveFromCart = (productId) => {
