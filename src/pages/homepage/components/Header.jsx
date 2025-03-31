@@ -7,6 +7,7 @@ import ProfileDropdown from "../components/ProfileDropdown";
 import Cart from "../components/Cart";
 import MobileMenu from "../components/MobileMenu";
 import { FaSearch, FaShoppingCart, FaBars } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -62,6 +63,18 @@ const Header = () => {
   }, [accessToken]);
 
   useEffect(() => {
+    if (isCartOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+  
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [isCartOpen]);
+
+  useEffect(() => {
     if (accessToken) {
       const decodedToken = jwt_decode(accessToken);
       const userId = decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"];
@@ -91,6 +104,39 @@ const Header = () => {
   }, [accessToken, isCartOpen]);
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const closeMenu = () => setIsMenuOpen(false);
+  const handleRemoveFromCart = (productId) => {
+    if (!cart || !cart.id) return;
+  
+    const productToRemove = cartItems.find(item => item.product.id === productId);
+  
+    if (!productToRemove) return;
+  
+    const productPrice = productToRemove.product.price;
+    const productQuantity = productToRemove.quantity;
+  
+    fetch(`https://localhost:7298/api/Cart/remove-product/${cart.id}/${productId}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+      },
+    })
+    .then(response => {
+      if (response.ok) {
+        return response.json();
+      }
+      throw new Error("Ürün silinemedi.");
+    })
+    .then(() => {
+      setCartItems(prev => prev.filter(item => item.product.id !== productId));
+  
+      setCart(prev => ({
+        ...prev,
+        totalPrice: prev.totalPrice - (productPrice * productQuantity),
+      }));
+    })
+    .catch(error => console.error("Silme işlemi sırasında hata:", error));
+  };
+  
   return (
     <header className={`fixed top-0 left-0 w-full z-50 px-6 sm:px-8 md:px-12 py-4 transition-all duration-300 ${isScrolled ? "bg-black" : "bg-transparent"}`}>
       <div className="flex justify-between items-center text-white">
@@ -116,7 +162,7 @@ const Header = () => {
           </button>
         </div>
       </div>
-      {isCartOpen && <Cart cartItems={cartItems} cart={cart} setIsCartOpen={setIsCartOpen} />}
+      {isCartOpen && <Cart cartItems={cartItems} cart={cart} setIsCartOpen={setIsCartOpen} handleRemoveFromCart={handleRemoveFromCart} />}
       <MobileMenu isMenuOpen={isMenuOpen} closeMenu={closeMenu} />
     </header>
   );

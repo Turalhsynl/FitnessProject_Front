@@ -152,7 +152,7 @@ const Shop = () => {
         setLoading(null);
       });
   };
-
+  
   return (
     <div className="min-h-screen bg-white text-black">
       <header className="relative bg-cover bg-center bg-no-repeat h-[610px] bg-[url('https://max-themes.net/demos/gym/gym/gym/upload/page-title.jpg')] text-white bg-black/20 bg-blend-overlay flex flex-col justify-center items-center">
