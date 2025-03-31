@@ -3,11 +3,11 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-d
 import { useStore } from "zustand";
 import { useAuthStore } from "./common/Store";
 import Home from "./pages/homepage/Home";
-import Header from "./components/Header";
+import Header from "../src/pages/homepage/components/Header";
 import Footer from "./components/Footer";
 import Contact from "./pages/contactpage/Contact";
 import Shop from "./pages/shoppage/Shop";
-import Cart from "./pages/cartpage/Cart";
+import Cart from "./pages/homepage/components/Cart";
 import Classes from "./pages/classespage/Classes";
 import Login from "./pages/loginpage/Login";
 import Register from "./pages/registerPage/Register";
