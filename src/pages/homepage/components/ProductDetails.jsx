@@ -23,42 +23,35 @@ const ProductDetails = () => {
 
   return (
     <div className="min-h-screen bg-white text-black">
-      {/* Header */}
       <header className="relative bg-cover bg-center h-[610px] bg-[url('https://max-themes.net/demos/gym/gym/gym/upload/page-title.jpg')] text-white flex flex-col justify-center items-center">
         <h1 className="text-6xl font-bold italic">SHOP</h1>
       </header>
 
-      <div className="min-h-screen bg-white text-black  flex flex-col md:flex-row gap-8 justify-center items-center">
-        {/* Left - Product Images */}
+      <div className="min-h-screen bg-white text-black flex flex-col md:flex-row gap-8 justify-center items-center">
         <div className="md:w-1/2 flex flex-col">
           <img src={product.imageUrl} alt={product.name} className="w-[1000px]" />
         </div>
+        <div className="md:w-1/2 space-y-6 flex flex-col mb-[150px] items-center text-center">
+          <span className="bg-gray-200 text-gray-700 px-3 py-1 text-xs font-semibold rounded-full">NEW</span>
+          <h1 className="text-4xl font-bold">{product.name}</h1>
+          <p className="text-2xl font-semibold">${product.price}</p>
+          <div className="flex items-center space-x-1 text-gray-700">
+            <span>⭐</span><span>⭐</span><span>⭐</span><span>⭐</span>
+            <p className="text-gray-500 text-sm">{product.reviews}</p>
+          </div>
+          <div>
+            <p className="text-gray-700 font-semibold">{product.color}</p>
+            <div className="flex space-x-2 justify-center">
+              <div
+                className="w-8 h-8 rounded-full border-2 border-gray-500"
+                style={{ backgroundColor: product.color }} 
+              ></div>
+            </div>
+          </div>
 
-        {/* Right - Product Information */}
-       {/* Right - Product Information */}
-<div className="md:w-1/2 space-y-6 flex flex-col mb-[150px] items-center text-center">
-  <span className="bg-gray-200 text-gray-700 px-3 py-1 text-xs font-semibold rounded-full">NEW</span>
-  <h1 className="text-4xl font-bold">{product.name}</h1>
-  <p className="text-2xl font-semibold">${product.price}</p>
-  <div className="flex items-center space-x-1 text-gray-700">
-    <span>⭐</span><span>⭐</span><span>⭐</span><span>⭐</span>
-    <p className="text-gray-500 text-sm">{product.reviews}</p>
-  </div>
-  <div>
-    <p className="text-gray-700 font-semibold">{product.color}</p>
-    <div className="flex space-x-2 justify-center">
-      <div className={`w-8 h-8 rounded-full border-2 border-gray-500`} style={{ backgroundColor: product.color }}></div>
-    </div>
-  </div>
-  <button className="bg-black text-white px-6 py-3 w-64 rounded-lg font-bold hover:bg-gray-800 transition">
-    ADD TO BAG
-  </button>
-
-
-
-
-          
-          {/* Description & Delivery Buttons */}
+          <button className="bg-black text-white px-6 py-3 w-64 rounded-lg font-bold hover:bg-gray-800 transition">
+            ADD TO BAG
+          </button>
           <div className="w-full max-w-lg">
             <div className="flex items-center justify-between border-b py-4 cursor-pointer" onClick={() => setIsModalOpen(true)}>
               <p className="text-lg font-semibold">DESCRIPTION</p>
@@ -76,8 +69,6 @@ const ProductDetails = () => {
           </div>
         </div>
       </div>
-      
-      {/* Modal for Description */}
       {isModalOpen && (
         <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black/40 z-50">
           <div className="fixed top-0 right-0 w-full md:w-[700px] h-full bg-white shadow-lg z-50 transition-transform transform translate-x-0">
