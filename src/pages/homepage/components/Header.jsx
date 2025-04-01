@@ -8,6 +8,7 @@ import Cart from "../components/Cart";
 import MobileMenu from "../components/MobileMenu";
 import { FaSearch, FaShoppingCart, FaBars } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import SearchBar from "./SearchBar";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -17,6 +18,7 @@ const Header = () => {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [cartItems, setCartItems] = useState([]);
   const [cart, setCart] = useState([]);
+
 
   const accessToken = Cookies.get("accessToken");
 
@@ -168,6 +170,8 @@ const Header = () => {
     })
     .catch(error => console.error("Silme işlemi sırasında hata:", error));
   };
+
+  
   
   return (
     <header className={`fixed top-0 left-0 w-full z-50 px-6 sm:px-8 md:px-12 py-4 transition-all duration-300 ${isScrolled ? "bg-black" : "bg-transparent"}`}>
@@ -175,7 +179,7 @@ const Header = () => {
         <Logo />
         <Navigation />
         <div className="flex items-center space-x-6 ml-6">
-          <FaSearch className="text-white text-2xl cursor-pointer hover:text-purple-500" />
+        <SearchBar accessToken={accessToken} />
           <button onClick={() => setIsCartOpen(true)}>
             <FaShoppingCart className="text-white text-2xl cursor-pointer hover:text-purple-500" />
           </button>
