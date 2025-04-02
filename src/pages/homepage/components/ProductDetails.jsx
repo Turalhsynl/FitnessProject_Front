@@ -1,9 +1,10 @@
 import { useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 
-const ProductDetails = () => {
+const ProductDetails = ({ accessToken }) => {
   const location = useLocation();
   const product = location.state?.product;
+  const cartId = location.state?.cartId;
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeliveryOpen, setIsDeliveryOpen] = useState(false);
 
@@ -18,6 +19,39 @@ const ProductDetails = () => {
       document.body.style.overflow = "auto";
     };
   }, [isModalOpen]);
+
+  const addToCart = async () => {
+    console.log(cartId)
+    if (!cartId) {
+      alert("Please log in to add items to the cart.");
+      return;
+    }
+
+    try {
+      const response = await fetch(`https://localhost:7298/api/Cart/add-product`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({
+          cartId: cartId,
+          productId: product.id,
+          quantity: 1,
+        }),
+      });
+
+      if (response.ok) {
+        alert("Product added to the cart successfully!");
+      } else {
+        console.error("Error adding product to cart.");
+        alert("Failed to add product to cart.");
+      }
+    } catch (error) {
+      console.error("Error adding product to cart:", error);
+      alert("An error occurred while adding the product to the cart.");
+    }
+  };
 
   if (!product) return <p>Product not found!</p>;
 
@@ -49,7 +83,10 @@ const ProductDetails = () => {
             </div>
           </div>
 
-          <button className="bg-black text-white px-6 py-3 w-64 rounded-lg font-bold hover:bg-gray-800 transition">
+          <button 
+            onClick={addToCart} 
+            className="bg-black text-white px-6 py-3 w-64 rounded-lg font-bold hover:bg-gray-800 transition"
+          >
             ADD TO BAG
           </button>
           <div className="w-full max-w-lg">

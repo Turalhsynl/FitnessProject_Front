@@ -266,7 +266,6 @@ const Shop = () => {
   const handleAddToCart = (productId) => {
     setLoading(productId);
     setAdded(null);
-
     fetch("https://localhost:7298/api/Cart/add-product", {
       method: "POST",
       headers: {
@@ -292,7 +291,7 @@ const Shop = () => {
   };
 
   const handleProductClick = (product) => {
-    navigate(`/product/${product.id}`, { state: { product } });
+    navigate(`/product/${product.id}`, { state: { product, cartId } });
   };
 
   const filteredAndSortedProducts = products
