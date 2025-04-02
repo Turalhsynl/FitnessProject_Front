@@ -1,17 +1,16 @@
-
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const SearchBar = ({ accessToken }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
+  const navigate = useNavigate();
+  let debounceTimeout;
 
-  const handleSearch = async (event) => {
-    setSearchQuery(event.target.value);
-
-    if (event.target.value.length > 2) {
+  const fetchResults = useCallback(async (query) => {
+    if (query.length > 2) {
       try {
-        const response = await fetch(`https://localhost:7298/api/Product/search?text=${event.target.value}`, {
+        const response = await fetch(`https://localhost:7298/api/Product/search?text=${query}`, {
           method: 'GET',
           headers: {
             'Authorization': `Bearer ${accessToken}`,
@@ -30,6 +29,24 @@ const SearchBar = ({ accessToken }) => {
     } else {
       setSearchResults([]);
     }
+  }, [accessToken]);
+
+  const handleSearch = (event) => {
+    const value = event.target.value;
+    setSearchQuery(value);
+
+    clearTimeout(debounceTimeout);
+    debounceTimeout = setTimeout(() => fetchResults(value), 300);
+  };
+
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter' && searchResults.length > 0) {
+      navigate(`/product/${searchResults[0].id}`, { state: { product: searchResults[0] } });
+    }
+  };
+
+  const handleSelect = (product) => {
+    navigate(`/product/${product.id}`, { state: { product } });
   };
 
   return (
@@ -39,16 +56,19 @@ const SearchBar = ({ accessToken }) => {
         placeholder="Search..."
         value={searchQuery}
         onChange={handleSearch}
+        onKeyDown={handleKeyDown}
         className="text-white px-4 py-2 bg-transparent border-b-2 border-white focus:outline-none"
       />
       {searchQuery && (
         <div className="absolute top-full left-0 w-full bg-black text-white mt-2 max-h-60 overflow-auto">
           {searchResults.length > 0 ? (
             searchResults.map(result => (
-              <div key={result.id} className="p-2 hover:bg-gray-700">
-                <Link to={`/product/${result.id}`} className="block">
-                  {result.name}
-                </Link>
+              <div 
+                key={result.id} 
+                className="p-2 hover:bg-gray-700 cursor-pointer"
+                onClick={() => handleSelect(result)}
+              >
+                {result.name}
               </div>
             ))
           ) : (

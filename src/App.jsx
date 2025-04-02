@@ -29,7 +29,6 @@ const App = () => {
         <Route path="/cart" element={accessToken ? <Cart /> : <Navigate to="/login" replace />} />
         <Route path="/classes" element={accessToken ? <Classes /> : <Navigate to="/login" replace />} />
         <Route path="/product/:id" element={<ProductDetails />} />
-        <Route path="/product/:id" element={<SearchBar />} />
       </Routes>
       <Footer />
     </Router>
