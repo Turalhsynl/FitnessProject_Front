@@ -39,18 +39,18 @@ const FilterSort = ({ setSelectedCategory, setSortBy, categories, colors, onColo
       <div>
         <button
           onClick={() => toggleSection("sortBy")}
-          className="w-full flex justify-between items-center font-bold py-2"
+          className="w-full flex justify-between items-center font-bold py-2 text-xl"
         >
           SORT BY
           <ChevronDown
-            className={`w-4 h-4 transition-transform ${openSections.sortBy ? "rotate-180" : ""}`}
+            className={`w-6 h-6 transition-transform ${openSections.sortBy ? "rotate-180" : ""}`}
           />
         </button>
         {openSections.sortBy && (
           <div className="space-y-2 mt-2">
             {[{ value: "price-asc", label: "Price: Low to High" },
             { value: "price-desc", label: "Price: High to Low" }].map((option) => (
-              <label key={option.value} className="flex items-center gap-2 cursor-pointer">
+              <label key={option.value} className="flex items-center gap-2 cursor-pointer text-[18px]">
                 <input
                   type="radio"
                   name="sort"
@@ -58,8 +58,8 @@ const FilterSort = ({ setSelectedCategory, setSortBy, categories, colors, onColo
                   onChange={() => handleSortChange(option.value)}
                   className="hidden"
                 />
-                <span className="w-4 h-4 border-2 border-black rounded-full flex items-center justify-center">
-                  {selectedSort === option.value && <span className="w-2 h-2 bg-black rounded-full"></span>}
+                <span className="w-5 h-5 border-2 border-black rounded-full flex items-center justify-center">
+                  {selectedSort === option.value && <span className="w-3 h-3 bg-black rounded-full"></span>}
                 </span>
                 {option.label}
               </label>
@@ -72,16 +72,16 @@ const FilterSort = ({ setSelectedCategory, setSortBy, categories, colors, onColo
       <div className="mt-4">
         <button
           onClick={() => toggleSection("productType")}
-          className="w-full flex justify-between items-center font-bold py-2"
+          className="w-full flex justify-between items-center font-bold py-2 text-xl"
         >
           PRODUCT TYPE
           <ChevronDown
-            className={`w-4 h-4 transition-transform ${openSections.productType ? "rotate-180" : ""}`}
+            className={`w-6 h-6 transition-transform ${openSections.productType ? "rotate-180" : ""}`}
           />
         </button>
         {openSections.productType && (
           <div className="mt-2 space-y-2">
-            <label className="flex items-center gap-2 cursor-pointer">
+            <label className="flex items-center gap-2 cursor-pointer text-[18px]">
               <input
                 type="radio"
                 name="category"
@@ -89,14 +89,14 @@ const FilterSort = ({ setSelectedCategory, setSortBy, categories, colors, onColo
                 onChange={() => setSelectedCategoryId(0)}
                 className="hidden"
               />
-              <span className="w-4 h-4 border-2 border-black rounded-full flex items-center justify-center">
-                {selectedCategoryId === 0 && <span className="w-2 h-2 bg-black rounded-full"></span>}
+              <span className="w-5 h-5 border-2 border-black rounded-full flex items-center justify-center">
+                {selectedCategoryId === 0 && <span className="w-3 h-3 bg-black rounded-full"></span>}
               </span>
               All Categories
             </label>
 
             {categories.map((category) => (
-              <label key={category.id} className="flex items-center gap-2 cursor-pointer">
+              <label key={category.id} className="flex items-center gap-2 cursor-pointer text-[20px]">
                 <input
                   type="radio"
                   name="category"
@@ -105,8 +105,8 @@ const FilterSort = ({ setSelectedCategory, setSortBy, categories, colors, onColo
                   onChange={() => setSelectedCategoryId(category.id)}
                   className="hidden"
                 />
-                <span className="w-4 h-4 border-2 border-black rounded-full flex items-center justify-center">
-                  {selectedCategoryId === category.id && <span className="w-2 h-2 bg-black rounded-full"></span>}
+                <span className="w-5 h-5 border-2 border-black rounded-full flex items-center justify-center">
+                  {selectedCategoryId === category.id && <span className="w-3 h-3 bg-black rounded-full"></span>}
                 </span>
                 {category.name}
               </label>
@@ -119,11 +119,11 @@ const FilterSort = ({ setSelectedCategory, setSortBy, categories, colors, onColo
       <div className="mt-4">
         <button
           onClick={() => toggleSection("colors")}
-          className="w-full flex justify-between items-center font-bold py-2"
+          className="w-full flex justify-between items-center font-bold py-2 text-xl"
         >
           COLORS
           <ChevronDown
-            className={`w-4 h-4 transition-transform ${openSections.colors ? "rotate-180" : ""}`}
+            className={`w-6 h-6 transition-transform ${openSections.colors ? "rotate-180" : ""}`}
           />
         </button>
 
