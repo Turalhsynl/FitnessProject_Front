@@ -1,0 +1,118 @@
+import { useState, useEffect } from "react";
+import { ChevronDown } from "lucide-react";
+
+const FilterSort = ({ setSelectedCategory, setSortBy, categories }) => {
+  const [openSections, setOpenSections] = useState({
+    sortBy: false,
+    productType: false,
+  });
+
+  const [selectedCategoryId, setSelectedCategoryId] = useState(0);
+  const [selectedSort, setSelectedSort] = useState(null);
+
+  const toggleSection = (section) => {
+    setOpenSections((prev) => ({
+      ...prev,
+      [section]: !prev[section],
+    }));
+  };
+
+  useEffect(() => {
+    setSelectedCategory(selectedCategoryId);
+  }, [selectedCategoryId, setSelectedCategory]);
+
+  const handleSortChange = (value) => {
+    setSelectedSort(value);
+    setSortBy(value === "price-asc" ? 0 : value === "price-desc" ? 1 : value);
+  };
+
+  return (
+    <div className="w-64 p-4 bg-white text-sm mt-20">
+      {/* Sort By */}
+      <div>
+        <button
+          onClick={() => toggleSection("sortBy")}
+          className="w-full flex justify-between items-center font-bold py-2"
+        >
+          SORT BY
+          <ChevronDown
+            className={`w-4 h-4 transition-transform ${openSections.sortBy ? "rotate-180" : ""}`}
+          />
+        </button>
+        {openSections.sortBy && (
+          <div className="space-y-2 mt-2">
+            {[{ value: "price-asc", label: "Price: Low to High" },
+              { value: "price-desc", label: "Price: High to Low" }].map((option) => (
+                <label key={option.value} className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="sort"
+                    value={option.value}
+                    onChange={() => handleSortChange(option.value)}
+                    className="hidden"
+                  />
+                  <span className="w-4 h-4 border-2 border-black rounded-full flex items-center justify-center">
+                    {selectedSort === option.value && <span className="w-2 h-2 bg-black rounded-full"></span>}
+                  </span>
+                  {option.label}
+                </label>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Product Type */}
+      <div className="mt-4">
+        <button
+          onClick={() => toggleSection("productType")}
+          className="w-full flex justify-between items-center font-bold py-2"
+        >
+          PRODUCT TYPE
+          <ChevronDown
+            className={`w-4 h-4 transition-transform ${openSections.productType ? "rotate-180" : ""}`}
+          />
+        </button>
+        {openSections.productType && (
+          <div className="mt-2 space-y-2">
+            {/* All Categories */}
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="radio"
+                name="category"
+                checked={selectedCategoryId === 0}
+                onChange={() => setSelectedCategoryId(0)}
+                className="hidden"
+              />
+              <span className="w-4 h-4 border-2 border-black rounded-full flex items-center justify-center">
+                {selectedCategoryId === 0 && <span className="w-2 h-2 bg-black rounded-full"></span>}
+              </span>
+              All Categories
+            </label>
+
+            {/* Other categories */}
+            {categories.map((category) => (
+              <label key={category.id} className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="radio"
+                  name="category"
+                  value={category.id}
+                  checked={selectedCategoryId === category.id}
+                  onChange={() => setSelectedCategoryId(category.id)}
+                  className="hidden"
+                />
+                <span className="w-4 h-4 border-2 border-black rounded-full flex items-center justify-center">
+                  {selectedCategoryId === category.id && <span className="w-2 h-2 bg-black rounded-full"></span>}
+                </span>
+                {category.name}
+              </label>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default FilterSort;
+
+
