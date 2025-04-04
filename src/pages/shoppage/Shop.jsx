@@ -350,7 +350,7 @@ const Shop = () => {
                   />
                   <button
                     onClick={() => handleAddToCart(product.id)}
-                    className="absolute h-[50px] w-full bottom-0 bg-black text-white font-bold opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-300"
+                    className="absolute h-[50px] w-full bottom-0 bg-black text-white font-bold opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-300 hidden lg:flex"
                   >
                     {loading === product.id ? (
                       <Loader2 className="animate-spin" size={24} />
@@ -360,6 +360,20 @@ const Shop = () => {
                       <p className="cursor-pointer hover:text-purple-500">ADD TO CART</p>
                     )}
                   </button>
+<button
+  onClick={() => handleAddToCart(product.id)}
+  className="absolute top-2 right-2 bg-white text-black rounded-full pl-3 pr-3  p-2 z-10 lg:hidden cursor-pointer"
+>
+  {loading === product.id ? (
+    <Loader2 className="animate-spin" size={18} />
+  ) : added === product.id ? (
+<i class="bi bi-bag-check"></i>
+  ) :  (
+    <i class="bi bi-bag-plus"></i>
+
+  )}
+</button>
+
                 </div>
                 <div className="p-[5px] cursor-pointer">
                   <h2 className="text-gray-500 text-lg font-semibold">{product.name}</h2>

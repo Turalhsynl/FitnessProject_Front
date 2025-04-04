@@ -51,7 +51,7 @@ const ProfileDropdown = ({ userData, setUserData }) => {
 
       {isOpen && (
         <div className="absolute right-0 mt-3 w-80 bg-black/60 backdrop-blur-xl border border-white rounded-2xl shadow-xl overflow-hidden z-10 animate-fade-in">
-          <div className="p-5 bg-black/10 text-white flex items-center gap-4">
+          <div className="p-5  text-white flex items-center gap-4">
             <img
               src={userData?.avatar || "https://via.placeholder.com/50"}
               alt="Profile"

@@ -2,10 +2,10 @@ import { Link } from "react-router-dom";
 import { Trash2 } from "lucide-react";
 
 const Cart = ({ cartItems, cart, setIsCartOpen, handleRemoveFromCart }) => (
-  <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black/70 z-50">
+  <div className="fixed top-0 left-0 w-full h-full flex items-center  justify-center bg-black/70 z-50">
     <div className="fixed top-0 right-0 w-full md:w-[400px] h-full bg-white shadow-lg z-50 transition-transform transform translate-x-0">
       <div className="flex flex-col h-full">
-        <div className="flex items-center justify-between p-6 border-b">
+        <div className="flex items-center justify-between p-6 ">
           <h2 className="text-lg font-bold">YOUR BAG</h2>
           <button onClick={() => setIsCartOpen(false)} className="text-3xl cursor-pointer">&times;</button>
         </div>
@@ -26,9 +26,9 @@ const Cart = ({ cartItems, cart, setIsCartOpen, handleRemoveFromCart }) => (
           <div className="flex-1 overflow-y-auto p-6 space-y-4">
             {cartItems.map((item, index) => (
               <div key={index} className="flex items-center justify-between border-b pb-4">
-                <img src={item.product.imageUrl} alt={item.productName} className="w-32 h-36 rounded cursor-pointer" />
+                <img src={item.product.imageUrl} alt={item.productName} className="w-32 h-38 rounded cursor-pointer" />
                 <div className="flex-1 ml-4">
-                  <p className="font-medium text-gray-600 cursor-pointer">{item.productName}</p>
+                  <p className="font-medium  text-gray-600 cursor-pointer">{item.productName}</p>
                   <p className="text-gray-500 text-sm">{item.product.description}</p>
                   <p className="font-bold">${item.product.price}</p>
                   <div className="flex mt-2 justify-between">
