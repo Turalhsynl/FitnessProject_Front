@@ -116,63 +116,39 @@ const FilterSort = ({ setSelectedCategory, setSortBy, categories, colors, onColo
       </div>
 
       {/* Colors */}
-      {/* <div className="mt-4">
-        <p className="font-bold mb-2">COLORS</p>
-        <div className="grid grid-cols-2 gap-4 mt-8">
-          {colors.map((color) => (
-            <div key={color.id} className="flex flex-col items-center">
-              <button
-                onClick={() => handleColorClick(color.id)}
-                className={`w-14 h-14 rounded-full border-2 transition-transform ${selectedColorId === color.id ? "border-black scale-110" : "border-gray-300"
-                  }`}
-                style={{ backgroundColor: color.code }}
-              />
-              <p
-                onClick={() => handleColorClick(color.id)}
-                className="cursor-pointer mt-2 text-sm"
-              >
-                {color.name}
-              </p>
-            </div>
-          ))}
-        </div>
-
-      </div> */}
-      {/* Colors */}
-<div className="mt-4">
-  <button
-    onClick={() => toggleSection("colors")}
-    className="w-full flex justify-between items-center font-bold py-2"
-  >
-    COLORS
-    <ChevronDown
-      className={`w-4 h-4 transition-transform ${openSections.colors ? "rotate-180" : ""}`}
-    />
-  </button>
-
-  {openSections.colors && (
-    <div className="grid grid-cols-2 gap-4 mt-8">
-      {colors.map((color) => (
-        <div key={color.id} className="flex flex-col items-center">
-          <button
-            onClick={() => handleColorClick(color.id)}
-            className={`w-14 h-14 rounded-full border-2 transition-transform ${
-              selectedColorId === color.id ? "border-black scale-110" : "border-gray-300"
-            }`}
-            style={{ backgroundColor: color.code }}
+      <div className="mt-4">
+        <button
+          onClick={() => toggleSection("colors")}
+          className="w-full flex justify-between items-center font-bold py-2"
+        >
+          COLORS
+          <ChevronDown
+            className={`w-4 h-4 transition-transform ${openSections.colors ? "rotate-180" : ""}`}
           />
-          <p
-            onClick={() => handleColorClick(color.id)}
-            className="cursor-pointer mt-2 text-sm"
-          >
-            {color.name}
-          </p>
-        </div>
-      ))}
-    </div>
-  )}
-</div>
+        </button>
 
+        {openSections.colors && (
+          <div className="grid grid-cols-2 gap-4 mt-8">
+            {colors.map((color) => (
+              <div key={color.id} className="flex flex-col items-center">
+                <button
+                  onClick={() => handleColorClick(color.id)}
+                  className={`w-14 h-14 rounded-full border-2 transition-transform ${selectedColorId === color.id ? "border-black scale-110" : "border-gray-300"
+                    }`}
+                  style={{ backgroundColor: color.code }}
+                />
+                <p
+                  onClick={() => handleColorClick(color.id)}
+                  className="cursor-pointer mt-2 text-sm"
+                >
+                  {color.name}
+                </p>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+      
     </div>
   );
 };
