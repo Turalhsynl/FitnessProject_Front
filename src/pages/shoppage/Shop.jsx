@@ -11,7 +11,9 @@ const Shop = () => {
   const [loading, setLoading] = useState(null);
   const [added, setAdded] = useState(null);
   const [categories, setCategories] = useState([]);
+  const [colors, setColors] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(0);
+  const [selectedColor, setSelectedColor] = useState(null);
   const [sortBy, setSortBy] = useState(0);
 
   const navigate = useNavigate();
@@ -23,18 +25,23 @@ const Shop = () => {
     if (!accessToken) return;
 
     fetch("https://localhost:7298/api/Category/GetAllCategory", {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
+      headers: { Authorization: `Bearer ${accessToken}` },
     })
       .then((res) => res.json())
       .then(setCategories)
       .catch((err) => console.error("Error fetching categories:", err));
 
+    setColors([
+      { id: 1, code: " #000000", name: "Black" },
+      { id: 2, code: " #808080", name: "Grey" },
+      { id: 3, code: " #FFC0CB", name: "Pink" },
+      { id: 4, code: " #008000", name: "Green" },
+      { id: 5, code: " #964B00", name: "Brown" },
+      { id: 6, code: " #0000FF", name: "Blue" },
+    ]);
+
     fetch(`https://localhost:7298/api/Cart/get/${userId}`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
+      headers: { Authorization: `Bearer ${accessToken}` },
     })
       .then((res) => res.json())
       .then((cart) => {
@@ -48,52 +55,62 @@ const Shop = () => {
     const finalSortOrder = sortOrder !== null ? sortOrder : 0;
 
     fetch(`https://localhost:7298/api/Product/category/${finalCategoryId}?sortOrder=${finalSortOrder}`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
+      headers: { Authorization: `Bearer ${accessToken}` },
     })
       .then((res) => res.json())
       .then(setProducts)
       .catch((err) => console.error("Error fetching filtered products:", err));
   };
 
-  useEffect(() => {
-    if (accessToken) {
-      fetchProducts(selectedCategory, sortBy);
-    }
-  }, [selectedCategory, sortBy, accessToken]);
-  
-
-  const handleAddToCart = (productId) => {
-    setLoading(productId);
-    setAdded(null);
-    fetch("https://localhost:7298/api/Cart/add-product", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}`,
-      },
-      body: JSON.stringify({
-        cartId,
-        productId,
-        quantity: 1,
-      }),
+  const fetchProductsbyColor = (colorId, ascending) => {
+    fetch(`https://localhost:7298/api/Product/products/by-color?color=${colorId}&ascending=${ascending}`, {
+      headers: { Authorization: `Bearer ${accessToken}` },
     })
       .then((res) => res.json())
-      .then(() => {
-        setLoading(null);
-        setAdded(productId);
-        setTimeout(() => setAdded(null), 2000);
-      })
-      .catch((err) => {
-        console.error("Error adding product:", err);
-        setLoading(null);
-      });
+      .then(setProducts)
+      .catch((err) => console.error("Error fetching color filtered products", err));
   };
 
-  const handleProductClick = (product) => {
-    navigate(`/product/${product.id}`, { state: { product, cartId } });
-  };
+  useEffect(() => {
+    if (accessToken) {
+      if (selectedColor) {
+        fetchProductsbyColor(selectedColor, true);
+      } else {
+        fetchProducts(selectedCategory, sortBy);
+      }
+    }
+  }, [selectedCategory, sortBy, selectedColor, accessToken]);
+
+  const handleAddToCart = (productId) => {
+        setLoading(productId);
+        setAdded(null);
+        fetch("https://localhost:7298/api/Cart/add-product", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
+          body: JSON.stringify({
+            cartId,
+            productId,
+            quantity: 1,
+          }),
+        })
+          .then((res) => res.json())
+          .then(() => {
+            setLoading(null);
+            setAdded(productId);
+            setTimeout(() => setAdded(null), 2000);
+          })
+          .catch((err) => {
+            console.error("Error adding product:", err);
+            setLoading(null);
+          });
+      };
+    
+      const handleProductClick = (product) => {
+        navigate(`/product/${product.id}`, { state: { product, cartId } });
+      };
 
   return (
     <div className="min-h-screen bg-white text-black">
@@ -107,6 +124,8 @@ const Shop = () => {
             setSelectedCategory={setSelectedCategory}
             setSortBy={setSortBy}
             categories={categories}
+            colors={colors}
+            onColorSelect={setSelectedColor}
           />
         </div>
 
