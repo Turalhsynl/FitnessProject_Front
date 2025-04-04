@@ -25,7 +25,6 @@ const App = () => {
         <Route path="/contact" element={<Contact />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-
         <Route path="/shop" element={accessToken ? <Shop /> : <Navigate to="/login" replace />} />
         <Route path="/cart" element={accessToken ? <Cart /> : <Navigate to="/login" replace />} />
         <Route path="/classes" element={accessToken ? <Classes /> : <Navigate to="/login" replace />} />

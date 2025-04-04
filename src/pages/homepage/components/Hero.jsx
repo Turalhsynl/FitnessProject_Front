@@ -20,7 +20,7 @@ const HeroSection = () => {
       <div className="relative z-10">
         <h1 className="text-white text-3xl sm:text-5xl font-extrabold leading-tight">
           REACH YOUR GOAL AT{" "}
-          <span className="text-purple-500">FITGYM</span>
+          <span className="text-purple-500 italic">FIT</span><span className="italic">GYM</span>
         </h1>
         <button className="mt-6 flex items-center gap-2 bg-[#4c00ff] hover:bg-purple-700 text-white px-6 py-3 -skew-x-12   font-medium transition-all">
           View Classes <ArrowRight size={20} />
