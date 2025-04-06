@@ -117,7 +117,6 @@ const Shop = () => {
       <header className="relative bg-cover bg-center h-[610px] bg-[url('https://max-themes.net/demos/gym/gym/gym/upload/page-title.jpg')] text-white flex flex-col justify-center items-center">
         <h1 className="text-6xl font-bold italic">SHOP</h1>
       </header>
-
       <div className="flex">
         <div className="w-64 p-4">
           <FilterSort

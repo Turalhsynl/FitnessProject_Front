@@ -9,6 +9,7 @@ import MobileMenu from "../components/MobileMenu";
 import { FaSearch, FaShoppingCart, FaBars } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import SearchBar from "./SearchBar";
+import { useLocation } from "react-router-dom";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -18,6 +19,7 @@ const Header = () => {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [cartItems, setCartItems] = useState([]);
   const [cart, setCart] = useState([]);
+  const isShopPage = location.pathname === "/shop";
 
 
   const accessToken = Cookies.get("accessToken");
@@ -179,7 +181,7 @@ const Header = () => {
         <Logo />
         <Navigation />
         <div className="flex items-center space-x-6 ml-6">
-        <SearchBar accessToken={accessToken} />
+        {isShopPage && <SearchBar accessToken={accessToken} />}
           <button onClick={() => setIsCartOpen(true)}>
             <FaShoppingCart className="text-white text-2xl cursor-pointer hover:text-purple-500" />
           </button>
