@@ -15,6 +15,7 @@ const Shop = () => {
   const [selectedCategory, setSelectedCategory] = useState(0);
   const [selectedColor, setSelectedColor] = useState(null);
   const [sortBy, setSortBy] = useState(0);
+  const [favoriteStatus, setFavoriteStatus] = useState({});
 
   const navigate = useNavigate();
   const accessToken = Cookies.get("accessToken");
@@ -41,14 +42,30 @@ const Shop = () => {
     ]);
 
     fetch(`https://localhost:7298/api/Cart/get/${userId}`, {
-      headers: { Authorization: `Bearer ${accessToken}` },
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
     })
       .then((res) => res.json())
       .then((cart) => {
-        if (cart?.id) setCartId(cart.id);
-      })
-      .catch((err) => console.error("Error fetching cart:", err));
+        if (cart && cart.id) setCartId(cart.id);
+      });
+
+    fetch(`https://localhost:7298/api/Favorite/list/${userId}`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((favorites) => {
+        const newStatus = {};
+        favorites.forEach((item) => {
+          newStatus[item.productId] = true;
+        });
+        setFavoriteStatus(newStatus);
+      });
   }, [accessToken, userId]);
+
 
   const fetchProducts = (categoryId, sortOrder) => {
     const finalCategoryId = categoryId || 0;
@@ -112,6 +129,37 @@ const Shop = () => {
         navigate(`/product/${product.id}`, { state: { product, cartId } });
       };
 
+
+      const handleFavoriteClick = (productId) => {
+        const isFav = favoriteStatus[productId] || false;
+        const url = isFav
+          ? "https://localhost:7298/api/Favorite/remove"
+          : "https://localhost:7298/api/Favorite/add";
+    
+        const body = {
+          userId,
+          productId,
+        };
+    
+        fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
+          body: JSON.stringify(body),
+        })
+          .then((res) => {
+            if (res.ok) {
+              setFavoriteStatus((prev) => ({
+                ...prev,
+                [productId]: !isFav,
+              }));
+            }
+          })
+          .catch((err) => console.error("Favori değiştirilemedi:", err));
+      };
+
   return (
     <div className="min-h-screen bg-white text-black">
       <header className="relative bg-cover bg-center h-[610px] bg-[url('https://max-themes.net/demos/gym/gym/gym/upload/page-title.jpg')] text-white flex flex-col justify-center items-center">
@@ -144,7 +192,7 @@ const Shop = () => {
                     />
                     <button
                       onClick={() => handleAddToCart(product.id)}
-                      className="absolute h-[50px] w-full bottom-0 bg-black text-white font-bold opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-300"
+                      className="absolute h-[50px] w-full bottom-0 bg-black text-white font-bold opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-300 hidden lg:flex"
                     >
                       {loading === product.id ? (
                         <Loader2 className="animate-spin" size={24} />
@@ -154,6 +202,31 @@ const Shop = () => {
                         <p className="cursor-pointer hover:text-purple-500">ADD TO CART</p>
                       )}
                     </button>
+
+                     <button
+  onClick={() => handleAddToCart(product.id)}
+  className="absolute top-2 right-2 bg-white text-black rounded-full pl-3 pr-3  p-2 z-10 lg:hidden cursor-pointer"
+>
+  {loading === product.id ? (
+    <Loader2 className="animate-spin" size={18} />
+  ) : added === product.id ? (
+<i className="fa-solid fa-check"></i>
+  ) :  (
+    <i class="bi bi-bag-plus"></i>
+
+  )}
+</button>
+
+                    <button
+                    onClick={() => handleFavoriteClick(product.id)}
+                    className="absolute top-2 left-2 text-red-500 text-xl z-10"
+                  >
+                    {favoriteStatus[product.id] ? (
+                      <i className="fa-solid fa-heart"></i>
+                    ) : (
+                      <i className="fa-regular fa-heart"></i>
+                    )}
+                  </button>
                   </div>
                   <div className="p-[5px] cursor-pointer">
                     <h2 className="text-gray-500 text-lg font-semibold">{product.name}</h2>
@@ -170,3 +243,8 @@ const Shop = () => {
 };
 
 export default Shop;
+
+
+
+
+
