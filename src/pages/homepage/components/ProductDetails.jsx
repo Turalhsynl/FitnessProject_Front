@@ -1,12 +1,40 @@
 import { useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
+import jwt_decode from "jwt-decode";
+import Cookies from "js-cookie";
 
-const ProductDetails = ({ accessToken }) => {
+const ProductDetails = () => {
   const location = useLocation();
   const product = location.state?.product;
-  const cartId = location.state?.cartId;
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeliveryOpen, setIsDeliveryOpen] = useState(false);
+  const [cartId, setCartId] = useState(null)
+
+
+  const accessToken = Cookies.get("accessToken");
+  const decodedToken = jwt_decode(accessToken);
+  const userId = decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"];
+
+  useEffect(() => {
+    if (!accessToken) {
+      console.error("Unauthorized: No token found.");
+      return;
+    }
+
+    fetch(`https://localhost:7298/api/Cart/get/${userId}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+    })
+      .then((response) => response.json())
+      .then((cart) => {
+        if (cart && cart.id) setCartId(cart.id);
+      })
+      .catch((error) => console.error("Error fetching cart:", error));
+
+  }, [accessToken, userId]);
 
   useEffect(() => {
     if (isModalOpen) {
@@ -78,13 +106,13 @@ const ProductDetails = ({ accessToken }) => {
             <div className="flex space-x-2 justify-center">
               <div
                 className="w-8 h-8 rounded-full border-2 border-gray-500"
-                style={{ backgroundColor: product.color }} 
+                style={{ backgroundColor: product.color }}
               ></div>
             </div>
           </div>
 
-          <button 
-            onClick={addToCart} 
+          <button
+            onClick={addToCart}
             className="bg-black text-white px-6 py-3 w-64 rounded-lg font-bold hover:bg-gray-800 transition"
           >
             ADD TO BAG
