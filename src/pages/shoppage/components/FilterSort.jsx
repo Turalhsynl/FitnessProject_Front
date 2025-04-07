@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { ChevronDown } from "lucide-react";
 
-const FilterSort = ({ setSelectedCategory, setSortBy, categories, colors, onColorSelect }) => {
+const FilterSort = ({ setSelectedCategory, setSortBy, categories, colors, onColorSelect, ascOrder }) => {
   const [openSections, setOpenSections] = useState({
     sortBy: false,
     productType: false,
@@ -24,6 +24,7 @@ const FilterSort = ({ setSelectedCategory, setSortBy, categories, colors, onColo
 
   const handleSortChange = (value) => {
     setSelectedSort(value);
+    ascOrder(value === "price-asc" ? true : false);
     setSortBy(value === "price-asc" ? 0 : value === "price-desc" ? 1 : value);
   };
 

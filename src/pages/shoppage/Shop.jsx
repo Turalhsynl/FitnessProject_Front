@@ -16,6 +16,7 @@ const Shop = () => {
   const [selectedColor, setSelectedColor] = useState(null);
   const [sortBy, setSortBy] = useState(0);
   const [favoriteStatus, setFavoriteStatus] = useState({});
+  const [ascendingOrder, setAscendingOrder] = useState(true)
 
   const navigate = useNavigate();
   const accessToken = Cookies.get("accessToken");
@@ -79,8 +80,8 @@ const Shop = () => {
       .catch((err) => console.error("Error fetching filtered products:", err));
   };
 
-  const fetchProductsbyColor = (colorId, ascending) => {
-    fetch(`https://localhost:7298/api/Product/products/by-color?color=${colorId}&ascending=${ascending}`, {
+  const fetchProductsbyColor = (colorId, categoryId, ascending) => {
+    fetch(`https://localhost:7298/api/Product/products/by-color?colors=${colorId}&categoryId=${categoryId}&ascending=${ascending}`, {
       headers: { Authorization: `Bearer ${accessToken}` },
     })
       .then((res) => res.json())
@@ -91,74 +92,74 @@ const Shop = () => {
   useEffect(() => {
     if (accessToken) {
       if (selectedColor) {
-        fetchProductsbyColor(selectedColor, true);
+        fetchProductsbyColor(selectedColor, selectedCategory, ascendingOrder);
       } else {
         fetchProducts(selectedCategory, sortBy);
       }
     }
-  }, [selectedCategory, sortBy, selectedColor, accessToken]);
+  }, [selectedCategory, sortBy, selectedColor, accessToken,ascendingOrder]);
 
   const handleAddToCart = (productId) => {
-        setLoading(productId);
-        setAdded(null);
-        fetch("https://localhost:7298/api/Cart/add-product", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${accessToken}`,
-          },
-          body: JSON.stringify({
-            cartId,
-            productId,
-            quantity: 1,
-          }),
-        })
-          .then((res) => res.json())
-          .then(() => {
-            setLoading(null);
-            setAdded(productId);
-            setTimeout(() => setAdded(null), 2000);
-          })
-          .catch((err) => {
-            console.error("Error adding product:", err);
-            setLoading(null);
-          });
-      };
-    
-      const handleProductClick = (product) => {
-        navigate(`/product/${product.id}`, { state: { product, cartId } });
-      };
+    setLoading(productId);
+    setAdded(null);
+    fetch("https://localhost:7298/api/Cart/add-product", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify({
+        cartId,
+        productId,
+        quantity: 1,
+      }),
+    })
+      .then((res) => res.json())
+      .then(() => {
+        setLoading(null);
+        setAdded(productId);
+        setTimeout(() => setAdded(null), 2000);
+      })
+      .catch((err) => {
+        console.error("Error adding product:", err);
+        setLoading(null);
+      });
+  };
+
+  const handleProductClick = (product) => {
+    navigate(`/product/${product.id}`, { state: { product, cartId } });
+  };
 
 
-      const handleFavoriteClick = (productId) => {
-        const isFav = favoriteStatus[productId] || false;
-        const url = isFav
-          ? "https://localhost:7298/api/Favorite/remove"
-          : "https://localhost:7298/api/Favorite/add";
-    
-        const body = {
-          userId,
-          productId,
-        };
-    
-        fetch(url, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${accessToken}`,
-          },
-          body: JSON.stringify(body),
-        })
-          .then((res) => {
-            if (res.ok) {
-              setFavoriteStatus((prev) => ({
-                ...prev,
-                [productId]: !isFav,
-              }));
-            }
-          })
-          .catch((err) => console.error("Favori değiştirilemedi:", err));
-      };
+  const handleFavoriteClick = (productId) => {
+    const isFav = favoriteStatus[productId] || false;
+    const url = isFav
+      ? "https://localhost:7298/api/Favorite/remove"
+      : "https://localhost:7298/api/Favorite/add";
+
+    const body = {
+      userId,
+      productId,
+    };
+
+    fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify(body),
+    })
+      .then((res) => {
+        if (res.ok) {
+          setFavoriteStatus((prev) => ({
+            ...prev,
+            [productId]: !isFav,
+          }));
+        }
+      })
+      .catch((err) => console.error("Favori değiştirilemedi:", err));
+  };
 
   return (
     <div className="min-h-screen bg-white text-black">
@@ -173,6 +174,7 @@ const Shop = () => {
             categories={categories}
             colors={colors}
             onColorSelect={setSelectedColor}
+            ascOrder={setAscendingOrder}
           />
         </div>
 
@@ -203,30 +205,30 @@ const Shop = () => {
                       )}
                     </button>
 
-                     <button
-  onClick={() => handleAddToCart(product.id)}
-  className="absolute top-2 right-2 bg-white text-black rounded-full pl-3 pr-3  p-2 z-10 lg:hidden cursor-pointer"
->
-  {loading === product.id ? (
-    <Loader2 className="animate-spin" size={18} />
-  ) : added === product.id ? (
-<i className="fa-solid fa-check"></i>
-  ) :  (
-    <i class="bi bi-bag-plus"></i>
+                    <button
+                      onClick={() => handleAddToCart(product.id)}
+                      className="absolute top-2 right-2 bg-white text-black rounded-full pl-3 pr-3  p-2 z-10 lg:hidden cursor-pointer"
+                    >
+                      {loading === product.id ? (
+                        <Loader2 className="animate-spin" size={18} />
+                      ) : added === product.id ? (
+                        <i className="fa-solid fa-check"></i>
+                      ) : (
+                        <i class="bi bi-bag-plus"></i>
 
-  )}
-</button>
+                      )}
+                    </button>
 
                     <button
-                    onClick={() => handleFavoriteClick(product.id)}
-                    className="absolute top-2 left-2 text-red-500 text-xl z-10"
-                  >
-                    {favoriteStatus[product.id] ? (
-                      <i className="fa-solid fa-heart"></i>
-                    ) : (
-                      <i className="fa-regular fa-heart"></i>
-                    )}
-                  </button>
+                      onClick={() => handleFavoriteClick(product.id)}
+                      className="absolute top-2 left-2 text-red-500 text-xl z-10"
+                    >
+                      {favoriteStatus[product.id] ? (
+                        <i className="fa-solid fa-heart"></i>
+                      ) : (
+                        <i className="fa-regular fa-heart"></i>
+                      )}
+                    </button>
                   </div>
                   <div className="p-[5px] cursor-pointer">
                     <h2 className="text-gray-500 text-lg font-semibold">{product.name}</h2>
