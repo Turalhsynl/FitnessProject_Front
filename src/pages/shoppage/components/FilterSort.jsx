@@ -9,7 +9,7 @@ const FilterSort = ({ setSelectedCategory, setSortBy, categories, colors, onColo
 
   const [selectedCategoryId, setSelectedCategoryId] = useState(0);
   const [selectedSort, setSelectedSort] = useState(null);
-  const [selectedColorId, setSelectedColorId] = useState(null);
+  const [selectedColorIds, setSelectedColorIds] = useState([]); // Array olaraq dəyişdirildi
 
   const toggleSection = (section) => {
     setOpenSections((prev) => ({
@@ -33,14 +33,25 @@ const FilterSort = ({ setSelectedCategory, setSortBy, categories, colors, onColo
   };
 
   const handleColorClick = (colorId) => {
-    const newColorId = selectedColorId === colorId ? null : colorId;
-    setSelectedColorId(newColorId);
-    onColorSelect(newColorId);
+    setSelectedColorIds((prev) => {
+      if (prev.includes(colorId)) {
+        // Əgər rəng artıq seçilibsə, array-dən silirik
+        return prev.filter((id) => id !== colorId);
+      } else {
+        // Əks halda, yeni rəngi əlavə edirik
+        return [...prev, colorId];
+      }
+    });
     setPage((prev) => {
       const updatedPage = { ...prev, currentPage: 1 };
       return updatedPage;
     });
   };
+
+  // `onColorSelect` funksiyasını rənglər array-ini ötürmək üçün çağırırıq
+  useEffect(() => {
+    onColorSelect(selectedColorIds);
+  }, [selectedColorIds, onColorSelect]);
 
   return (
     <div className="w-full sm:w-64 p-4 bg-white text-sm mt-20">
@@ -142,7 +153,7 @@ const FilterSort = ({ setSelectedCategory, setSortBy, categories, colors, onColo
               <div key={color.id} className="flex flex-col items-center">
                 <button
                   onClick={() => handleColorClick(color.id)}
-                  className={`w-12 h-12 rounded-full border-2 transition-transform ${selectedColorId === color.id ? "border-black scale-105" : "border-gray-300"
+                  className={`w-12 h-12 rounded-full border-2 transition-transform ${selectedColorIds.includes(color.id) ? "border-black scale-105" : "border-gray-300"
                     } hover:scale-110 hover:border-black transform duration-300`}
                   style={{ backgroundColor: color.code }}
                 />

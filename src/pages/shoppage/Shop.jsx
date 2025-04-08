@@ -269,7 +269,7 @@ const Shop = () => {
   const [categories, setCategories] = useState([]);
   const [colors, setColors] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(0);
-  const [selectedColor, setSelectedColor] = useState(null);
+  const [selectedColor, setSelectedColor] = useState([]);
   const [sortBy, setSortBy] = useState(0);
   const [favoriteStatus, setFavoriteStatus] = useState({});
   const [ascendingOrder, setAscendingOrder] = useState(true)
@@ -344,8 +344,10 @@ const Shop = () => {
     queryParams.append("page", page);
     queryParams.append("pageSize", pagination.pageSize);
 
-    if (finalColorId) {
-      queryParams.append("colors", finalColorId);
+    if (selectedColor) {
+      selectedColor.forEach(color => {
+        queryParams.append("colors", color);
+      });
     }
 
     fetch(`${baseUrl}?${queryParams.toString()}`, {
