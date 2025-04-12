@@ -138,7 +138,9 @@ const ProfileDropdown = ({ userData, setUserData }) => {
           </div>
 
           <div className="p-4 space-y-2 text-white">
-            <button className="flex items-center text-left p-3 cursor-pointer transition-all">
+            <button onClick={() =>{
+              navigate("/userprofile")
+            }} className="flex items-center text-left p-3 cursor-pointer transition-all">
               <FaUser className="mr-3 text-lg" /> My Account
             </button>
             <button className="flex items-center text-left p-3 cursor-pointer transition-all">
