@@ -15,6 +15,7 @@ import ProductDetails from "./pages/homepage/components/ProductDetails";
 import SearchBar from "./pages/homepage/components/SearchBar";
 import FilterSort from "./pages/shoppage/components/FilterSort";
 import UserProfile from "./pages/userProfile/UserProfile"
+import FitnessProgram from "./pages/programsPage/FitnessProgram"
 
 const App = () => {
   const { accessToken } = useStore(useAuthStore);
@@ -32,6 +33,7 @@ const App = () => {
         <Route path="/classes" element={accessToken ? <Classes /> : <Navigate to="/login" replace />} />
         <Route path="/product/:id" element={<ProductDetails />} />
         <Route path="/userprofile" element={<UserProfile />} />
+        <Route path="/programs" element={<FitnessProgram/>}/>
       </Routes>
       <Footer />
     </Router>
