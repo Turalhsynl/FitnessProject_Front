@@ -70,7 +70,7 @@ const ProductDetails = () => {
       });
 
       if (response.ok) {
-        alert("Product added to the cart successfully!");
+        console.error("Product added to the cart successfully!");
       } else {
         console.error("Error adding product to cart.");
         alert("Failed to add product to cart.");
@@ -86,7 +86,7 @@ const ProductDetails = () => {
   return (
     <div className="min-h-screen bg-white text-black">
       <header className="relative bg-cover bg-center h-[610px] bg-[url('https://max-themes.net/demos/gym/gym/gym/upload/page-title.jpg')] text-white flex flex-col justify-center items-center">
-        <h1 className="text-6xl font-bold italic">SHOP</h1>
+        <h1 className="text-6xl font-bold italic">Product Details</h1>
       </header>
 
       <div className="min-h-screen bg-white text-black flex flex-col md:flex-row gap-8 justify-center items-center">
@@ -113,9 +113,9 @@ const ProductDetails = () => {
 
           <button
             onClick={addToCart}
-            className="bg-black text-white px-6 py-3 w-64 rounded-lg font-bold hover:bg-gray-800 transition"
+            className="bg-black text-white px-6 py-3 w-64 font-bold  hover:text-purple-500 transition cursor-pointer"
           >
-            ADD TO BAG
+            ADD TO CART
           </button>
           <div className="w-full max-w-lg">
             <div className="flex items-center justify-between border-b py-4 cursor-pointer" onClick={() => setIsModalOpen(true)}>

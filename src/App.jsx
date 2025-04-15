@@ -15,13 +15,14 @@ import ProductDetails from "./pages/homepage/components/ProductDetails";
 import SearchBar from "./pages/homepage/components/SearchBar";
 import FilterSort from "./pages/shoppage/components/FilterSort";
 import UserProfile from "./pages/userProfile/UserProfile"
+import AdminPanel from "./pages/adminPanel/AdminPanel";
 
 const App = () => {
   const { accessToken } = useStore(useAuthStore);
 
   return (
     <Router>
-      <Header />
+      {/* <Header /> */}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/contact" element={<Contact />} />
@@ -32,6 +33,7 @@ const App = () => {
         <Route path="/classes" element={accessToken ? <Classes /> : <Navigate to="/login" replace />} />
         <Route path="/product/:id" element={<ProductDetails />} />
         <Route path="/userprofile" element={<UserProfile />} />
+        <Route path="/adminPanel" element={<AdminPanel />} />
       </Routes>
       <Footer />
     </Router>
