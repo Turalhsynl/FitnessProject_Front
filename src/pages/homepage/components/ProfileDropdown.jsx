@@ -115,7 +115,7 @@ const ProfileDropdown = ({ userData, setUserData }) => {
   return (
     <div className="relative">
       <img
-        src={userData?.avatar || "https://via.placeholder.com/40"}
+        src={userData?.avatar || "https://www.transparentpng.com/download/user/gray-user-profile-icon-png-fP8Q1P.png"}
         alt="Profile"
         className="w-12 h-12 rounded-full cursor-pointer border-2 border-purple-500 shadow-lg hover:scale-110 transition-transform"
         onClick={() => setIsOpen(!isOpen)}
@@ -125,7 +125,7 @@ const ProfileDropdown = ({ userData, setUserData }) => {
         <div className="absolute right-0 mt-3 w-80 bg-black/60 backdrop-blur-xl border border-white rounded-2xl shadow-xl overflow-hidden z-10 animate-fade-in">
           <div className="p-5 text-white flex items-center gap-4">
             <img
-              src={userData?.avatar || "https://via.placeholder.com/50"}
+              src={userData?.avatar || "https://www.transparentpng.com/download/user/gray-user-profile-icon-png-fP8Q1P.png"}
               alt="Profile"
               className="w-14 h-14 rounded-full border-2 border-white shadow-md"
             />
