@@ -75,7 +75,7 @@ const Footer = () => {
         </div>
       </div>
       <div className="relative mt-12 border-t border-gray-700 pt-6 flex flex-col md:flex-row justify-between items-center text-sm text-gray-500">
-        <p>&copy; 2023 WRITE-A-LOT. All rights reserved.</p>
+        <p>&copy; 2025 WRITE-A-LOT. All rights reserved.</p>
         <div className="flex space-x-4 mt-4 md:mt-0">
           <i className="fab fa-instagram cursor-pointer hover:text-white transition"></i>
           <i className="fab fa-twitter cursor-pointer hover:text-white transition"></i>

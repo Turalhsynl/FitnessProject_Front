@@ -1,6 +1,6 @@
 import React from "react";
-// import Run from "../assets/Run-Man.jpg"
 import Run from "../../../assets/Run-Man.jpg"
+
 const About = () => {
   return (
     <div className=" text-white py-16 mt-[350px] ">
