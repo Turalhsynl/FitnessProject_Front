@@ -15,6 +15,7 @@ import ProductDetails from "./pages/homepage/components/ProductDetails";
 import SearchBar from "./pages/homepage/components/SearchBar";
 import FilterSort from "./pages/shoppage/components/FilterSort";
 import UserProfile from "./pages/userProfile/UserProfile"
+import AdminPanel from "./pages/adminPanel/AdminPanel";
 import FitnessProgram from "./pages/programsPage/FitnessProgram"
 import ProgramDetails from "./pages/programsPage/components/ProgramDetail.JSX";
 import AboutUs from "./pages/aboutUs/AboutUs";
@@ -35,6 +36,7 @@ const App = () => {
         <Route path="/classes" element={accessToken ? <Classes /> : <Navigate to="/login" replace />} />
         <Route path="/product/:id" element={<ProductDetails />} />
         <Route path="/userprofile" element={<UserProfile />} />
+        <Route path="/adminPanel" element={<AdminPanel />} />
         <Route path="/programs" element={<FitnessProgram/>}/>
         <Route path="/program-details/:id" element={<ProgramDetails />} />
         <Route path="/aboutUs" element={<AboutUs />} />

@@ -282,7 +282,7 @@
 
 
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,useRef } from "react";
 import Cookies from "js-cookie";
 
 export default function RecipeApp() {
@@ -295,9 +295,10 @@ export default function RecipeApp() {
   const [calorieMin, setCalorieMin] = useState(0);
   const [calorieMax, setCalorieMax] = useState(1000);
   const [rotate, setRotate] = useState(false);
-    const [selectedSort, setSelectedSort] = useState(null);
+  const [selectedSort, setSelectedSort] = useState(null);
+  const scrollRef = useRef(null);
 
-  // ✨ Yazı animasyonu için eklenen state
+
   const [typedText, setTypedText] = useState("");
   const [index, setIndex] = useState(0);
 
@@ -395,6 +396,14 @@ export default function RecipeApp() {
         setSelectedRecipe(data[0]);
       });
   };
+  const scrollLeft = () => {
+    scrollRef.current.scrollBy({ left: -220, behavior: "smooth" });
+  };
+  
+  const scrollRight = () => {
+    scrollRef.current.scrollBy({ left: 220, behavior: "smooth" });
+  };
+  
 
   return (
     <div className="bg-[#f5f7ed] min-h-screen p-6">
