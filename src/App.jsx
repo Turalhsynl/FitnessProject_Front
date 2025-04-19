@@ -16,7 +16,7 @@ import SearchBar from "./pages/homepage/components/SearchBar";
 import FilterSort from "./pages/shoppage/components/FilterSort";
 import UserProfile from "./pages/userProfile/UserProfile"
 import AdminPanel from "./pages/adminPanel/AdminPanel";
-
+import Chat from "./pages/homepage/components/Chat";
 const App = () => {
   const { accessToken } = useStore(useAuthStore);
 
@@ -34,6 +34,7 @@ const App = () => {
         <Route path="/product/:id" element={<ProductDetails />} />
         <Route path="/userprofile" element={<UserProfile />} />
         <Route path="/adminPanel" element={<AdminPanel />} />
+        <Route path="/chat" element={<Chat/>} />
       </Routes>
       <Footer />
     </Router>
