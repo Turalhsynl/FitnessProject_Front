@@ -16,7 +16,14 @@ import SearchBar from "./pages/homepage/components/SearchBar";
 import FilterSort from "./pages/shoppage/components/FilterSort";
 import UserProfile from "./pages/userProfile/UserProfile"
 import AdminPanel from "./pages/adminPanel/AdminPanel";
+<<<<<<< HEAD
 import Chat from "./pages/homepage/components/Chat";
+=======
+import FitnessProgram from "./pages/programsPage/FitnessProgram"
+import ProgramDetails from "./pages/programsPage/components/ProgramDetail.JSX";
+import AboutUs from "./pages/aboutUs/AboutUs";
+
+>>>>>>> 9b51f1fac326212a012e2b5015bff571a539fe12
 const App = () => {
   const { accessToken } = useStore(useAuthStore);
 
@@ -34,7 +41,13 @@ const App = () => {
         <Route path="/product/:id" element={<ProductDetails />} />
         <Route path="/userprofile" element={<UserProfile />} />
         <Route path="/adminPanel" element={<AdminPanel />} />
+<<<<<<< HEAD
         <Route path="/chat" element={<Chat/>} />
+=======
+        <Route path="/programs" element={<FitnessProgram/>}/>
+        <Route path="/program-details/:id" element={<ProgramDetails />} />
+        <Route path="/aboutUs" element={<AboutUs />} />
+>>>>>>> 9b51f1fac326212a012e2b5015bff571a539fe12
       </Routes>
       <Footer />
     </Router>
