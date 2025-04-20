@@ -50,6 +50,8 @@ export default function Dashboard() {
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [profileImageUrl, setProfileImageUrl] = useState(null);
+
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -76,6 +78,29 @@ export default function Dashboard() {
     };
     fetchUserData();
   }, []);
+
+  ////
+  useEffect(() => {
+    const fetchProfileImage = async () => {
+      try {
+        const response = await fetch(
+          `https://localhost:7298/api/File/${user?.profileImageId}`
+        );
+        if (!response.ok) throw new Error("Şəkil tapılmadı");
+
+        const data = await response.json();
+        setProfileImageUrl(data.url); // serverdən qaytarılan şəkil URL-i
+      } catch (error) {
+        console.error("Şəkil yüklənə bilmədi:", error);
+        setProfileImageUrl(null); // error olsa placeholder işləsin
+      }
+    };
+
+    if (user?.profileImageId) {
+      fetchProfileImage();
+    }
+  }, [user?.profileImageId]);
+  ////
 
   const handlePasswordChange = async (e) => {
     e.preventDefault();
@@ -188,7 +213,7 @@ export default function Dashboard() {
               <p className="text-sm text-gray-600">Bugünkü hədəflərə hazırsanmı?</p>
             </div>
             <img
-              src={user.image || "https://i.pravatar.cc/150?img=12"}
+              src={profileImageUrl}
               alt="Profil şəkli"
               className="w-20 h-20 rounded-full border-4 border-white shadow-md"
             />
