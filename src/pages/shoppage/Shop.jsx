@@ -260,6 +260,7 @@ import jwt_decode from "jwt-decode";
 import { Loader2 } from "lucide-react";
 import FilterSort from "./components/FilterSort";
 import Pagination from "./components/Pagination";
+import SearchBar from "../homepage/components/SearchBar";
 
 const Shop = () => {
   const [products, setProducts] = useState([]);
@@ -440,9 +441,37 @@ const Shop = () => {
 
   return (
     <div className="min-h-screen bg-white text-black">
-      <header className="relative bg-cover bg-center h-[610px] bg-[url('https://max-themes.net/demos/gym/gym/gym/upload/page-title.jpg')] text-white flex flex-col justify-center items-center">
+      {/* <header className="relative bg-cover bg-center h-[610px] bg-[url('https://max-themes.net/demos/gym/gym/gym/upload/page-title.jpg')] text-white flex flex-col justify-center items-center">
         <h1 className="text-6xl font-bold italic">SHOP</h1>
-      </header>
+        
+      </header> */}
+
+      <div
+      style={{
+        background:
+          "linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(https://max-themes.net/demos/gym/gym/gym/upload/page-title.jpg) no-repeat center",
+        backgroundSize: "",
+      }}
+      className="py-52 bg-cover bg-center h-[610px] px-1 md:px-8 text-center relative text-white font-bold text-2xl md:text-3xl overflow-auto"
+    >
+       <h1 className="text-6xl font-bold italic">SHOP</h1>
+      {/* <div className="w-11/12 md:w-3/4 lg:max-w-3xl m-auto">
+        <div className="relative z-30 text-base text-white">
+          <input
+            type="text"
+            value=""
+            placeholder="Keyword"
+            className="mt-2 shadow-md border-b-2 focus:outline-none rounded-2xl py-3 px-6 block w-full"
+          />
+          <div className="text-left  absolute top-10 rounded-t-none rounded-b-2xl shadow bg-white divide-y w-full max-h-40 overflow-auto"></div>
+        </div>
+      </div> */}
+
+
+      <SearchBar accessToken={accessToken} />
+    </div>
+
+      
       <div className="flex flex-col md:flex-row">
         <div className="w-full md:w-64 p-4">
           <FilterSort
@@ -498,7 +527,7 @@ const Shop = () => {
 
                     <button
                       onClick={() => handleFavoriteClick(product.id)}
-                      className="absolute top-2 left-2 text-red-500 text-xl z-10"
+                      className="absolute top-2 left-3 text-gray-600 text-xl z-10"
                     >
                       {favoriteStatus[product.id] ? (
                         <i className="fa-solid fa-heart"></i>

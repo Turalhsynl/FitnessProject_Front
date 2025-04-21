@@ -879,7 +879,7 @@ export default function Chat() {
               <div className="absolute top-0 right-0 w-4 h-4 bg-green-500 rounded-full"></div>
             )}
             {newMessagesCount > 0 && (
-              <span className="absolute top-0 right-0 text-black text-xs font-bold">
+              <span className="absolute top-0 right-0 left-[50px] text-black text-xs font-bold">
                 {newMessagesCount}
               </span>
             )}
