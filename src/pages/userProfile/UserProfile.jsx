@@ -4,6 +4,10 @@ import jwt_decode from "jwt-decode";
 import { toast, ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from "react-router-dom";
+import Users from "../adminPanel/components/Users"
+import Recipes from '../adminPanel/components/Recipes';
+import Products from '../adminPanel/components/Products';
+import Categories from '../adminPanel/components/Categories';
 
 function EditableCard({ label, value, color, onChange }) {
   const [isEditing, setIsEditing] = useState(false);
@@ -45,9 +49,26 @@ export default function Dashboard() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [selectedItem, setSelectedItem] = useState("Profil");
+  const isAdmin = user?.userRole === 1;
+  // const sidebarItems = [
+  //   "Profil", "Məşq Planı", "Nailiyyətlər", "Qidalanma",
+  //   "İstatistikalar", "Qrafik", "Mesajlar", "Şifrəni dəyiş"
+  // ];
+
+
+
   const sidebarItems = [
-    "Profil", "Məşq Planı", "Nailiyyətlər", "Qidalanma",
-    "İstatistikalar", "Qrafik", "Mesajlar", "Şifrəni dəyiş"
+    "Profil",
+    "Məşq Planı",
+    "Nailiyyətlər",
+    "Qidalanma",
+    "İstatistikalar",
+    "Qrafik",
+    "Mesajlar",
+    "Şifrəni dəyiş",
+    ...(isAdmin
+      ? ["Product CRUD", "User CRUD", "Recipes CRUD", "Categories CRUD"]
+      : []),
   ];
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -272,6 +293,41 @@ export default function Dashboard() {
               </form>
             </div>
           )}
+
+
+{selectedItem === "Product CRUD" && isAdmin && (
+  <div className="bg-white p-6 rounded-xl shadow-md">
+    <h2 className="text-xl font-bold mb-4">Product CRUD</h2>
+    <p>Burada məhsulların idarə olunması olacaq.</p>
+    <Products />
+
+  </div>
+)}
+
+{selectedItem === "User CRUD" && isAdmin && (
+  <div className="bg-white p-6 rounded-xl shadow-md">
+    <h2 className="text-xl font-bold mb-4">User CRUD</h2>
+    <p>Burada istifadəçilərin idarə olunması olacaq.</p>
+    <Users />
+  </div>
+)}
+
+{selectedItem === "Recipes CRUD" && isAdmin && (
+  <div className="bg-white p-6 rounded-xl shadow-md">
+    <h2 className="text-xl font-bold mb-4">Recipes CRUD</h2>
+    <p>Burada reseptlərin idarə olunması olacaq.</p>
+    <Recipes />
+  </div>
+)}
+
+{selectedItem === "Categories CRUD" && isAdmin && (
+  <div className="bg-white p-6 rounded-xl shadow-md">
+    <h2 className="text-xl font-bold mb-4">Categories CRUD</h2>
+    <p>Burada kateqoriyaların idarə olunması olacaq.</p>
+    <Categories />
+  </div>
+)}
+
           <div className="mt-10 max-w-7xl mx-auto px-4">
       <h3 className="text-3xl font-bold text-center text-gray-800 mb-8">Proqramlarım</h3>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">

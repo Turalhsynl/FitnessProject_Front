@@ -5,7 +5,7 @@ import Cookies from "js-cookie";
 export default function Users() {
   const [users, setUsers] = useState([]);
   const [newUser, setNewUser] = useState({
-    firstname: '', lastname: '', gender: '', age: '', email: '', password: ''
+    firstname: '', lastname: '', gender: '', age: '', email: '', 
   });
   const [editingUser, setEditingUser] = useState(null);
 
@@ -38,7 +38,7 @@ export default function Users() {
       body: JSON.stringify(newUser),
     })
       .then(() => {
-        setNewUser({ firstname: '', lastname: '', gender: '', age: '', email: '', password: '' });
+        setNewUser({ firstname: '', lastname: '', gender: '', age: '', email: '', });
         getUsers();
       })
       .catch(error => console.error('Error adding user:', error));
@@ -69,7 +69,7 @@ export default function Users() {
   };
 
   return (
-    <div>
+    <div className=''>
       <h2 className="text-xl font-bold mb-4">Users</h2>
 
       <div className="mb-4 flex gap-2">
@@ -108,18 +108,12 @@ export default function Users() {
           value={newUser.email}
           onChange={e => setNewUser({ ...newUser, email: e.target.value })}
         />
-        <input
-          type="password"
-          placeholder="Password"
-          className="border p-2"
-          value={newUser.password}
-          onChange={e => setNewUser({ ...newUser, password: e.target.value })}
-        />
+       
         <button onClick={addUser} className="bg-green-500 text-white px-4 py-2 rounded">Add</button>
       </div>
 
       {editingUser && (
-        <div className="mb-4 flex gap-2">
+        <div className="mb-4 gap-2 ">
           <input
             type="number"
             placeholder="UserRole"
@@ -183,16 +177,6 @@ export default function Users() {
             value={editingUser.weight}
             onChange={e => setEditingUser({ ...editingUser, weight: e.target.value })}
           />
-         <input
-  type="text"
-  placeholder="password"
-  className="border p-2"
-  value={editingUser.password || " "}
-  onChange={e => setEditingUser({ ...editingUser, password: e.target.value })}
-/>
-
-
-          
           <button onClick={updateUser} className="bg-blue-500 text-white px-4 py-2 rounded">Update</button>
           <button onClick={() => setEditingUser(null)} className="bg-gray-500 text-white px-4 py-2 rounded">Cancel</button>
         </div>
@@ -208,6 +192,8 @@ export default function Users() {
             <th className="p-2 border">Age</th>
             <th className="p-2 border">Gender</th>
             <th className="p-2 border">Email</th>
+            <th className="p-2 border">Height</th>
+            <th className="p-2 border">Weight</th>
             <th className="p-2 border">Actions</th>
           </tr>
         </thead>
@@ -221,6 +207,8 @@ export default function Users() {
               <td className="p-2 border">{user.age}</td>
               <td className="p-2 border">{user.gender}</td>
               <td className="p-2 border">{user.email}</td>
+              <td className="p-2 border">{user.height}</td>
+              <td className="p-2 border">{user.weight}</td>
               <td className="p-2 border flex gap-2">
                 <button onClick={() => setEditingUser(user)} className="bg-yellow-500 text-white px-2 py-1 rounded">Edit</button>
                 <button onClick={() => deleteUser(user.id)} className="bg-red-500 text-white px-2 py-1 rounded">Delete</button>
