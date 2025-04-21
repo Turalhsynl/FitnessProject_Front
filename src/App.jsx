@@ -17,6 +17,11 @@ import FilterSort from "./pages/shoppage/components/FilterSort";
 import UserProfile from "./pages/userProfile/UserProfile"
 import AdminPanel from "./pages/adminPanel/AdminPanel";
 import Chat from "./pages/homepage/components/Chat";
+import FitnessProgram from "./pages/programsPage/FitnessProgram"
+import ProgramDetails from "./pages/programsPage/components/ProgramDetail.JSX";
+import AboutUs from "./pages/aboutUs/AboutUs";
+
+
 const App = () => {
   const { accessToken } = useStore(useAuthStore);
 
@@ -35,6 +40,9 @@ const App = () => {
         <Route path="/userprofile" element={<UserProfile />} />
         <Route path="/adminPanel" element={<AdminPanel />} />
         <Route path="/chat" element={<Chat/>} />
+        <Route path="/programs" element={<FitnessProgram/>}/>
+        <Route path="/program-details/:id" element={<ProgramDetails />} />
+        <Route path="/aboutUs" element={<AboutUs />} />
       </Routes>
       <Footer />
     </Router>

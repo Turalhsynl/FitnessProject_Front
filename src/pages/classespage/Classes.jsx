@@ -406,7 +406,7 @@ export default function RecipeApp() {
   
 
   return (
-    <div className="bg-[#f5f7ed] min-h-screen p-6">
+    <div className="bg-[#f5f7ed] min-h-screen p-6 mt-20">
       <nav className="flex justify-between items-center mb-10">
         <div className="flex items-center gap-10 ml-4">
           {/* <div className="text-red-600 font-bold border-b-2 border-red-600">Search</div> */}

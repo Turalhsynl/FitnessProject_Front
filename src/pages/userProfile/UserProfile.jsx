@@ -50,6 +50,8 @@ export default function Dashboard() {
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [profileImageUrl, setProfileImageUrl] = useState(null);
+
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -76,6 +78,29 @@ export default function Dashboard() {
     };
     fetchUserData();
   }, []);
+
+  ////
+  useEffect(() => {
+    const fetchProfileImage = async () => {
+      try {
+        const response = await fetch(
+          `https://localhost:7298/api/File/${user?.profileImageId}`
+        );
+        if (!response.ok) throw new Error("Şəkil tapılmadı");
+
+        const data = await response.json();
+        setProfileImageUrl(data.url); // serverdən qaytarılan şəkil URL-i
+      } catch (error) {
+        console.error("Şəkil yüklənə bilmədi:", error);
+        setProfileImageUrl(null); // error olsa placeholder işləsin
+      }
+    };
+
+    if (user?.profileImageId) {
+      fetchProfileImage();
+    }
+  }, [user?.profileImageId]);
+  ////
 
   const handlePasswordChange = async (e) => {
     e.preventDefault();
@@ -162,7 +187,7 @@ export default function Dashboard() {
       <ToastContainer position="top-right" autoClose={3000} />
       <div className="flex flex-col lg:flex-row flex-1">
         {/* Sidebar */}
-        <div className="w-full lg:w-64 bg-[#1E2E50] text-white p-6">
+        <div className="w-full lg:w-64 bg-black text-white p-6">
           <h1 className="text-2xl font-bold mb-10">FITZONE</h1>
           <ul className="space-y-3">
             {sidebarItems.map((item, i) => (
@@ -171,7 +196,7 @@ export default function Dashboard() {
                 className={`px-4 py-2 cursor-pointer transition-all duration-300 
                 ${item === selectedItem
                     ? "bg-[#FDF7F0] text-[#1F1F1F] rounded-l-lg -mr-6 z-10"
-                    : "hover:bg-[#2C3F64] text-white rounded-lg"}`}
+                    : "hover:bg-[#2a2b2e]  text-white rounded-lg"}`}
                 onClick={() => setSelectedItem(item)}
               >
                 {item}
@@ -188,7 +213,7 @@ export default function Dashboard() {
               <p className="text-sm text-gray-600">Bugünkü hədəflərə hazırsanmı?</p>
             </div>
             <img
-              src={user.image || "https://i.pravatar.cc/150?img=12"}
+              src={profileImageUrl}
               alt="Profil şəkli"
               className="w-20 h-20 rounded-full border-4 border-white shadow-md"
             />
@@ -199,7 +224,7 @@ export default function Dashboard() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
               <EditableCard label="Name" value={user.firstname} color="bg-yellow-300" onChange={(val) => updateUserField("firstname", val)} />
               <EditableCard label="Surname" value={user.lastname} color="bg-purple-300" onChange={(val) => updateUserField("lastname", val)} />
-              <EditableCard label="Gender" value={user.gender} color="bg-pink-300" onChange={(val) => updateUserField("gender", val)} />
+              <EditableCard label="Gender" value={user.gender} color={`${user.gender === "male" ? "bg-blue-300" : "bg-pink-300"}`} onChange={(val) => updateUserField("gender", val)} />
               <EditableCard label="Email" value={user.email} color="bg-blue-200 col-span-1 sm:col-span-2" onChange={(val) => updateUserField("email", val)} />
               <EditableCard label="Age" value={user.age} color="bg-indigo-200" onChange={(val) => updateUserField("age", val)} />
               <EditableCard label="Height" value={user.height} color="bg-green-200" onChange={(val) => updateUserField("height", val)} />
