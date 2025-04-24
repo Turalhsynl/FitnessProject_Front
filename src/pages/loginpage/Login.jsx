@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {useStore} from 'zustand'
+import { useAuthStore } from "../../common/Store";
 import download from "../../assets/download.png";
-import { themeStore } from '../../common/Store'
+import Cookies from "js-cookie";
+import jwt_decode from "jwt-decode";
 
 const Login = () => {
-  const { addAccesToken } = useStore(themeStore);
+  const { setTokens } = useAuthStore();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -16,17 +17,51 @@ const Login = () => {
       const response = await fetch("https://localhost:7298/api/User/Login", {
         method: "POST",
         headers: {
-          "Accept": "application/json",
+          Accept: "application/json",
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ email, password }),
       });
 
       const data = await response.json();
-      console.log(data);
-      if (response.ok) {
-        addAccesToken(data.token);
-        navigate("/home");
+
+      if (response.ok && data?.data?.accessToken && data?.data?.refreshToken) {
+        setTokens(data?.data?.accessToken, data?.data?.refreshToken);
+
+        const accessToken = Cookies.get("accessToken");
+        const decodedToken = jwt_decode(accessToken);
+
+        const userId = decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"];
+
+        const cartResponse = await fetch(`https://localhost:7298/api/Cart/get/${userId}`, {
+          method: "GET",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+
+        const cartData = await cartResponse.json();
+
+        if (cartResponse.ok && !cartData?.id) {
+          const createCartResponse = await fetch("https://localhost:7298/api/Cart/create", {
+            method: "POST",
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${accessToken}`,
+            },
+          });
+
+          if (!createCartResponse.ok) {
+            console.error("Yeni səbət yaradılmadı");
+          }
+        }
+
+        navigate("/");
+      } else {
+        console.error("Tokenlər cavabda yoxdur:", data);
       }
     } catch (error) {
       console.error("Login error:", error);
@@ -73,7 +108,7 @@ const Login = () => {
             Login
           </button>
           <p className="text-gray-400 text-sm text-center mt-4">
-            Don't have an account? <span className="text-purple-400 hover:underline cursor-pointer">Sign Up</span>
+            Don't have an account? <span className="text-purple-400 hover:underline cursor-pointer" onClick={() => navigate("/register")}>Sign Up</span>
           </p>
         </form>
       </div>

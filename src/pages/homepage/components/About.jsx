@@ -1,9 +1,9 @@
 import React from "react";
-// import Run from "../assets/Run-Man.jpg"
 import Run from "../../../assets/Run-Man.jpg"
+
 const About = () => {
   return (
-    <div className=" text-white py-16 mt-[150px] ">
+    <div className=" text-white py-16 mt-[350px] ">
       <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
         <div>
           <h2 className="text-xl md:text-2xl font-bold italic text-white mb-4">

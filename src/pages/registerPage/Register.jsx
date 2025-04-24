@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {useStore} from 'zustand'
+import { useStore } from "zustand";
 import download from "../../assets/download.png";
-import { themeStore } from '../../common/Store'
+import { useAuthStore } from "../../common/Store";
 
 const Register = () => {
-    const { addAccesToken } = useStore(themeStore);
+  const { setTokens } = useStore(useAuthStore);
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     firstname: "",
@@ -29,20 +29,18 @@ const Register = () => {
       const response = await fetch("https://localhost:7298/api/User/Register", {
         method: "POST",
         headers: {
-          "Accept": "application/json",
+          Accept: "application/json",
           "Content-Type": "application/json",
         },
+        credentials: "include",
         body: JSON.stringify(formData),
       });
 
       const data = await response.json();
-      console.log(data);
 
       if (!response.ok) {
         throw new Error(data.message || "Registration failed");
       }
-
-      addAccesToken(data.token);
       navigate("/login");
     } catch (error) {
       console.error("Register error:", error.message);

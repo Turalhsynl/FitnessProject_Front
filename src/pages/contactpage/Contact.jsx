@@ -8,7 +8,7 @@ const Contact = () => {
         <p className="text-2xl mb-10">Get Intouch</p>
       </div>
 
-      <div className="container mx-auto text-center mt-20">
+      <div className="container mx-auto text-center mt-20 mb-[150px]">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         <div className="flex flex-col items-center">
             <div className="bg-white text-black p-4 rounded-full mb-4">
