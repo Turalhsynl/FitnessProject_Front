@@ -3,10 +3,16 @@ import Cookies from "js-cookie";
 import jwt_decode from "jwt-decode";
 import { toast, ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
+import { useNavigate } from "react-router-dom";
+import Users from "../adminPanel/components/Users"
+import Recipes from '../adminPanel/components/Recipes';
+import Products from '../adminPanel/components/Products';
+import Categories from '../adminPanel/components/Categories';
 
 function EditableCard({ label, value, color, onChange }) {
   const [isEditing, setIsEditing] = useState(false);
   const [tempValue, setTempValue] = useState(value);
+  
 
   useEffect(() => {
     setTempValue(value);
@@ -43,14 +49,33 @@ export default function Dashboard() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [selectedItem, setSelectedItem] = useState("Profil");
+  const isAdmin = user?.userRole === 1;
+  // const sidebarItems = [
+  //   "Profil", "Məşq Planı", "Nailiyyətlər", "Qidalanma",
+  //   "İstatistikalar", "Qrafik", "Mesajlar", "Şifrəni dəyiş"
+  // ];
+
+
+
   const sidebarItems = [
-    "Profil", "Məşq Planı", "Nailiyyətlər", "Qidalanma",
-    "İstatistikalar", "Qrafik", "Mesajlar", "Şifrəni dəyiş"
+    "Profil",
+    "Məşq Planı",
+    "Nailiyyətlər",
+    "Qidalanma",
+    "İstatistikalar",
+    "Qrafik",
+    "Mesajlar",
+    "Şifrəni dəyiş",
+    ...(isAdmin
+      ? ["Product CRUD", "User CRUD", "Recipes CRUD", "Categories CRUD"]
+      : []),
   ];
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [profileImageUrl, setProfileImageUrl] = useState(null);
+  const [programs, setPrograms] = useState([]);
+  const navigate = useNavigate();
 
 
   useEffect(() => {
@@ -79,20 +104,16 @@ export default function Dashboard() {
     fetchUserData();
   }, []);
 
-  ////
   useEffect(() => {
     const fetchProfileImage = async () => {
       try {
-        const response = await fetch(
-          `https://localhost:7298/api/File/${user?.profileImageId}`
-        );
+        const response = await fetch(`https://localhost:7298/api/File/${user?.profileImageId}`);
         if (!response.ok) throw new Error("Şəkil tapılmadı");
-
         const data = await response.json();
-        setProfileImageUrl(data.url); // serverdən qaytarılan şəkil URL-i
+        setProfileImageUrl(data.url);
       } catch (error) {
         console.error("Şəkil yüklənə bilmədi:", error);
-        setProfileImageUrl(null); // error olsa placeholder işləsin
+        setProfileImageUrl(null);
       }
     };
 
@@ -100,63 +121,13 @@ export default function Dashboard() {
       fetchProfileImage();
     }
   }, [user?.profileImageId]);
-  ////
-
-  const handlePasswordChange = async (e) => {
-    e.preventDefault();
-    if (newPassword !== confirmPassword) {
-      toast.error("Yeni şifrələr uyğun gəlmir ❌");
-      return;
-    }
-    try {
-      const accessToken = Cookies.get("accessToken");
-      if (!accessToken) return;
-
-      const payload = {
-        id: user.id,
-        firstname: user.firstname,
-        lastname: user.lastname,
-        gender: user.gender,
-        age: user.age,
-        email: user.email,
-        password: newPassword,
-        height: user.height,
-        weight: user.weight
-      };
-
-      const response = await fetch("https://localhost:7298/api/User/update", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
-        },
-        body: JSON.stringify(payload),
-      });
-
-      const result = await response.json();
-      if (result.isSuccess) {
-        toast.success("Şifrə uğurla dəyişdirildi ✅");
-        setOldPassword("");
-        setNewPassword("");
-        setConfirmPassword("");
-      } else {
-        toast.error(result.message || "Xəta baş verdi ❌");
-      }
-    } catch (err) {
-      toast.error("Şifrə dəyişdirilə bilmədi ❌");
-    }
-  };
 
   const updateUserField = async (field, value) => {
     try {
       const accessToken = Cookies.get("accessToken");
       if (!accessToken) return;
 
-      const updatedUser = {
-        ...user,
-        [field]: value,
-        password: user.password || "default-password"
-      };
+      const updatedUser = { ...user, [field]: value };
 
       const response = await fetch("https://localhost:7298/api/User/Update", {
         method: "PUT",
@@ -179,6 +150,65 @@ export default function Dashboard() {
     }
   };
 
+  const accessToken = Cookies.get("accessToken");
+  const decodedToken = jwt_decode(accessToken);
+  const userId = decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"];
+
+  const handlePasswordChange = async (e) => {
+    e.preventDefault();
+  
+    if (newPassword !== confirmPassword) {
+      toast.error("Yeni şifrələr uyğun gəlmir ❌");
+      return;
+    }
+
+    try {
+      const accessToken = Cookies.get("accessToken");
+      if (!accessToken || !user?.id) return;
+  
+      const payload = {
+        userId: userId,
+        currentPassword: oldPassword,
+        newPassword: newPassword,
+      };
+  
+      const response = await fetch("https://localhost:7298/api/User/update-password", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify(payload),
+      });
+  
+      const result = await response.json();
+      if (result.isSuccess) {
+        toast.success("Şifrə uğurla dəyişdirildi ✅");
+        setOldPassword("");
+        setNewPassword("");
+        setConfirmPassword("");
+      } else {
+        toast.error(result.message || "Şifrə dəyişdirilə bilmədi ❌");
+      }
+    } catch (error) {
+      console.error("Şifrə dəyişmə xətası:", error);
+      toast.error("Xəta baş verdi ❌");
+    }
+  };
+
+  useEffect(() => {
+    // API-yə sorğu göndəririk
+    fetch(`https://localhost:7298/api/UserProgram/programs-by-user?userId=${userId}`)
+      .then(response => response.json())
+      .then(data => {
+        if (data.isSuccess) {
+          setPrograms(data.data);
+        }
+      })
+      .catch(error => console.error('API Error:', error));
+  }, []);
+
+
   if (loading) return <div className="text-center mt-10">Yüklənir...</div>;
   if (!user) return <div className="text-center mt-10">İstifadəçi məlumatları mövcud deyil.</div>;
 
@@ -186,7 +216,6 @@ export default function Dashboard() {
     <div className="min-h-screen bg-[#FDF7F0] text-[#1F1F1F] font-sans flex flex-col mt-20">
       <ToastContainer position="top-right" autoClose={3000} />
       <div className="flex flex-col lg:flex-row flex-1">
-        {/* Sidebar */}
         <div className="w-full lg:w-64 bg-black text-white p-6">
           <h1 className="text-2xl font-bold mb-10">FITZONE</h1>
           <ul className="space-y-3">
@@ -204,8 +233,6 @@ export default function Dashboard() {
             ))}
           </ul>
         </div>
-
-        {/* Main content */}
         <div className="flex-1 p-6">
           <div className="bg-[#E8E6FF] rounded-xl p-4 md:p-6 flex flex-col md:flex-row items-center justify-between mb-6 gap-4">
             <div>
@@ -213,13 +240,11 @@ export default function Dashboard() {
               <p className="text-sm text-gray-600">Bugünkü hədəflərə hazırsanmı?</p>
             </div>
             <img
-              src={profileImageUrl}
+              src={profileImageUrl || "https://cdn-icons-png.flaticon.com/512/149/149071.png"}
               alt="Profil şəkli"
               className="w-20 h-20 rounded-full border-4 border-white shadow-md"
             />
           </div>
-
-          {/* Profile Editing */}
           {selectedItem === "Profil" && (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
               <EditableCard label="Name" value={user.firstname} color="bg-yellow-300" onChange={(val) => updateUserField("firstname", val)} />
@@ -231,8 +256,6 @@ export default function Dashboard() {
               <EditableCard label="Weight" value={user.weight} color="bg-red-200" onChange={(val) => updateUserField("weight", val)} />
             </div>
           )}
-
-          {/* Change Password */}
           {selectedItem === "Şifrəni dəyiş" && (
             <div className="bg-white p-6 rounded-xl shadow-md w-full max-w-md mx-auto">
               <h2 className="text-xl font-bold mb-4">Şifrəni Dəyiş</h2>
@@ -271,45 +294,74 @@ export default function Dashboard() {
             </div>
           )}
 
-          {/* Programs */}
-          <div className="mt-10">
-            <h3 className="text-xl font-semibold mb-4">Proqramlarım</h3>
-            <div className="space-y-4">
-              {[
-                {
-                  title: 'Əzələ Artırma Proqramı',
-                  desc: 'Bu proqram əzələ kütləsini artırmaq üçün nəzərdə tutulub.',
-                  slides: 12,
-                  status: 'Public',
-                  image: 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'
-                },
-                {
-                  title: 'Arıqlama Planı',
-                  desc: 'Yağ yandırmaq və fit qalmaq üçün hazırlanan proqram.',
-                  slides: 8,
-                  status: 'Private',
-                  image: 'https://cdn-icons-png.flaticon.com/512/3135/3135789.png'
+
+{selectedItem === "Product CRUD" && isAdmin && (
+  <div className="bg-white p-6 rounded-xl shadow-md">
+    <h2 className="text-xl font-bold mb-4">Product CRUD</h2>
+    <p>Burada məhsulların idarə olunması olacaq.</p>
+    <Products />
+
+  </div>
+)}
+
+{selectedItem === "User CRUD" && isAdmin && (
+  <div className="bg-white p-6 rounded-xl shadow-md">
+    <h2 className="text-xl font-bold mb-4">User CRUD</h2>
+    <p>Burada istifadəçilərin idarə olunması olacaq.</p>
+    <Users />
+  </div>
+)}
+
+{selectedItem === "Recipes CRUD" && isAdmin && (
+  <div className="bg-white p-6 rounded-xl shadow-md">
+    <h2 className="text-xl font-bold mb-4">Recipes CRUD</h2>
+    <p>Burada reseptlərin idarə olunması olacaq.</p>
+    <Recipes />
+  </div>
+)}
+
+{selectedItem === "Categories CRUD" && isAdmin && (
+  <div className="bg-white p-6 rounded-xl shadow-md">
+    <h2 className="text-xl font-bold mb-4">Categories CRUD</h2>
+    <p>Burada kateqoriyaların idarə olunması olacaq.</p>
+    <Categories />
+  </div>
+)}
+
+          <div className="mt-10 max-w-7xl mx-auto px-4">
+      <h3 className="text-3xl font-bold text-center text-gray-800 mb-8">Proqramlarım</h3>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        {programs.map((program, i) => (
+          <div
+            key={i}
+            className="bg-white hover:shadow-xl transition-shadow duration-300 p-6 rounded-2xl border border-gray-200 flex flex-col justify-between"
+          >
+            <img
+              src={program.imageUrl}
+              alt={program.name}
+              className="w-full h-40 object-cover rounded-xl mb-4"
+            />
+            <h4 className="text-xl font-semibold mb-2 text-gray-800">{program.name}</h4>
+            <p className="text-gray-600 text-sm mb-3 line-clamp-3">{program.description}</p>
+            <div className="flex justify-between text-sm text-gray-500 mb-4">
+              <span>Çətinlik: {program.level}</span>
+              <span>Müddət: {program.durationInWeeks} həftə</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-lg font-bold text-indigo-600">${program.price}</span>
+              <button
+                onClick={() =>
+                  navigate(`/program-details/${program.id}`, { state: { program } })
                 }
-              ].map((item, i) => (
-                <div key={i} className="bg-white p-4 rounded-xl shadow-md flex flex-col sm:flex-row items-center justify-between">
-                  <div className="flex gap-4 items-center mb-4 sm:mb-0">
-                    <img src={item.image} className="w-14 h-14" alt="icon" />
-                    <div>
-                      <h4 className="font-semibold">{item.title}</h4>
-                      <p className="text-xs text-gray-500">{item.desc}</p>
-                      <p className="text-sm mt-1">{item.slides} slayd</p>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <span className="text-sm bg-gray-100 px-3 py-1 rounded-full">
-                      {item.status}
-                    </span>
-                  </div>
-                </div>
-              ))}
+                className="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded-full text-sm transition duration-200"
+              >
+                Proqramı İzlə
+              </button>
             </div>
           </div>
-
+        ))}
+      </div>
+    </div>
         </div>
       </div>
     </div>
