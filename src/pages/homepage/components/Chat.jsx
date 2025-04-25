@@ -593,6 +593,7 @@ export default function Chat() {
   const [receiverId, setReceiverId] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const messageRef = useRef();
+  const [hasUnreadMessage, setHasUnreadMessage] = useState(false);
 
   const accessToken = Cookies.get("accessToken");
   const decodedToken = jwt_decode(accessToken);
@@ -605,7 +606,7 @@ export default function Chat() {
     audio.play();
   };
 
-  // ✅ Söhbət tarixçəsini API ilə yükləyirik
+
   useEffect(() => {
     const fetchConversation = async () => {
       if (!userId || !receiverId) return;
@@ -637,7 +638,7 @@ export default function Chat() {
     fetchConversation();
   }, [receiverId]);
 
-  // ✅ SignalR bağlantısı və mesajların dinlənməsi
+
   useEffect(() => {
     if (!accessToken || !userId) return;
 
@@ -658,7 +659,12 @@ export default function Chat() {
           sentAt: data.sentAt,
         },
       ]);
+      if (!isOpen) {
+        setHasUnreadMessage(true);
+      }
     });
+
+   
 
     connect
       .start()
@@ -714,10 +720,13 @@ export default function Chat() {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.8 }}
             transition={{ duration: 0.3 }}
-            onClick={() => setIsOpen(true)}
+            onClick={() => {setIsOpen(true);setHasUnreadMessage(false);}}
             className="w-16 h-16 bg-purple-700 rounded-full shadow-lg flex items-center justify-center text-white text-3xl hover:scale-105 transition"
           >
             🤖
+            {hasUnreadMessage && (
+              <span className="absolute top-1 right-1 w-3 h-3 bg-green-500 rounded-full"></span>
+            )}
           </motion.button>
         ) : (
           <motion.div

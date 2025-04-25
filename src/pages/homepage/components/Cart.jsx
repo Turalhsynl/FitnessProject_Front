@@ -379,11 +379,11 @@ const Cart = ({
               ) : (
                 favorites.map((item, index) => (
                   <div key={index} className="flex items-center justify-between border-b pb-4">
-                    <img src={item.imageUrl} alt={item.name} className="w-24 h-24 rounded" />
+                    <img src={item.product.imageUrl} alt={item.product.name} className="w-24 h-24 rounded" />
                     <div className="flex-1 ml-4">
-                      <p className="font-medium text-gray-700">{item.name}</p>
-                      <p className="text-gray-500 text-sm">{item.description}</p>
-                      <p className="font-bold">${item.price}</p>
+                      <p className="font-medium text-gray-700">{item.product.name}</p>
+                      <p className="text-gray-500 text-sm">{item.product.description}</p>
+                      <p className="font-bold">${item.product.price}</p>
                       <button
                         className="mt-2 text-red-500 text-sm"
                         onClick={() => handleRemoveFromFavorites(item.id)}

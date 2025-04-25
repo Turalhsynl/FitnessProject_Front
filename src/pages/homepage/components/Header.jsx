@@ -10,6 +10,7 @@ import { FaSearch, FaShoppingCart, FaBars } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import SearchBar from "./SearchBar";
 import { useLocation } from "react-router-dom";
+import Chat from "../components/Chat";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -180,6 +181,9 @@ const Header = () => {
       <div className="flex justify-between items-center text-white">
         <Logo />
         <Navigation />
+        <div className="text-black"> {/* Və ya istədiyin rəng */}
+    <Chat />
+  </div>
         <div className="flex items-center space-x-6 ml-6">
         {isShopPage && <SearchBar accessToken={accessToken} />}
           <button onClick={() => setIsCartOpen(true)}>
