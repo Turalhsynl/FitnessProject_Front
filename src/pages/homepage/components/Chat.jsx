@@ -725,15 +725,8 @@ export default function Chat() {
           >
             🤖
             {hasUnreadMessage && (
-              <span className="absolute top-1 right-1 w-3 h-3 bg-green-500 rounded-full"></span>
-            {newMessagesCount > 0 && (
-              <div className="absolute top-0 right-0 w-4 h-4 bg-green-500 rounded-full"></div>
-            )}
-            {newMessagesCount > 0 && (
-              <span className="absolute top-0 right-0 left-[50px] text-black text-xs font-bold">
-                {newMessagesCount}
-              </span>
-            )}
+               <span className="absolute top-1 right-1 w-3 h-3 bg-green-500 rounded-full"></span>
+             )}
           </motion.button>
         ) : (
           <motion.div
