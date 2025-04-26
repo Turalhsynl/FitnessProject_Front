@@ -1,29 +1,42 @@
 import React, { useState, useEffect } from "react";
-import Cookies from "js-cookie"; // Cookies module
-import jwt_decode from "jwt-decode"; // jwt-decode module
+import Cookies from "js-cookie";
+import jwt_decode from "jwt-decode";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function Checkout() {
   const [cart, setCart] = useState(null);
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
+  const [isPlacingOrder, setIsPlacingOrder] = useState(false);
 
-  // Access token from cookies
   const accessToken = Cookies.get("accessToken");
 
-  // Decode the JWT token to extract the userId
-  const decodedToken = jwt_decode(accessToken);
-  const userId = decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"];
+  let userId = null;
+  let userEmail = null;
+  try {
+    const decodedToken = jwt_decode(accessToken);
+    userId = decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"];
+    userEmail = decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"];
+  } catch (error) {
+    setErrorMessage("Invalid access token");
+  }
 
   useEffect(() => {
-    // API request with Authorization header
+    if (!userId) return;
     fetch(`https://localhost:7298/api/Cart/get/${userId}`, {
       method: "GET",
       headers: {
-        "Authorization": `Bearer ${accessToken}`, // Authorization header
+        "Authorization": `Bearer ${accessToken}`,
         "Content-Type": "application/json",
       },
     })
-      .then((response) => response.json())
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Failed to fetch cart");
+        }
+        return response.json();
+      })
       .then((data) => {
         setCart(data);
         setLoading(false);
@@ -44,6 +57,51 @@ export default function Checkout() {
     return cart.cartLines.reduce((total, item) => total + item.quantity, 0);
   };
 
+  const handlePlaceOrder = async (e) => {
+    e.preventDefault();
+    if (!cart || cart.cartLines.length === 0) {
+      toast.error("Your cart is empty!");
+      return;
+    }
+
+    setIsPlacingOrder(true);
+
+    const paymentSuccess = true;
+
+    try {
+      if (!paymentSuccess) {
+        throw new Error("Payment failed");
+      }
+
+      const response = await fetch(`https://localhost:7298/api/Stripe/create-payment`, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: userEmail,
+          totalPrice: getTotalPrice(),
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to place order");
+      }
+
+      toast.success("Order placed successfully!");
+
+      setCart({
+        ...cart,
+        cartLines: [],
+      });
+    } catch (error) {
+      toast.error("Failed to place order");
+    } finally {
+      setIsPlacingOrder(false);
+    }
+  };
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -54,7 +112,6 @@ export default function Checkout() {
 
   return (
     <div className="min-h-screen bg-white mt-20">
-      {/* Header with Background Image */}
       <div
         className="h-72 flex items-center justify-center bg-cover bg-center relative"
         style={{
@@ -65,12 +122,9 @@ export default function Checkout() {
         <h1 className="relative text-5xl font-bold text-white">CHECKOUT</h1>
       </div>
 
-      {/* Main Checkout Form */}
       <div className="py-10 px-4 mt-10">
-        <form className="max-w-5xl mx-auto space-y-8">
-          {/* Billing Details */}
+        <form className="max-w-5xl mx-auto space-y-8" onSubmit={handlePlaceOrder}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* Left Side - Billing */}
             <div className="border p-6 rounded-md space-y-5">
               <h3 className="text-lg font-semibold mb-4">Billing details</h3>
 
@@ -79,42 +133,26 @@ export default function Checkout() {
                   <label className="block mb-1 text-gray-700">
                     First name <span className="text-red-500">*</span>
                   </label>
-                  <input
-                    type="text"
-                    className="w-full border p-2 rounded-md"
-                    required
-                  />
+                  <input type="text" className="w-full border p-2 rounded-md" required />
                 </div>
                 <div>
                   <label className="block mb-1 text-gray-700">
                     Last name <span className="text-red-500">*</span>
                   </label>
-                  <input
-                    type="text"
-                    className="w-full border p-2 rounded-md"
-                    required
-                  />
+                  <input type="text" className="w-full border p-2 rounded-md" required />
                 </div>
               </div>
 
               <div>
-                <label className="block mb-1 text-gray-700">
-                  Company name (optional)
-                </label>
-                <input
-                  type="text"
-                  className="w-full border p-2 rounded-md"
-                />
+                <label className="block mb-1 text-gray-700">Company name (optional)</label>
+                <input type="text" className="w-full border p-2 rounded-md" />
               </div>
 
               <div>
                 <label className="block mb-1 text-gray-700">
                   Country / Region <span className="text-red-500">*</span>
                 </label>
-                <select
-                  className="w-full border p-2 rounded-md"
-                  required
-                >
+                <select className="w-full border p-2 rounded-md" required>
                   <option>United States (US)</option>
                   <option>United Kingdom (UK)</option>
                   <option>Turkey</option>
@@ -125,26 +163,15 @@ export default function Checkout() {
                 <label className="block mb-1 text-gray-700">
                   Street address <span className="text-red-500">*</span>
                 </label>
-                <input
-                  type="text"
-                  className="w-full border p-2 rounded-md"
-                  required
-                />
-                <input
-                  type="text"
-                  className="w-full border p-2 rounded-md mt-2"
-                />
+                <input type="text" className="w-full border p-2 rounded-md" required />
+                <input type="text" className="w-full border p-2 rounded-md mt-2" />
               </div>
 
               <div>
                 <label className="block mb-1 text-gray-700">
                   Town / City <span className="text-red-500">*</span>
                 </label>
-                <input
-                  type="text"
-                  className="w-full border p-2 rounded-md"
-                  required
-                />
+                <input type="text" className="w-full border p-2 rounded-md" required />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
@@ -152,10 +179,7 @@ export default function Checkout() {
                   <label className="block mb-1 text-gray-700">
                     State <span className="text-red-500">*</span>
                   </label>
-                  <select
-                    className="w-full border p-2 rounded-md"
-                    required
-                  >
+                  <select className="w-full border p-2 rounded-md" required>
                     <option>California</option>
                     <option>New York</option>
                     <option>Texas</option>
@@ -165,11 +189,7 @@ export default function Checkout() {
                   <label className="block mb-1 text-gray-700">
                     ZIP Code <span className="text-red-500">*</span>
                   </label>
-                  <input
-                    type="text"
-                    className="w-full border p-2 rounded-md"
-                    required
-                  />
+                  <input type="text" className="w-full border p-2 rounded-md" required />
                 </div>
               </div>
 
@@ -177,28 +197,18 @@ export default function Checkout() {
                 <label className="block mb-1 text-gray-700">
                   Phone <span className="text-red-500">*</span>
                 </label>
-                <input
-                  type="tel"
-                  className="w-full border p-2 rounded-md"
-                  required
-                />
+                <input type="tel" className="w-full border p-2 rounded-md" required />
               </div>
 
               <div>
                 <label className="block mb-1 text-gray-700">
                   Email address <span className="text-red-500">*</span>
                 </label>
-                <input
-                  type="email"
-                  className="w-full border p-2 rounded-md"
-                  required
-                />
+                <input type="email" className="w-full border p-2 rounded-md" required />
               </div>
             </div>
 
-            {/* Right Side - Your Order and Payment */}
             <div className="space-y-6">
-              {/* Your Order */}
               <div className="border p-6 rounded-md space-y-4">
                 <h3 className="text-lg font-semibold mb-4">Your order</h3>
 
@@ -217,13 +227,11 @@ export default function Checkout() {
                       ))}
                     </div>
 
-                    {/* Total Price */}
                     <div className="border-t pt-4 flex justify-between font-bold">
                       <span>Total</span>
                       <span>${getTotalPrice().toFixed(2)}</span>
                     </div>
 
-                    {/* Total Quantity */}
                     <div className="flex justify-between font-bold">
                       <span>Total Items</span>
                       <span>{getTotalQuantity()}</span>
@@ -232,10 +240,10 @@ export default function Checkout() {
                 )}
               </div>
 
-              {/* Card Payment Section */}
               <div className="border p-6 rounded-md space-y-5">
                 <h3 className="text-lg font-semibold mb-4">Card Payment</h3>
 
+                {/* Static Card Payment Form */}
                 <div>
                   <label className="block mb-1 text-gray-700">
                     Card Number <span className="text-red-500">*</span>
@@ -246,6 +254,11 @@ export default function Checkout() {
                     className="w-full border p-2 rounded-md"
                     maxLength="19"
                     required
+                    onChange={(e) => {
+                      let value = e.target.value.replace(/\D/g, "");
+                      value = value.match(/.{1,4}/g)?.join(" ") || "";
+                      e.target.value = value;
+                    }}
                   />
                 </div>
 
@@ -260,6 +273,13 @@ export default function Checkout() {
                       className="w-full border p-2 rounded-md"
                       maxLength="5"
                       required
+                      onChange={(e) => {
+                        let value = e.target.value.replace(/\D/g, "");
+                        if (value.length > 2) {
+                          value = value.slice(0, 2) + "/" + value.slice(2, 4);
+                        }
+                        e.target.value = value;
+                      }}
                     />
                   </div>
 
@@ -273,18 +293,20 @@ export default function Checkout() {
                       className="w-full border p-2 rounded-md"
                       maxLength="4"
                       required
+                      onInput={(e) => {
+                        e.target.value = e.target.value.replace(/\D/g, "").slice(0, 4);
+                      }}
                     />
                   </div>
                 </div>
               </div>
 
-              {/* Place Order Button */}
               <button
                 type="submit"
                 className="w-full bg-purple-600 text-white py-3 rounded-md font-semibold text-lg"
-                disabled={loading}
+                disabled={isPlacingOrder}
               >
-                {loading ? "Processing..." : "Place Order"}
+                {isPlacingOrder ? "Processing..." : "Place Order"}
               </button>
             </div>
           </div>
