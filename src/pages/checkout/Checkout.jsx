@@ -59,47 +59,92 @@ export default function Checkout() {
 
   const handlePlaceOrder = async (e) => {
     e.preventDefault();
+  
     if (!cart || cart.cartLines.length === 0) {
       toast.error("Your cart is empty!");
       return;
     }
-
+  
     setIsPlacingOrder(true);
-
-    const paymentSuccess = true;
-
+  
     try {
-      if (!paymentSuccess) {
-        throw new Error("Payment failed");
-      }
-
-      const response = await fetch(`https://localhost:7298/api/Stripe/create-payment`, {
+      const createPaymentResponse = await fetch(`https://localhost:7298/api/Stripe/create-payment`, {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${accessToken}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          amount: getTotalPrice(),
           email: userEmail,
-          totalPrice: getTotalPrice(),
         }),
       });
-
-      if (!response.ok) {
-        throw new Error("Failed to place order");
+  
+      if (!createPaymentResponse.ok) {
+        throw new Error("Failed to create payment");
       }
-
-      toast.success("Order placed successfully!");
-
-      setCart({
-        ...cart,
-        cartLines: [],
+  
+      const createPaymentData = await createPaymentResponse.json();
+      const paymentIntentId = createPaymentData.paymentIntentId;
+  
+      const confirmPaymentResponse = await fetch(`https://localhost:7298/api/Stripe/confirm-payment`, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          paymentIntentId: paymentIntentId,
+          paymentMethodId: "pm_card_visa",
+        }),
       });
+  
+      if (!confirmPaymentResponse.ok) {
+        throw new Error("Failed to confirm payment");
+      }
+  
+      const confirmPaymentData = await confirmPaymentResponse.json();
+  
+      if (confirmPaymentData.status === "Payment successful") {
+        toast.success("Payment successful!");
+  
+        const createOrderResponse = await fetch(`https://localhost:7298/api/Order`, {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            userId: parseInt(userId),
+            totalAmount: getTotalPrice(),
+            orderLines: cart.cartLines.map((item) => ({
+              productId: item.product.id,
+              quantity: item.quantity,
+              price: item.product.price,
+            })),
+          }),
+        });
+  
+        if (!createOrderResponse.ok) {
+          throw new Error("Failed to create order");
+        }
+  
+        toast.success("Order created successfully!");
+  
+        setCart({
+          ...cart,
+          cartLines: [],
+        });
+      } else {
+        toast.error("Payment failed!");
+      }
     } catch (error) {
-      toast.error("Failed to place order");
+      console.error(error);
+      toast.error("There was an error processing your payment.");
     } finally {
       setIsPlacingOrder(false);
     }
+  
   };
 
   if (loading) {
@@ -254,11 +299,6 @@ export default function Checkout() {
                     className="w-full border p-2 rounded-md"
                     maxLength="19"
                     required
-                    onChange={(e) => {
-                      let value = e.target.value.replace(/\D/g, "");
-                      value = value.match(/.{1,4}/g)?.join(" ") || "";
-                      e.target.value = value;
-                    }}
                   />
                 </div>
 
@@ -273,13 +313,6 @@ export default function Checkout() {
                       className="w-full border p-2 rounded-md"
                       maxLength="5"
                       required
-                      onChange={(e) => {
-                        let value = e.target.value.replace(/\D/g, "");
-                        if (value.length > 2) {
-                          value = value.slice(0, 2) + "/" + value.slice(2, 4);
-                        }
-                        e.target.value = value;
-                      }}
                     />
                   </div>
 
@@ -293,9 +326,6 @@ export default function Checkout() {
                       className="w-full border p-2 rounded-md"
                       maxLength="4"
                       required
-                      onInput={(e) => {
-                        e.target.value = e.target.value.replace(/\D/g, "").slice(0, 4);
-                      }}
                     />
                   </div>
                 </div>
