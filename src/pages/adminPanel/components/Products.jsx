@@ -1,153 +1,3 @@
-// import { useEffect, useState } from 'react';
-// import Cookies from 'js-cookie';
-// import jwt_decode from 'jwt-decode';
-
-// export default function Products() {
-//   const [products, setProducts] = useState([]);
-//   const [newProduct, setNewProduct] = useState({ name: '', quantity: '', description: '', price: '', imageUrl: '', color: '', categoryId: '' });
-//   const [editingProduct, setEditingProduct] = useState(null);
-
-//   const colorOptions = [
-//     { id: 1, name: 'Black' },
-//     { id: 2, name: 'Grey' },
-//     { id: 3, name: 'Pink' },
-//     { id: 4, name: 'Green' },
-//     { id: 5, name: 'Brown' },
-//     { id: 6, name: 'Blue' },
-//   ];
-
-//   const accessToken = Cookies.get("accessToken");
-
-//   function getProducts() {
-//     fetch('https://localhost:7298/api/Product/GetAll', {
-//       method: 'GET',
-//       headers: {
-//         Authorization: `Bearer ${accessToken}`,
-//       },
-//     })
-//       .then(res => res.json())
-//       .then(data => setProducts(data));
-//   }
-
-//   function addProduct() {
-//     fetch('https://localhost:7298/api/Product/Add', {
-//       method: 'POST',
-//       headers: {
-//         'Content-Type': 'application/json',
-//         Authorization: `Bearer ${accessToken}`,
-//       },
-//       body: JSON.stringify({ ...newProduct, quantity: parseInt(newProduct.quantity), price: parseFloat(newProduct.price), color: parseInt(newProduct.color), categoryId: parseInt(newProduct.categoryId) }),
-//     }).then(() => {
-//       setNewProduct({ name: '', quantity: '', description: '', price: '', imageUrl: '', color: '', categoryId: '' });
-//       getProducts();
-//     });
-//   }
-
-//   function deleteProduct(id) {
-//     fetch(`https://localhost:7298/api/Product/Delete?id=${id}`, {
-//       method: 'DELETE',
-//       headers: {
-//         Authorization: `Bearer ${accessToken}`,
-//       },
-//     }).then(() => getProducts());
-//   }
-
-//   function updateProduct() {
-//     fetch(`https://localhost:7298/api/Product/Update`, {
-//       method: 'PUT',
-//       headers: {
-//         'Content-Type': 'application/json',
-//         Authorization: `Bearer ${accessToken}`,
-//       },
-//       body: JSON.stringify({ ...editingProduct, quantity: parseInt(editingProduct.quantity), price: parseFloat(editingProduct.price), color: parseInt(editingProduct.color), categoryId: parseInt(editingProduct.categoryId) }),
-//     }).then(() => {
-//       setEditingProduct(null);
-//       getProducts();
-//     });
-//   }
-
-//   useEffect(() => {
-//     getProducts();
-//   }, []);
-
-//   return (
-//     <div>
-//       <h2 className="text-xl font-bold mb-4">Products</h2>
-      
-//       <div className="mb-4 flex flex-wrap gap-2">
-//         <input type="text" placeholder="Name" className="border p-2" value={newProduct.name} onChange={e => setNewProduct({ ...newProduct, name: e.target.value })} />
-//         <input type="text" placeholder="Quantity" className="border p-2" value={newProduct.quantity} onChange={e => setNewProduct({ ...newProduct, quantity: e.target.value })} />
-//         <input type="text" placeholder="Description" className="border p-2" value={newProduct.description} onChange={e => setNewProduct({ ...newProduct, description: e.target.value })} />
-//         <input type="text" placeholder="Price" className="border p-2" value={newProduct.price} onChange={e => setNewProduct({ ...newProduct, price: e.target.value })} />
-//         <input type="text" placeholder="Image URL" className="border p-2" value={newProduct.imageUrl} onChange={e => setNewProduct({ ...newProduct, imageUrl: e.target.value })} />
-//         <select className="border p-2" value={newProduct.color} onChange={e => setNewProduct({ ...newProduct, color: e.target.value })}>
-//           <option value="">Select Color</option>
-//           {colorOptions.map(opt => (
-//             <option key={opt.id} value={opt.id}>{opt.name}</option>
-//           ))}
-//         </select>
-//         <input type="text" placeholder="Category ID" className="border p-2" value={newProduct.categoryId} onChange={e => setNewProduct({ ...newProduct, categoryId: e.target.value })} />
-//         <button onClick={addProduct} className="bg-green-500 text-white px-4 py-2 rounded">Add</button>
-//       </div>
-
-//       {editingProduct && (
-//         <div className="mb-4 flex flex-wrap gap-2">
-//           <input type="text" placeholder="Name" className="border p-2" value={editingProduct.name} onChange={e => setEditingProduct({ ...editingProduct, name: e.target.value })} />
-//           <input type="text" placeholder="Quantity" className="border p-2" value={editingProduct.quantity} onChange={e => setEditingProduct({ ...editingProduct, quantity: e.target.value })} />
-//           <input type="text" placeholder="Description" className="border p-2" value={editingProduct.description} onChange={e => setEditingProduct({ ...editingProduct, description: e.target.value })} />
-//           <input type="text" placeholder="Price" className="border p-2" value={editingProduct.price} onChange={e => setEditingProduct({ ...editingProduct, price: e.target.value })} />
-//           <input type="text" placeholder="Image URL" className="border p-2" value={editingProduct.imageUrl} onChange={e => setEditingProduct({ ...editingProduct, imageUrl: e.target.value })} />
-//           <select className="border p-2" value={editingProduct.color} onChange={e => setEditingProduct({ ...editingProduct, color: e.target.value })}>
-//             <option value="">Select Color</option>
-//             {colorOptions.map(opt => (
-//               <option key={opt.id} value={opt.id}>{opt.name}</option>
-//             ))}
-//           </select>
-//           <input type="text" placeholder="Category ID" className="border p-2" value={editingProduct.categoryId} onChange={e => setEditingProduct({ ...editingProduct, categoryId: e.target.value })} />
-//           <button onClick={updateProduct} className="bg-blue-500 text-white px-4 py-2 rounded">Update</button>
-//           <button onClick={() => setEditingProduct(null)} className="bg-gray-500 text-white px-4 py-2 rounded">Cancel</button>
-//         </div>
-//       )}
-
-//       <table className="w-full border">
-//         <thead>
-//           <tr className="bg-gray-200">
-//             <th className="p-2 border">ID</th>
-//             <th className="p-2 border">Name</th>
-//             <th className="p-2 border">Description</th>
-//             <th className="p-2 border">Quantity</th>
-//             <th className="p-2 border">Price</th>
-//             <th className="p-2 border">Color</th>
-//             <th className="p-2 border">categoryId</th>
-//             <th className="p-2 border">Image</th>
-//             <th className="p-2 border">Actions</th>
-//           </tr>
-//         </thead>
-//         <tbody>
-//           {products.map(product => (
-//             <tr key={product.id} className="border-t">
-//               <td className="p-2 border">{product.id}</td>
-//               <td className="p-2 border">{product.name}</td>
-//               <td className="p-2 border">{product.description}</td>
-//               <td className="p-2 border">{product.quantity}</td>
-//               <td className="p-2 border">{product.price}</td>
-//               <td className="p-2 border">{product.color}</td>
-//               <td className="p-2 border">{product.categoryId}</td>
-//               <td className="p-2 border"><img src={product.imageUrl} alt="" className="w-16 h-16 object-cover" /></td>
-//               <td className="p-2 border flex gap-2">
-//                 <button onClick={() => setEditingProduct(product)} className="bg-yellow-500 text-white px-2 py-1 rounded">Edit</button>
-//                 <button onClick={() => deleteProduct(product.id)} className="bg-red-500 text-white px-2 py-1 rounded">Delete</button>
-//               </td>
-//             </tr>
-//           ))}
-//         </tbody>
-//       </table>
-//     </div>
-//   );
-// }
-
-
-
 import { useEffect, useState } from 'react';
 import Cookies from 'js-cookie';
 
@@ -155,6 +5,7 @@ export default function Products() {
   const [products, setProducts] = useState([]);
   const [newProduct, setNewProduct] = useState({ name: '', quantity: '', description: '', price: '', image: null, color: '', categoryId: '' });
   const [editingProduct, setEditingProduct] = useState(null);
+  const [imageUrls, setImageUrls] = useState({});
 
   const colorOptions = [
     { id: 1, name: 'Black' },
@@ -167,7 +18,6 @@ export default function Products() {
 
   const accessToken = Cookies.get("accessToken");
 
-  // Get all products
   function getProducts() {
     fetch('https://localhost:7298/api/Product/GetAll', {
       method: 'GET',
@@ -176,10 +26,12 @@ export default function Products() {
       },
     })
       .then(res => res.json())
-      .then(data => setProducts(data));
+      .then(data => {
+        setProducts(data);
+        fetchImages(data);
+      });
   }
 
-  // Upload image
   function uploadImage(image) {
     const formData = new FormData();
     formData.append('image', image);
@@ -193,26 +45,24 @@ export default function Products() {
     })
       .then(res => res.json())
       .then(data => {
-        return data.fileName; // Return the filename of the uploaded image
+        return data.imageId; // <-- YALNIZ imageId qaytarırıq
       });
   }
 
-  // Add new product
   function addProduct() {
     if (newProduct.image) {
-      // If there is an image, upload it first
       uploadImage(newProduct.image)
-        .then(fileName => {
+        .then(imageId => {
           const productData = {
-            ...newProduct,
+            name: newProduct.name,
             quantity: parseInt(newProduct.quantity),
+            description: newProduct.description,
             price: parseFloat(newProduct.price),
             color: parseInt(newProduct.color),
             categoryId: parseInt(newProduct.categoryId),
-            imageUrl: fileName, // Add the image URL (filename)
+            imageId: imageId, // <-- imageId əlavə olunur
           };
 
-          // Add the product
           fetch('https://localhost:7298/api/Product/Add', {
             method: 'POST',
             headers: {
@@ -221,26 +71,23 @@ export default function Products() {
             },
             body: JSON.stringify(productData),
           }).then(() => {
-            // Reset the form and fetch the updated products
             setNewProduct({ name: '', quantity: '', description: '', price: '', image: null, color: '', categoryId: '' });
             getProducts();
           });
         })
         .catch(error => {
           console.error('Image upload failed:', error);
-          // Handle image upload error
         });
     } else {
-      // If no image, just add the product without the image
       const productData = {
-        ...newProduct,
+        name: newProduct.name,
         quantity: parseInt(newProduct.quantity),
+        description: newProduct.description,
         price: parseFloat(newProduct.price),
         color: parseInt(newProduct.color),
         categoryId: parseInt(newProduct.categoryId),
       };
 
-      // Add the product
       fetch('https://localhost:7298/api/Product/Add', {
         method: 'POST',
         headers: {
@@ -255,18 +102,20 @@ export default function Products() {
     }
   }
 
-  // Update existing product
   function updateProduct() {
-    if (editingProduct.image) {
+    if (editingProduct.image instanceof File) {
       uploadImage(editingProduct.image)
-        .then(fileName => {
+        .then(imageId => {
           const updatedProduct = {
-            ...editingProduct,
+            id: editingProduct.id,
+            name: editingProduct.name,
             quantity: parseInt(editingProduct.quantity),
+            description: editingProduct.description,
             price: parseFloat(editingProduct.price),
+            imageUrl:editingProduct.imageUrl,
             color: parseInt(editingProduct.color),
             categoryId: parseInt(editingProduct.categoryId),
-            imageUrl: fileName, // Add the image URL (filename)
+            imageId: imageId, // <-- yeni imageId əlavə olunur
           };
 
           fetch('https://localhost:7298/api/Product/Update', {
@@ -280,14 +129,21 @@ export default function Products() {
             setEditingProduct(null);
             getProducts();
           });
+        })
+        .catch(error => {
+          console.error('Image upload failed:', error);
         });
     } else {
       const updatedProduct = {
-        ...editingProduct,
+        id: editingProduct.id,
+        name: editingProduct.name,
         quantity: parseInt(editingProduct.quantity),
+        description: editingProduct.description,
         price: parseFloat(editingProduct.price),
+        imageUrl:editingProduct.imageUrl,
         color: parseInt(editingProduct.color),
         categoryId: parseInt(editingProduct.categoryId),
+        imageId: editingProduct.imageId, // <-- mövcud imageId qalır
       };
 
       fetch('https://localhost:7298/api/Product/Update', {
@@ -304,7 +160,6 @@ export default function Products() {
     }
   }
 
-  // Delete product
   function deleteProduct(id) {
     fetch(`https://localhost:7298/api/Product/Delete?id=${id}`, {
       method: 'DELETE',
@@ -314,7 +169,24 @@ export default function Products() {
     }).then(() => getProducts());
   }
 
-  // Fetch all products on mount
+  async function fetchImages(products) {
+    const urls = {};
+    for (const product of products) {
+      if (product.imageId) {
+        try {
+          const response = await fetch(`https://localhost:7298/api/File/${product.imageId}`);
+          if (response.ok) {
+            const data = await response.json();
+            urls[product.id] = data.url;
+          }
+        } catch (error) {
+          console.error('Şəkil yüklənərkən xəta baş verdi:', error);
+        }
+      }
+    }
+    setImageUrls(urls);
+  }
+
   useEffect(() => {
     getProducts();
   }, []);
@@ -347,7 +219,7 @@ export default function Products() {
           <input type="text" placeholder="Quantity" className="border p-2" value={editingProduct.quantity} onChange={e => setEditingProduct({ ...editingProduct, quantity: e.target.value })} />
           <input type="text" placeholder="Description" className="border p-2" value={editingProduct.description} onChange={e => setEditingProduct({ ...editingProduct, description: e.target.value })} />
           <input type="text" placeholder="Price" className="border p-2" value={editingProduct.price} onChange={e => setEditingProduct({ ...editingProduct, price: e.target.value })} />
-          <input type="file" onChange={e => setEditingProduct({ ...editingProduct, image: e.target.files[0] })} />
+          <input type="file" className='border' onChange={e => setEditingProduct({ ...editingProduct, image: e.target.files[0] })} />
           <select className="border p-2" value={editingProduct.color} onChange={e => setEditingProduct({ ...editingProduct, color: e.target.value })}>
             <option value="">Select Color</option>
             {colorOptions.map(opt => (
@@ -385,7 +257,11 @@ export default function Products() {
               <td className="p-2 border">{product.price}</td>
               <td className="p-2 border">{product.color}</td>
               <td className="p-2 border">{product.categoryId}</td>
-              <td className="p-2 border"><img src={product.imageUrl} alt="" className="w-16 h-16 object-cover" /></td>
+              <td className="p-2 border">
+                {imageUrls[product.id] && (
+                  <img src={imageUrls[product.id]} alt="" className="w-16 h-16 object-cover" />
+                )}
+              </td>
               <td className="p-2 border flex gap-2">
                 <button onClick={() => setEditingProduct(product)} className="bg-yellow-500 text-white px-2 py-1 rounded">Edit</button>
                 <button onClick={() => deleteProduct(product.id)} className="bg-red-500 text-white px-2 py-1 rounded">Delete</button>

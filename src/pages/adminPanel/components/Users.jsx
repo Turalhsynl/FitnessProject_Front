@@ -115,12 +115,12 @@ export default function Users() {
       {editingUser && (
         <div className="mb-4 gap-2 ">
           <input
-            type="number"
-            placeholder="UserRole"
-            className="border p-2"
-            value={editingUser.userRole}
-            onChange={e => setEditingUser({ ...editingUser, userRole: e.target.value })}
-          />
+  type="number"
+  placeholder="UserRole"
+  className="border p-2"
+  value={editingUser.userRole}
+  onChange={e => setEditingUser({ ...editingUser, userRole: Number(e.target.value) })}
+/>
 
         <input
             type="text"
