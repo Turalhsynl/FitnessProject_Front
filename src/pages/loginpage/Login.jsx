@@ -14,7 +14,7 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("https://localhost:7298/api/User/Login", {
+      const response = await fetch("https://fitgym.com.az/api/User/Login", {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -33,7 +33,7 @@ const Login = () => {
 
         const userId = decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"];
 
-        const cartResponse = await fetch(`https://localhost:7298/api/Cart/get/${userId}`, {
+        const cartResponse = await fetch(`https://fitgym.com.az/api/Cart/get/${userId}`, {
           method: "GET",
           headers: {
             Accept: "application/json",
@@ -45,7 +45,7 @@ const Login = () => {
         const cartData = await cartResponse.json();
 
         if (cartResponse.ok && !cartData?.id) {
-          const createCartResponse = await fetch("https://localhost:7298/api/Cart/create", {
+          const createCartResponse = await fetch("https://fitgym.com.az/api/Cart/create", {
             method: "POST",
             headers: {
               Accept: "application/json",

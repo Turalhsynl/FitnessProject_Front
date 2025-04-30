@@ -42,7 +42,7 @@ useEffect(() => {
         if (!product.imageId) return;
 
         try {
-          const res = await fetch(`https://localhost:7298/api/File/${product.imageId}`);
+          const res = await fetch(`https://fitgym.com.az/api/File/${product.imageId}`);
           if (!res.ok) throw new Error("Şəkil tapılmadı");
 
           const data = await res.json();
@@ -67,7 +67,7 @@ useEffect(() => {
   useEffect(() => {
     if (!accessToken) return;
 
-    fetch("https://localhost:7298/api/Category/GetAllCategory", {
+    fetch("https://fitgym.com.az/api/Category/GetAllCategory", {
       headers: { Authorization: `Bearer ${accessToken}` },
     })
       .then((res) => res.json())
@@ -83,7 +83,7 @@ useEffect(() => {
       { id: 6, code: " #0000FF", name: "Blue" },
     ]);
 
-    fetch(`https://localhost:7298/api/Cart/get/${userId}`, {
+    fetch(`https://fitgym.com.az/api/Cart/get/${userId}`, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
@@ -93,7 +93,7 @@ useEffect(() => {
         if (cart && cart.id) setCartId(cart.id);
       });
 
-    fetch(`https://localhost:7298/api/Favorite/list/${userId}`, {
+    fetch(`https://fitgym.com.az/api/Favorite/list/${userId}`, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
@@ -114,7 +114,7 @@ useEffect(() => {
     const finalCategoryId = selectedCategory || 0;
     const finalSortOrder = sortBy !== null ? sortBy : 0;
     const finalColorId = selectedColor || 0;
-    const baseUrl = "https://localhost:7298/api/Product/filtered-paged";
+    const baseUrl = "https://fitgym.com.az/api/Product/filtered-paged";
     const queryParams = new URLSearchParams();
 
     if (finalCategoryId) {
@@ -160,7 +160,7 @@ useEffect(() => {
   const handleAddToCart = (productId) => {
     setLoading(productId);
     setAdded(null);
-    fetch("https://localhost:7298/api/Cart/add-product", {
+    fetch("https://fitgym.com.az/api/Cart/add-product", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -192,8 +192,8 @@ useEffect(() => {
   const handleFavoriteClick = (productId) => {
     const isFav = favoriteStatus[productId] || false;
     const url = isFav
-      ? "https://localhost:7298/api/Favorite/remove"
-      : "https://localhost:7298/api/Favorite/add";
+      ? "https://fitgym.com.az/api/Favorite/remove"
+      : "https://fitgym.com.az/api/Favorite/add";
 
     const body = {
       userId,

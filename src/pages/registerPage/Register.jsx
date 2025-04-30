@@ -26,7 +26,7 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("https://localhost:7298/api/User/Register", {
+      const response = await fetch("https://fitgym.com.az/api/User/Register", {
         method: "POST",
         headers: {
           Accept: "application/json",

@@ -307,7 +307,7 @@ export default function RecipeApp() {
   useEffect(() => {
     if (!accessToken) return;
 
-    fetch("https://localhost:7298/api/Recipe", {
+    fetch("https://fitgym.com.az/api/Recipe", {
       headers: { Authorization: `Bearer ${accessToken}` },
     })
       .then((res) => res.json())
@@ -340,13 +340,13 @@ export default function RecipeApp() {
 
     let url = "";
     if (searchText) {
-      url = `https://localhost:7298/api/Recipe/search?name=${searchText}`;
+      url = `https://fitgym.com.az/api/Recipe/search?name=${searchText}`;
     } else if (ingredient) {
-      url = `https://localhost:7298/api/Recipe/by-ingredient?ingredient=${ingredient}`;
+      url = `https://fitgym.com.az/api/Recipe/by-ingredient?ingredient=${ingredient}`;
     } else if (mealType) {
-      url = `https://localhost:7298/api/Recipe/by-mealtype?mealType=${mealType}`;
+      url = `https://fitgym.com.az/api/Recipe/by-mealtype?mealType=${mealType}`;
     } else {
-      url = `https://localhost:7298/api/Recipe/by-calories?minCalories=${calorieMin}&maxCalories=${calorieMax}`;
+      url = `https://fitgym.com.az/api/Recipe/by-calories?minCalories=${calorieMin}&maxCalories=${calorieMax}`;
     }
 
     fetch(url, {
@@ -375,13 +375,13 @@ export default function RecipeApp() {
 
     switch (sortType) {
       case "calories":
-        url = `https://localhost:7298/api/Recipe/by-calories?minCalories=${calorieMin}&maxCalories=${calorieMax}`;
+        url = `https://fitgym.com.az/api/Recipe/by-calories?minCalories=${calorieMin}&maxCalories=${calorieMax}`;
         break;
       case "ingredient":
-        url = `https://localhost:7298/api/Recipe/by-ingredient?ingredient=${ingredient}`;
+        url = `https://fitgym.com.az/api/Recipe/by-ingredient?ingredient=${ingredient}`;
         break;
       case "mealtype":
-        url = `https://localhost:7298/api/Recipe/by-mealtype?mealType=${mealType}`;
+        url = `https://fitgym.com.az/api/Recipe/by-mealtype?mealType=${mealType}`;
         break;
       default:
         return;

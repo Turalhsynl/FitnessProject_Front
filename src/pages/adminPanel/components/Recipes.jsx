@@ -12,7 +12,7 @@ const accessToken = Cookies.get("accessToken");
 
 
   function getRecipes() {
-    fetch('https://localhost:7298/api/Recipe', {
+    fetch('https://fitgym.com.az/api/Recipe', {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
@@ -22,7 +22,7 @@ const accessToken = Cookies.get("accessToken");
   }
 
   function addRecipe() {
-    fetch('https://localhost:7298/api/Recipe/add', {
+    fetch('https://fitgym.com.az/api/Recipe/add', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -36,7 +36,7 @@ const accessToken = Cookies.get("accessToken");
   }
 
   function deleteRecipe(id) {
-    fetch(`https://localhost:7298/api/Recipe/${id}`, {
+    fetch(`https://fitgym.com.az/api/Recipe/${id}`, {
       method: 'DELETE',
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -45,7 +45,7 @@ const accessToken = Cookies.get("accessToken");
   }
 
   function updateRecipe() {
-    fetch(`https://localhost:7298/api/Recipe/${editingRecipe.id}`, {
+    fetch(`https://fitgym.com.az/api/Recipe/${editingRecipe.id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',

@@ -81,7 +81,7 @@ export default function Dashboard() {
         const decodedToken = jwt_decode(accessToken);
         const userId = decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"];
 
-        const response = await fetch(`https://localhost:7298/api/User/GetById?Id=${userId}`, {
+        const response = await fetch(`https://fitgym.com.az/api/User/GetById?Id=${userId}`, {
           headers: { Authorization: `Bearer ${accessToken}` },
         });
 
@@ -101,7 +101,7 @@ export default function Dashboard() {
   useEffect(() => {
     const fetchProfileImage = async () => {
       try {
-        const response = await fetch(`https://localhost:7298/api/File/${user?.profileImageId}`);
+        const response = await fetch(`https://fitgym.com.az/api/File/${user?.profileImageId}`);
         if (!response.ok) throw new Error("Şəkil tapılmadı");
         const data = await response.json();
         setProfileImageUrl(data.url);
@@ -123,7 +123,7 @@ export default function Dashboard() {
 
       const updatedUser = { ...user, [field]: value };
 
-      const response = await fetch("https://localhost:7298/api/User/Update", {
+      const response = await fetch("https://fitgym.com.az/api/User/Update", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -166,7 +166,7 @@ export default function Dashboard() {
         newPassword: newPassword,
       };
 
-      const response = await fetch("https://localhost:7298/api/User/update-password", {
+      const response = await fetch("https://fitgym.com.az/api/User/update-password", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -204,7 +204,7 @@ export default function Dashboard() {
       const accessToken = Cookies.get("accessToken");
       if (!accessToken) return;
   
-      const response = await fetch("https://localhost:7298/api/UserProfile/upload-profile-image", {
+      const response = await fetch("https://fitgym.com.az/api/UserProfile/upload-profile-image", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -231,7 +231,7 @@ export default function Dashboard() {
   
 
   useEffect(() => {
-    fetch(`https://localhost:7298/api/UserProgram/programs-by-user?userId=${userId}`)
+    fetch(`https://fitgym.com.az/api/UserProgram/programs-by-user?userId=${userId}`)
       .then(response => response.json())
       .then(data => {
         if (data.isSuccess) {

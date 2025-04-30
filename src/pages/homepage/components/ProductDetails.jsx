@@ -21,7 +21,7 @@ const ProductDetails = () => {
       return;
     }
 
-    fetch(`https://localhost:7298/api/Cart/get/${userId}`, {
+    fetch(`https://fitgym.com.az/api/Cart/get/${userId}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -56,7 +56,7 @@ const ProductDetails = () => {
     }
 
     try {
-      const response = await fetch(`https://localhost:7298/api/Cart/add-product`, {
+      const response = await fetch(`https://fitgym.com.az/api/Cart/add-product`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

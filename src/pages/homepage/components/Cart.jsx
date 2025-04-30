@@ -31,7 +31,7 @@ const Cart = ({
     if (activeTab === "favorites" && userId && accessToken) {
       setLoadingFavorites(true);
   
-      fetch(`https://localhost:7298/api/Favorite/list/${userId}`, {
+      fetch(`https://fitgym.com.az/api/Favorite/list/${userId}`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
           "Content-Type": "application/json",

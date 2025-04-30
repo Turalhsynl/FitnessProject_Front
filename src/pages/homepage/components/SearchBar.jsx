@@ -106,7 +106,7 @@ const SearchBar = ({ accessToken }) => {
   const fetchResults = useCallback(async (query) => {
     if (query.length > 2) {
       try {
-        const response = await fetch(`https://localhost:7298/api/Product/search?text=${query}`, {
+        const response = await fetch(`https://fitgym.com.az/api/Product/search?text=${query}`, {
           method: 'GET',
           headers: {
             'Authorization': `Bearer ${accessToken}`,

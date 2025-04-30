@@ -19,7 +19,7 @@ export default function Products() {
   const accessToken = Cookies.get("accessToken");
 
   function getProducts() {
-    fetch('https://localhost:7298/api/Product/GetAll', {
+    fetch('https://fitgym.com.az/api/Product/GetAll', {
       method: 'GET',
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -37,7 +37,7 @@ export default function Products() {
     formData.append('ProductImage', image);
     formData.append('ProductId', productId);
   
-    const response = await fetch('https://localhost:7298/api/ProductImage/upload-image', {
+    const response = await fetch('https://fitgym.com.az/api/ProductImage/upload-image', {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -69,7 +69,7 @@ export default function Products() {
             imageId: imageId,
           };
 
-          fetch('https://localhost:7298/api/Product/Add', {
+          fetch('https://fitgym.com.az/api/Product/Add', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -94,7 +94,7 @@ export default function Products() {
         categoryId: parseInt(newProduct.categoryId),
       };
 
-      fetch('https://localhost:7298/api/Product/Add', {
+      fetch('https://fitgym.com.az/api/Product/Add', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -122,7 +122,7 @@ export default function Products() {
         imageUrl: "",
       };
   
-      const response = await fetch('https://localhost:7298/api/Product/Update', {
+      const response = await fetch('https://fitgym.com.az/api/Product/Update', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -148,7 +148,7 @@ export default function Products() {
   }
 
   function deleteProduct(id) {
-    fetch(`https://localhost:7298/api/Product/Delete?id=${id}`, {
+    fetch(`https://fitgym.com.az/api/Product/Delete?id=${id}`, {
       method: 'DELETE',
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -161,7 +161,7 @@ export default function Products() {
     for (const product of products) {
       if (product.imageId) {
         try {
-          const response = await fetch(`https://localhost:7298/api/File/${product.imageId}`);
+          const response = await fetch(`https://fitgym.com.az/api/File/${product.imageId}`);
           if (response.ok) {
             const data = await response.json();
             urls[product.id] = data.url;
