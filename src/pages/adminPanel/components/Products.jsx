@@ -32,22 +32,28 @@ export default function Products() {
       });
   }
 
-  function uploadImage(image) {
+  async function uploadProductImage(productId, image) {
     const formData = new FormData();
-    formData.append('image', image);
-
-    return fetch('https://localhost:7298/api/ProductImage/upload-image', {
+    formData.append('ProductImage', image);
+    formData.append('ProductId', productId);
+  
+    const response = await fetch('https://localhost:7298/api/ProductImage/upload-image', {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
       body: formData,
-    })
-      .then(res => res.json())
-      .then(data => {
-        return data.imageId; // <-- YALNIZ imageId qaytarırıq
-      });
+    });
+  
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("Image upload failed:", errorText);
+      throw new Error('Image upload failed');
+    }
+  
+    return await response.json();
   }
+  
 
   function addProduct() {
     if (newProduct.image) {
@@ -60,7 +66,7 @@ export default function Products() {
             price: parseFloat(newProduct.price),
             color: parseInt(newProduct.color),
             categoryId: parseInt(newProduct.categoryId),
-            imageId: imageId, // <-- imageId əlavə olunur
+            imageId: imageId,
           };
 
           fetch('https://localhost:7298/api/Product/Add', {
@@ -102,61 +108,42 @@ export default function Products() {
     }
   }
 
-  function updateProduct() {
-    if (editingProduct.image instanceof File) {
-      uploadImage(editingProduct.image)
-        .then(imageId => {
-          const updatedProduct = {
-            id: editingProduct.id,
-            name: editingProduct.name,
-            quantity: parseInt(editingProduct.quantity),
-            description: editingProduct.description,
-            price: parseFloat(editingProduct.price),
-            imageUrl:editingProduct.imageUrl,
-            color: parseInt(editingProduct.color),
-            categoryId: parseInt(editingProduct.categoryId),
-            imageId: imageId, // <-- yeni imageId əlavə olunur
-          };
-
-          fetch('https://localhost:7298/api/Product/Update', {
-            method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${accessToken}`,
-            },
-            body: JSON.stringify(updatedProduct),
-          }).then(() => {
-            setEditingProduct(null);
-            getProducts();
-          });
-        })
-        .catch(error => {
-          console.error('Image upload failed:', error);
-        });
-    } else {
+  async function updateProduct() {
+    try {
       const updatedProduct = {
         id: editingProduct.id,
         name: editingProduct.name,
         quantity: parseInt(editingProduct.quantity),
         description: editingProduct.description,
         price: parseFloat(editingProduct.price),
-        imageUrl:editingProduct.imageUrl,
         color: parseInt(editingProduct.color),
         categoryId: parseInt(editingProduct.categoryId),
-        imageId: editingProduct.imageId, // <-- mövcud imageId qalır
+        imageId: editingProduct.imageId || 0,
+        imageUrl: "",
       };
-
-      fetch('https://localhost:7298/api/Product/Update', {
+  
+      const response = await fetch('https://localhost:7298/api/Product/Update', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${accessToken}`,
         },
         body: JSON.stringify(updatedProduct),
-      }).then(() => {
-        setEditingProduct(null);
-        getProducts();
       });
+  
+      if (!response.ok) {
+        throw new Error("Product update failed");
+      }
+  
+      if (editingProduct.image instanceof File) {
+        const uploadResult = await uploadProductImage(editingProduct.id, editingProduct.image);
+  
+      }
+  
+      setEditingProduct(null);
+      getProducts();
+    } catch (error) {
+      console.error('Product update failed:', error);
     }
   }
 

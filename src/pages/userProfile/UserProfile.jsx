@@ -12,7 +12,7 @@ import Categories from '../adminPanel/components/Categories';
 function EditableCard({ label, value, color, onChange }) {
   const [isEditing, setIsEditing] = useState(false);
   const [tempValue, setTempValue] = useState(value);
-  
+
 
   useEffect(() => {
     setTempValue(value);
@@ -50,12 +50,6 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [selectedItem, setSelectedItem] = useState("Profil");
   const isAdmin = user?.userRole === 1;
-  // const sidebarItems = [
-  //   "Profil", "Məşq Planı", "Nailiyyətlər", "Qidalanma",
-  //   "İstatistikalar", "Qrafik", "Mesajlar", "Şifrəni dəyiş"
-  // ];
-
-
 
   const sidebarItems = [
     "Profil",
@@ -156,7 +150,7 @@ export default function Dashboard() {
 
   const handlePasswordChange = async (e) => {
     e.preventDefault();
-  
+
     if (newPassword !== confirmPassword) {
       toast.error("Yeni şifrələr uyğun gəlmir ❌");
       return;
@@ -165,13 +159,13 @@ export default function Dashboard() {
     try {
       const accessToken = Cookies.get("accessToken");
       if (!accessToken || !user?.id) return;
-  
+
       const payload = {
         userId: userId,
         currentPassword: oldPassword,
         newPassword: newPassword,
       };
-  
+
       const response = await fetch("https://localhost:7298/api/User/update-password", {
         method: "PUT",
         headers: {
@@ -180,7 +174,7 @@ export default function Dashboard() {
         },
         body: JSON.stringify(payload),
       });
-  
+
       const result = await response.json();
       if (result.isSuccess) {
         toast.success("Şifrə uğurla dəyişdirildi ✅");
@@ -196,8 +190,47 @@ export default function Dashboard() {
     }
   };
 
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) {
+      toast.error("Şəkil seçilmədi ❌");
+      return;
+    }
+  
+    const formData = new FormData();
+    formData.append("ProfileImage", file);
+  
+    try {
+      const accessToken = Cookies.get("accessToken");
+      if (!accessToken) return;
+  
+      const response = await fetch("https://localhost:7298/api/UserProfile/upload-profile-image", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: formData,
+      });
+  
+      const data = await response.json();
+      if (data.isSuccess) {
+        setProfileImageUrl(data.imageUrl);
+        toast.success("Şəkil uğurla yeniləndi ✅");
+        
+        setUser({ ...user, profileImageId: data.profileImageId });
+  
+      } else {
+        toast.error("Şəkil yüklənə bilmədi ❌");
+      }
+    } catch (error) {
+      console.error("Şəkil yükləmə xətası:", error);
+      toast.error("Şəkil yüklənərkən xəta baş verdi ❌");
+    }
+  };
+  
+  
+
   useEffect(() => {
-    // API-yə sorğu göndəririk
     fetch(`https://localhost:7298/api/UserProgram/programs-by-user?userId=${userId}`)
       .then(response => response.json())
       .then(data => {
@@ -234,17 +267,36 @@ export default function Dashboard() {
           </ul>
         </div>
         <div className="flex-1 p-6">
-          <div className="bg-[#E8E6FF] rounded-xl p-4 md:p-6 flex flex-col md:flex-row items-center justify-between mb-6 gap-4">
-            <div>
-              <h2 className="text-2xl font-bold mb-1">Salam, {user.firstname}!</h2>
-              <p className="text-sm text-gray-600">Bugünkü hədəflərə hazırsanmı?</p>
-            </div>
-            <img
-              src={profileImageUrl || "https://cdn-icons-png.flaticon.com/512/149/149071.png"}
-              alt="Profil şəkli"
-              className="w-20 h-20 rounded-full border-4 border-white shadow-md"
-            />
-          </div>
+        <div className="bg-[#E8E6FF] rounded-xl p-4 md:p-6 flex flex-col md:flex-row items-center justify-between mb-6 gap-4">
+  <div>
+    <h2 className="text-2xl font-bold mb-1">Salam, {user.firstname}!</h2>
+    <p className="text-sm text-gray-600">Bugünkü hədəflərə hazırsanmı?</p>
+  </div>
+  <div className="relative w-20 h-20">
+    <img
+      src={profileImageUrl || "https://cdn-icons-png.flaticon.com/512/149/149071.png"}
+      alt="Profil şəkli"
+      className="w-20 h-20 rounded-full border-4 border-white shadow-md object-cover"
+    />
+    <label className="absolute bottom-0 right-0 bg-white p-1 rounded-full shadow cursor-pointer">
+      <input
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={handleImageUpload}
+      />
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="h-4 w-4 text-black"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536M9 13l3 3L20.485 7.515a2.121 2.121 0 00-3-3L9 13z" />
+      </svg>
+    </label>
+  </div>
+</div>
           {selectedItem === "Profil" && (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
               <EditableCard label="Name" value={user.firstname} color="bg-yellow-300" onChange={(val) => updateUserField("firstname", val)} />
@@ -295,73 +347,73 @@ export default function Dashboard() {
           )}
 
 
-{selectedItem === "Product CRUD" && isAdmin && (
-  <div className="bg-white p-6 rounded-xl shadow-md">
-    <h2 className="text-xl font-bold mb-4">Product CRUD</h2>
-    <p>Burada məhsulların idarə olunması olacaq.</p>
-    <Products />
+          {selectedItem === "Product CRUD" && isAdmin && (
+            <div className="bg-white p-6 rounded-xl shadow-md">
+              <h2 className="text-xl font-bold mb-4">Product CRUD</h2>
+              <p>Burada məhsulların idarə olunması olacaq.</p>
+              <Products />
 
-  </div>
-)}
+            </div>
+          )}
 
-{selectedItem === "User CRUD" && isAdmin && (
-  <div className="bg-white p-6 rounded-xl shadow-md">
-    <h2 className="text-xl font-bold mb-4">User CRUD</h2>
-    <p>Burada istifadəçilərin idarə olunması olacaq.</p>
-    <Users />
-  </div>
-)}
+          {selectedItem === "User CRUD" && isAdmin && (
+            <div className="bg-white p-6 rounded-xl shadow-md">
+              <h2 className="text-xl font-bold mb-4">User CRUD</h2>
+              <p>Burada istifadəçilərin idarə olunması olacaq.</p>
+              <Users />
+            </div>
+          )}
 
-{selectedItem === "Recipes CRUD" && isAdmin && (
-  <div className="bg-white p-6 rounded-xl shadow-md">
-    <h2 className="text-xl font-bold mb-4">Recipes CRUD</h2>
-    <p>Burada reseptlərin idarə olunması olacaq.</p>
-    <Recipes />
-  </div>
-)}
+          {selectedItem === "Recipes CRUD" && isAdmin && (
+            <div className="bg-white p-6 rounded-xl shadow-md">
+              <h2 className="text-xl font-bold mb-4">Recipes CRUD</h2>
+              <p>Burada reseptlərin idarə olunması olacaq.</p>
+              <Recipes />
+            </div>
+          )}
 
-{selectedItem === "Categories CRUD" && isAdmin && (
-  <div className="bg-white p-6 rounded-xl shadow-md">
-    <h2 className="text-xl font-bold mb-4">Categories CRUD</h2>
-    <p>Burada kateqoriyaların idarə olunması olacaq.</p>
-    <Categories />
-  </div>
-)}
+          {selectedItem === "Categories CRUD" && isAdmin && (
+            <div className="bg-white p-6 rounded-xl shadow-md">
+              <h2 className="text-xl font-bold mb-4">Categories CRUD</h2>
+              <p>Burada kateqoriyaların idarə olunması olacaq.</p>
+              <Categories />
+            </div>
+          )}
 
           <div className="mt-10 max-w-7xl mx-auto px-4">
-      <h3 className="text-3xl font-bold text-center text-gray-800 mb-8">Proqramlarım</h3>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-        {programs.map((program, i) => (
-          <div
-            key={i}
-            className="bg-white hover:shadow-xl transition-shadow duration-300 p-6 rounded-2xl border border-gray-200 flex flex-col justify-between"
-          >
-            <img
-              src={program.imageUrl}
-              alt={program.name}
-              className="w-full h-40 object-cover rounded-xl mb-4"
-            />
-            <h4 className="text-xl font-semibold mb-2 text-gray-800">{program.name}</h4>
-            <p className="text-gray-600 text-sm mb-3 line-clamp-3">{program.description}</p>
-            <div className="flex justify-between text-sm text-gray-500 mb-4">
-              <span>Çətinlik: {program.level}</span>
-              <span>Müddət: {program.durationInWeeks} həftə</span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-lg font-bold text-indigo-600">${program.price}</span>
-              <button
-                onClick={() =>
-                  navigate(`/program-details/${program.id}`, { state: { program } })
-                }
-                className="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded-full text-sm transition duration-200"
-              >
-                Proqramı İzlə
-              </button>
+            <h3 className="text-3xl font-bold text-center text-gray-800 mb-8">Proqramlarım</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+              {programs.map((program, i) => (
+                <div
+                  key={i}
+                  className="bg-white hover:shadow-xl transition-shadow duration-300 p-6 rounded-2xl border border-gray-200 flex flex-col justify-between"
+                >
+                  <img
+                    src={program.imageUrl}
+                    alt={program.name}
+                    className="w-full h-40 object-cover rounded-xl mb-4"
+                  />
+                  <h4 className="text-xl font-semibold mb-2 text-gray-800">{program.name}</h4>
+                  <p className="text-gray-600 text-sm mb-3 line-clamp-3">{program.description}</p>
+                  <div className="flex justify-between text-sm text-gray-500 mb-4">
+                    <span>Çətinlik: {program.level}</span>
+                    <span>Müddət: {program.durationInWeeks} həftə</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-lg font-bold text-indigo-600">${program.price}</span>
+                    <button
+                      onClick={() =>
+                        navigate(`/program-details/${program.id}`, { state: { program } })
+                      }
+                      className="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded-full text-sm transition duration-200"
+                    >
+                      Proqramı İzlə
+                    </button>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
-        ))}
-      </div>
-    </div>
         </div>
       </div>
     </div>
