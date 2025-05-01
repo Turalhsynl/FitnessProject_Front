@@ -43,7 +43,7 @@ const Header = () => {
         const userId = decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"];
         const fetchUserData = async () => {
           try {
-            const response = await fetch(`https://fitgym.com.az/api/User/GetById?Id=${userId}`, {
+            const response = await fetch(`https://localhost:7298/api/User/GetById?Id=${userId}`, {
               method: "GET",
               headers: {
                 "Authorization": `Bearer ${accessToken}`,
@@ -86,7 +86,7 @@ const Header = () => {
   
       const fetchCartId = async () => {
         try {
-          const response = await fetch(`https://fitgym.com.az/api/Cart/get/${userId}`, {
+          const response = await fetch(`https://localhost:7298/api/Cart/get/${userId}`, {
             method: 'GET',
             headers: {
               'Authorization': `Bearer ${accessToken}`,
@@ -103,7 +103,7 @@ const Header = () => {
           if (cartId) {
             const fetchCartData = async () => {
               try {
-                const cartResponse = await fetch(`https://fitgym.com.az/api/Cart/${cartId}`, {
+                const cartResponse = await fetch(`https://localhost:7298/api/Cart/${cartId}`, {
                   method: 'GET',
                   headers: {
                     'Authorization': `Bearer ${accessToken}`,
@@ -151,7 +151,7 @@ const Header = () => {
     const productPrice = productToRemove.product.price;
     const productQuantity = productToRemove.quantity;
   
-    fetch(`https://fitgym.com.az/api/Cart/remove-product/${cart.id}/${productId}`, {
+    fetch(`https://localhost:7298/api/Cart/remove-product/${cart.id}/${productId}`, {
       method: 'DELETE',
       headers: {
         'Authorization': `Bearer ${accessToken}`,

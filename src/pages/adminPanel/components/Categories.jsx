@@ -13,7 +13,7 @@ export default function Categories() {
   const accessToken = Cookies.get('accessToken');
 
   function getCategories() {
-    fetch('https://fitgym.com.az/api/Category/GetAllCategory', {
+    fetch('https://localhost:7298/api/Category/GetAllCategory', {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
@@ -23,7 +23,7 @@ export default function Categories() {
   }
 
   function addCategory() {
-    fetch('https://fitgym.com.az/api/Category/CreateCategory', {
+    fetch('https://localhost:7298/api/Category/CreateCategory', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -37,7 +37,7 @@ export default function Categories() {
   }
 
   function deleteCategory(id) {
-    fetch(`https://fitgym.com.az/api/Category/${id}?deletedBy=${id}`, {
+    fetch(`https://localhost:7298/api/Category/${id}?deletedBy=${id}`, {
       method: 'DELETE',
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -46,7 +46,7 @@ export default function Categories() {
   }
 
   function updateCategory() {
-    fetch(`https://fitgym.com.az/api/Category/UpdateCategory`, {
+    fetch(`https://localhost:7298/api/Category/UpdateCategory`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',

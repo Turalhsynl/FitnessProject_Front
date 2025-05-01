@@ -858,7 +858,7 @@ export default function Chat() {
 
       try {
         const res = await fetch(
-          `https://fitgym.com.az/api/chat/conversation?user1Id=${userId}&user2Id=${receiverId}`,
+          `https://localhost:7298/api/chat/conversation?user1Id=${userId}&user2Id=${receiverId}`,
           {
             method: "GET",
             headers: {
@@ -887,7 +887,7 @@ export default function Chat() {
     if (!accessToken || !userId) return;
 
     const connect = new signalR.HubConnectionBuilder()
-      .withUrl(`https://fitgym.com.az/chathub?userId=${userId}`, {
+      .withUrl(`https://localhost:7298/chathub?userId=${userId}`, {
         accessTokenFactory: () => accessToken,
       })
       .withAutomaticReconnect()
@@ -968,8 +968,8 @@ export default function Chat() {
 
       const data = await res.json();
 
-      if (res.ok && data.Response) {
-        return data.Response;
+      if (res.ok && data.response) {
+        return data.response;
       } else {
         throw new Error("AI response error");
       }

@@ -104,7 +104,7 @@ const AllClassesSection = () => {
   };
 
   useEffect(() => {
-    fetch("https://fitgym.com.az/api/FitnessProgram/GetAll", {
+    fetch("https://localhost:7298/api/FitnessProgram/GetAll", {
       headers: {
         Authorization: `Bearer ${accessToken}`
       }

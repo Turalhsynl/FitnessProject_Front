@@ -24,7 +24,7 @@ export default function Checkout() {
 
   useEffect(() => {
     if (!userId) return;
-    fetch(`https://fitgym.com.az/api/Cart/get/${userId}`, {
+    fetch(`https://localhost:7298/api/Cart/get/${userId}`, {
       method: "GET",
       headers: {
         "Authorization": `Bearer ${accessToken}`,
@@ -68,7 +68,7 @@ export default function Checkout() {
     setIsPlacingOrder(true);
   
     try {
-      const createPaymentResponse = await fetch(`https://fitgym.com.az/api/Stripe/create-payment`, {
+      const createPaymentResponse = await fetch(`https://localhost:7298/api/Stripe/create-payment`, {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${accessToken}`,
@@ -87,7 +87,7 @@ export default function Checkout() {
       const createPaymentData = await createPaymentResponse.json();
       const paymentIntentId = createPaymentData.paymentIntentId;
   
-      const confirmPaymentResponse = await fetch(`https://fitgym.com.az/api/Stripe/confirm-payment`, {
+      const confirmPaymentResponse = await fetch(`https://localhost:7298/api/Stripe/confirm-payment`, {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${accessToken}`,
@@ -108,7 +108,7 @@ export default function Checkout() {
       if (confirmPaymentData.status === "Payment successful") {
         toast.success("Payment successful!");
   
-        const createOrderResponse = await fetch(`https://fitgym.com.az/api/Order`, {
+        const createOrderResponse = await fetch(`https://localhost:7298/api/Order`, {
           method: "POST",
           headers: {
             "Authorization": `Bearer ${accessToken}`,

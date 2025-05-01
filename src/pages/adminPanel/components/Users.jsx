@@ -14,7 +14,7 @@ export default function Users() {
   const userId = decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"];
 
   const getUsers = () => {
-    fetch('https://fitgym.com.az/api/User/GetAll', {
+    fetch('https://localhost:7298/api/User/GetAll', {
       method: 'GET',
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -32,7 +32,7 @@ export default function Users() {
   }, [accessToken]);
 
   const addUser = () => {
-    fetch('https://fitgym.com.az/api/User/Register', {
+    fetch('https://localhost:7298/api/User/Register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(newUser),
@@ -45,7 +45,7 @@ export default function Users() {
   };
 
   const deleteUser = (id) => {
-    fetch(`https://fitgym.com.az/api/User/Delete?id=${id}`, {
+    fetch(`https://localhost:7298/api/User/Delete?id=${id}`, {
       method: 'DELETE',
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -56,7 +56,7 @@ export default function Users() {
   };
 
   const updateUser = () => {
-    fetch('https://fitgym.com.az/api/User/Update', {
+    fetch('https://localhost:7298/api/User/Update', {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${accessToken}` },
       body: JSON.stringify(editingUser),

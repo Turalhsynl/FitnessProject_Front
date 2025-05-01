@@ -12,7 +12,7 @@ const ProfileDropdown = ({ userData, setUserData }) => {
     const fetchProfileImage = async () => {
       try {
         const response = await fetch(
-          `https://fitgym.com.az/api/File/${userData?.profileImageId}`
+          `https://localhost:7298/api/File/${userData?.profileImageId}`
         );
         if (!response.ok) throw new Error("Şəkil tapılmadı");
 
