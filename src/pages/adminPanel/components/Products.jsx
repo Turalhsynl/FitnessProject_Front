@@ -3,7 +3,7 @@ import Cookies from 'js-cookie';
 
 export default function Products() {
   const [products, setProducts] = useState([]);
-  const [newProduct, setNewProduct] = useState({ name: '', quantity: '', description: '', price: '', image: null, color: '', categoryId: '' });
+  const [newProduct, setNewProduct] = useState({ name: '', quantity: '', description: '', price: '', color: '', categoryId: '' });
   const [editingProduct, setEditingProduct] = useState(null);
   const [imageUrls, setImageUrls] = useState({});
 
@@ -54,59 +54,56 @@ export default function Products() {
     return await response.json();
   }
   
-
   function addProduct() {
-    if (newProduct.image) {
-      uploadImage(newProduct.image)
-        .then(imageId => {
-          const productData = {
-            name: newProduct.name,
-            quantity: parseInt(newProduct.quantity),
-            description: newProduct.description,
-            price: parseFloat(newProduct.price),
-            color: parseInt(newProduct.color),
-            categoryId: parseInt(newProduct.categoryId),
-            imageId: imageId,
-          };
-
-          fetch('https://localhost:7298/api/Product/Add', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${accessToken}`,
-            },
-            body: JSON.stringify(productData),
-          }).then(() => {
-            setNewProduct({ name: '', quantity: '', description: '', price: '', image: null, color: '', categoryId: '' });
-            getProducts();
-          });
-        })
-        .catch(error => {
-          console.error('Image upload failed:', error);
-        });
-    } else {
-      const productData = {
-        name: newProduct.name,
-        quantity: parseInt(newProduct.quantity),
-        description: newProduct.description,
-        price: parseFloat(newProduct.price),
-        color: parseInt(newProduct.color),
-        categoryId: parseInt(newProduct.categoryId),
-      };
-
-      fetch('https://localhost:7298/api/Product/Add', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${accessToken}`,
-        },
-        body: JSON.stringify(productData),
-      }).then(() => {
-        setNewProduct({ name: '', quantity: '', description: '', price: '', image: null, color: '', categoryId: '' });
+    const productData = {
+      name: newProduct.name,
+      quantity: parseInt(newProduct.quantity),
+      description: newProduct.description,
+      price: parseFloat(newProduct.price),
+      imageUrl: "string", // Formal olaraq
+      color: parseInt(newProduct.color),
+      categoryId: parseInt(newProduct.categoryId),
+    };
+  
+    fetch('https://localhost:7298/api/Product/Add', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify(productData),
+    })
+      .then(() => {
+        // məhsullar yenidən yüklənir
         getProducts();
-      });
-    }
+  
+        // şəkil varsa, məhsul ID tapılmalıdır (ən sonuncunu götürək)
+        if (newProduct.image) {
+          setTimeout(() => {
+            // Ən son məhsulu tapmaq üçün 500ms sonra products state-dən götürmək
+            fetch('https://localhost:7298/api/Product/GetAll', {
+              method: 'GET',
+              headers: {
+                Authorization: `Bearer ${accessToken}`,
+              },
+            })
+              .then(res => res.json())
+              .then(allProducts => {
+                const lastProduct = allProducts[allProducts.length - 1];
+                if (lastProduct && lastProduct.id) {
+                  uploadProductImage(lastProduct.id, newProduct.image)
+                    .then(() => getProducts())
+                    .catch(err => console.error("Şəkil yüklənmədi:", err));
+                }
+              });
+          }, 500);
+        }
+  
+        setNewProduct({ name: '', quantity: '', description: '', price: '', image: null, color: '', categoryId: '' });
+      })
+      .catch(err => console.error("Məhsul əlavə olunmadı:", err));
   }
+  
 
   async function updateProduct() {
     try {
