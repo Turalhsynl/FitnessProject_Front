@@ -14,6 +14,7 @@ const Cart = ({
   const [activeTab, setActiveTab] = useState("cart");
   const [favorites, setFavorites] = useState([]);
   const [loadingFavorites, setLoadingFavorites] = useState(false);
+  const [productImages, setProductImages] = useState({}); // productId => url xəritəsi
 
   const accessToken = Cookies.get("accessToken");
   let userId = null;
@@ -53,11 +54,58 @@ const Cart = ({
         });
     }
   }, [activeTab, userId, accessToken]);
-  
 
+  useEffect(() => {
+    const fetchImages = async () => {
+      const newImages = {};
+
+      // cartItems üçün şəkil yüklənməsi
+      await Promise.all(
+        cartItems.map(async (item) => {
+          const imageId = item.product?.imageId;
+          if (!imageId) return;
+
+          try {
+            const res = await fetch(`https://localhost:7298/api/File/${imageId}`);
+            if (res.ok) {
+              const data = await res.json();
+              newImages[item.product.id] = data.url;
+            }
+          } catch (err) {
+            console.error(`Şəkil yüklənərkən xəta baş verdi:`, err);
+          }
+        })
+      );
+
+      // favorites üçün şəkil yüklənməsi
+      if (activeTab === "favorites") {
+        await Promise.all(
+          favorites.map(async (item) => {
+            const imageId = item.product?.imageId;
+            if (!imageId) return;
+
+            try {
+              const res = await fetch(`https://localhost:7298/api/File/${imageId}`);
+              if (res.ok) {
+                const data = await res.json();
+                newImages[item.product.id] = data.url;
+              }
+            } catch (err) {
+              console.error(`Şəkil yüklənərkən xəta baş verdi:`, err);
+            }
+          })
+        );
+      }
+
+      setProductImages(newImages);
+    };
+
+    if (cartItems.length > 0 || favorites.length > 0) {
+      fetchImages();
+    }
+  }, [cartItems, favorites, activeTab]);
 
   return (
-    
     <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black/70 z-50">
       <div className="fixed top-0 right-0 w-full md:w-[400px] h-full bg-white shadow-lg z-50 transition-transform transform translate-x-0">
         <div className="flex flex-col h-full">
@@ -109,7 +157,7 @@ const Cart = ({
                 {cartItems.map((item, index) => (
                   <div key={index} className="flex items-center justify-between border-b pb-4">
                     <img
-                      src={item.product.imageUrl}
+                      src={productImages[item.product.id]}  // burada şəkil çəkiləcək
                       alt={item.productName}
                       className="w-32 h-38 rounded cursor-pointer"
                     />
@@ -142,7 +190,11 @@ const Cart = ({
               ) : (
                 favorites.map((item, index) => (
                   <div key={index} className="flex items-center justify-between border-b pb-4">
-                    <img src={item.product.imageUrl} alt={item.product.name} className="w-24 h-24 rounded" />
+                    <img
+                      src={productImages[item.product.id]}  // burada şəkil çəkiləcək
+                      alt={item.product.name}
+                      className="w-24 h-24 rounded"
+                    />
                     <div className="flex-1 ml-4">
                       <p className="font-medium text-gray-700">{item.product.name}</p>
                       <p className="text-gray-500 text-sm">{item.product.description}</p>
