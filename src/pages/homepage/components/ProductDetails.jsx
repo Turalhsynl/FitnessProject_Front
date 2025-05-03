@@ -163,22 +163,11 @@ const ProductDetails = () => {
                 <button onClick={() => setIsModalOpen(false)} className="text-3xl cursor-pointer">&times;</button>
               </div>
               <div className="p-6 flex-1 overflow-y-auto">
-                <h2 className="font-bold">WAKE AND SHAKE</h2>
+                <h2 className="font-bold">{product.name}</h2>
                 <p>
-                  Shake, shred and succeed. The ideal shaker bottle for pre-workouts, post-workouts and hydrating in between.
-                  Take advantage of the content measurements to keep track of your hydration throughout your fitness transformation.
-                  Complete with a metal mixer ball for the perfect blend.
+                  {product.description}
                 </p>
-                <p className="font-bold">Note:</p>
-                <p>For hygiene reasons, all our bottles and shakers are non-refundable.</p>
-                <ul className="list-disc pl-5">
-                  <li>14oz protein shaker</li>
-                  <li>Not dishwasher safe</li>
-                  <li>Do not microwave</li>
-                  <li>Material: polypropylene & polyethylene</li>
-                  <li>Shaker size: 3.3in x 7.2in</li>
-                  <li>SKU: I13A3A-BBBB</li>
-                </ul>
+                
               </div>
             </div>
           </div>
