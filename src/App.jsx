@@ -21,6 +21,7 @@ import FitnessProgram from "./pages/programsPage/FitnessProgram"
 import ProgramDetails from "./pages/programsPage/components/ProgramDetail.JSX";
 import AboutUs from "./pages/aboutUs/AboutUs";
 import CheckoutPage from "./pages/checkout/Checkout";
+import SelectCoach from "./pages/membershippage/SelectCoach";
 
 
 const App = () => {
@@ -45,6 +46,7 @@ const App = () => {
         <Route path="/program-details/:id" element={<ProgramDetails />} />
         <Route path="/aboutUs" element={<AboutUs />} />
         <Route path="/checkout" element={<CheckoutPage />} />
+        <Route path="/select-coach" element={<SelectCoach />} />
       </Routes>
       <Footer />
     </Router>

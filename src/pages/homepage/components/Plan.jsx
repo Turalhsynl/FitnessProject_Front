@@ -1,57 +1,31 @@
 import React, { useState, useEffect } from "react";
-
-
-// import React, { useState, useEffect } from "react";
-
-// const MembershipPlans = () => {
-//   const [plans, setPlans] = useState([]);
-//   const [selectedPlan, setSelectedPlan] = useState(null);
-
-//   useEffect(() => {
-//     // Fetching data from backend (replace with actual API URL)
-//     fetch("/api/membership-plans")
-//       .then((response) => response.json())
-//       .then((data) => {
-//         setPlans(data);
-//         setSelectedPlan(data[0]?.id); // Default selection
-//       })
-//       .catch((error) => console.error("Error fetching plans:", error));
-//   }, []);
-
-
+import { useNavigate } from "react-router-dom";
 
 
 const Plan = () => {
   const [plans, setPlans] = useState([]);
   const [selectedPlan, setSelectedPlan] = useState(null);
 
+  const navigate = useNavigate();
+
   useEffect(() => {
-    const mockData = [
-      {
-        id: 1,
-        name: "One Year Plan",
-        description: "No Term, plus free access card. $39 joining fee included, 1-month guest pass, and free 2 PT classes. Free access to all equipment and the swimming pool.",
-        price: 299,
-        duration: "Year"
-      },
-      {
-        id: 2,
-        name: "One Month Plan",
-        description: "Access to all gym facilities for one month.",
-        price: 29,
-        duration: "Month"
-      },
-      {
-        id: 3,
-        name: "One Week Plan",
-        description: "Access to all gym facilities for one week.",
-        price: 15,
-        duration: "Week"
+    const fetchPlans = async () => {
+      try {
+        const response = await fetch("https://localhost:7298/api/MembershipPlan");
+        const result = await response.json();
+
+        if (result.isSuccess && Array.isArray(result.data)) {
+          setPlans(result.data);
+          setSelectedPlan(result.data[0]?.id);
+        } else {
+          console.error("API returned error or invalid data");
+        }
+      } catch (error) {
+        console.error("Failed to fetch plans:", error);
       }
-    ];
-    
-    setPlans(mockData);
-    setSelectedPlan(mockData[0]?.id);
+    };
+
+    fetchPlans();
   }, []);
 
   return (
@@ -63,31 +37,39 @@ const Plan = () => {
           {plans.map((plan) => (
             <div
               key={plan.id}
-              className={`p-6 rounded-lg cursor-pointer border ${
-                selectedPlan === plan.id ? "border-purple-500" : "border-gray-700"
-              } bg-gray-900 flex justify-between items-center`}
+              className={`p-6 rounded-lg cursor-pointer border ${selectedPlan === plan.id ? "border-purple-500" : "border-gray-700"
+                } bg-gray-900 flex justify-between items-center`}
               onClick={() => setSelectedPlan(plan.id)}
             >
               <div className="flex items-center space-x-4">
                 <div
-                  className={`w-4 h-4 rounded-full border ${
-                    selectedPlan === plan.id ? "bg-purple-500 border-purple-500" : "border-gray-500"
-                  }`}
+                  className={`w-4 h-4 rounded-full border ${selectedPlan === plan.id ? "bg-purple-500 border-purple-500" : "border-gray-500"
+                    }`}
                 />
                 <div>
                   <p className="text-white font-semibold">{plan.name}</p>
-                  <p className="text-gray-400 text-sm">{plan.description}</p>
+                  <p className="text-gray-400 text-sm">
+                    Access to {plan.maxProgramsAllowed} program{plan.maxProgramsAllowed > 1 ? "s" : ""}
+                  </p>
                 </div>
               </div>
-              <p className="text-white font-bold">${plan.price} / {plan.duration}</p>
+              <p className="text-white font-bold">${plan.price} / Month</p>
             </div>
           ))}
         </div>
         <button
-          className="mt-6 bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-semibold w-full md:w-auto"
-        >
-          Next Step →
-        </button>
+  onClick={() =>
+    navigate("/select-coach", {
+      state: {
+        selectedPlanId: selectedPlan,
+        maxProgramsAllowed: plans.find((p) => p.id === selectedPlan)?.maxProgramsAllowed || 1,
+      },
+    })
+  }
+  className="mt-6 bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-semibold w-full md:w-auto"
+>
+  Next Step →
+</button>
       </div>
     </div>
   );
