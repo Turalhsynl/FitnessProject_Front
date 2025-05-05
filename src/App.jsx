@@ -22,7 +22,7 @@ import ProgramDetails from "./pages/programsPage/components/ProgramDetail.JSX";
 import AboutUs from "./pages/aboutUs/AboutUs";
 import CheckoutPage from "./pages/checkout/Checkout";
 import SelectCoach from "./pages/membershippage/SelectCoach";
-
+import CoachDetail from "./pages/membershippage/CoachDetail";
 
 const App = () => {
   const { accessToken } = useStore(useAuthStore);
@@ -47,6 +47,8 @@ const App = () => {
         <Route path="/aboutUs" element={<AboutUs />} />
         <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/select-coach" element={<SelectCoach />} />
+        <Route path="/coach/:id" element={<CoachDetail />} />
+
       </Routes>
       <Footer />
     </Router>
