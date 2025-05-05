@@ -32,37 +32,37 @@ const Shop = () => {
   const decodedToken = jwt_decode(accessToken);
   const userId = decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"];
 
-///
-useEffect(() => {
-  const fetchAllImages = async () => {
-    const updatedImages = {};
+  ///
+  useEffect(() => {
+    const fetchAllImages = async () => {
+      const updatedImages = {};
 
-    await Promise.all(
-      products.map(async (product) => {
-        if (!product.imageId) return;
+      await Promise.all(
+        products.map(async (product) => {
+          if (!product.imageId) return;
 
-        try {
-          const res = await fetch(`https://localhost:7298/api/File/${product.imageId}`);
-          if (!res.ok) throw new Error("Şəkil tapılmadı");
+          try {
+            const res = await fetch(`https://localhost:7298/api/File/${product.imageId}`);
+            if (!res.ok) throw new Error("Şəkil tapılmadı");
 
-          const data = await res.json();
+            const data = await res.json();
 
-          updatedImages[product.id] = data.url;
-        } catch (err) {
-          console.error("Şəkil yüklənə bilmədi:", err);
-          updatedImages[product.id] = null;
-        }
-      })
-    );
+            updatedImages[product.id] = data.url;
+          } catch (err) {
+            console.error("Şəkil yüklənə bilmədi:", err);
+            updatedImages[product.id] = null;
+          }
+        })
+      );
 
-    setProductImages(updatedImages);
-  };
+      setProductImages(updatedImages);
+    };
 
-  if (products.length > 0) {
-    fetchAllImages();
-  }
-}, [products]);
-///
+    if (products.length > 0) {
+      fetchAllImages();
+    }
+  }, [products]);
+  ///
 
   useEffect(() => {
     if (!accessToken) return;
@@ -108,7 +108,7 @@ useEffect(() => {
       });
   }, [accessToken, userId, pagination.currentPage, selectedCategory, selectedColor]);
 
-  
+
 
   const fetchProducts = (page = 1) => {
     const finalCategoryId = selectedCategory || 0;
@@ -227,31 +227,18 @@ useEffect(() => {
       </header> */}
 
       <div
-      style={{
-        background:
-          "linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(https://max-themes.net/demos/gym/gym/gym/upload/page-title.jpg) no-repeat center",
-        backgroundSize: "",
-      }}
-      className="py-52 bg-cover bg-center h-[610px] px-1 md:px-8 text-center relative text-white font-bold text-2xl md:text-3xl overflow-auto"
-    >
-       <h1 className="text-6xl font-bold italic">SHOP</h1>
-      {/* <div className="w-11/12 md:w-3/4 lg:max-w-3xl m-auto">
-        <div className="relative z-30 text-base text-white">
-          <input
-            type="text"
-            value=""
-            placeholder="Keyword"
-            className="mt-2 shadow-md border-b-2 focus:outline-none rounded-2xl py-3 px-6 block w-full"
-          />
-          <div className="text-left  absolute top-10 rounded-t-none rounded-b-2xl shadow bg-white divide-y w-full max-h-40 overflow-auto"></div>
-        </div>
-      </div> */}
+        style={{
+          background:
+            "linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(https://max-themes.net/demos/gym/gym/gym/upload/page-title.jpg) no-repeat center",
+          backgroundSize: "",
+        }}
+        className="py-40 bg-cover bg-center h-[610px] px-1 md:px-8 text-center relative text-white font-bold text-2xl md:text-3xl overflow-auto"
+      >
+        <h1 className="text-6xl font-bold italic">SHOP</h1>
+        <SearchBar accessToken={accessToken}/>
+      </div>
 
 
-      <SearchBar accessToken={accessToken} />
-    </div>
-
-      
       <div className="flex flex-col md:flex-row">
         <div className="w-full md:w-64 p-4">
           <FilterSort
