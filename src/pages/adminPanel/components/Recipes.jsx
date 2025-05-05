@@ -110,12 +110,13 @@ const accessToken = Cookies.get("accessToken");
               <td className="p-2 border">{recipe.id}</td>
               <td className="p-2 border">{recipe.name}</td>
               <td className="p-2 border">{recipe.description}</td>
-              <td className="p-2 border">{recipe.ingredients}</td>
-              <td className="p-2 border">{recipe.calories}</td>
-              <td className="p-2 border">{recipe.mealType}</td>
               <td className="p-2 border">
                 <img src={recipe.imageUrl} alt="" className="w-16 h-16 object-cover" />
               </td>
+              <td className="p-2 border">{recipe.ingredients}</td>
+              <td className="p-2 border">{recipe.calories}</td>
+              <td className="p-2 border">{recipe.mealType}</td>
+              
               <td className="p-2 border flex gap-2">
                 <button onClick={() => setEditingRecipe(recipe)} className="bg-yellow-500 text-white px-2 py-1 rounded">Edit</button>
                 <button onClick={() => deleteRecipe(recipe.id)} className="bg-red-500 text-white px-2 py-1 rounded">Delete</button>

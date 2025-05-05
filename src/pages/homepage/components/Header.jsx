@@ -8,8 +8,9 @@ import Cart from "../components/Cart";
 import MobileMenu from "../components/MobileMenu";
 import { FaSearch, FaShoppingCart, FaBars } from "react-icons/fa";
 import { Link } from "react-router-dom";
-
 import { useLocation } from "react-router-dom";
+import Chat from "../components/Chat";
+import Checkout from "../../checkout/Checkout";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -180,6 +181,11 @@ const Header = () => {
       <div className="flex justify-between items-center text-white">
         <Logo />
         <Navigation />
+        <div className="text-black"> {/* Və ya istədiyin rəng */}
+    {
+      accessToken ? <Chat/> : <></>
+    }
+  </div>
         <div className="flex items-center space-x-6 ml-6">
         {isShopPage}
           <button onClick={() => setIsCartOpen(true)}>
@@ -203,6 +209,7 @@ const Header = () => {
       {isCartOpen && <Cart cartItems={cartItems} cart={cart} setIsCartOpen={setIsCartOpen} handleRemoveFromCart={handleRemoveFromCart} />}
       <MobileMenu isMenuOpen={isMenuOpen} closeMenu={closeMenu} />
     </header>
+    
   );
 };
 export default Header;

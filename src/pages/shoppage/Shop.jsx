@@ -102,11 +102,11 @@ useEffect(() => {
       .then((favorites) => {
         const newStatus = {};
         favorites.forEach((item) => {
-          newStatus[item.productId] = true;
+          newStatus[item.product.id] = true;
         });
         setFavoriteStatus(newStatus);
       });
-  }, [accessToken, userId]);
+  }, [accessToken, userId, pagination.currentPage, selectedCategory, selectedColor]);
 
   
 

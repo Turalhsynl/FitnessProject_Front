@@ -8,7 +8,8 @@ const ProductDetails = () => {
   const product = location.state?.product;
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeliveryOpen, setIsDeliveryOpen] = useState(false);
-  const [cartId, setCartId] = useState(null)
+  const [cartId, setCartId] = useState(null);
+  const [imgUrl,setImgUrl] = useState(null);
 
 
   const accessToken = Cookies.get("accessToken");
@@ -41,6 +42,7 @@ const ProductDetails = () => {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "auto";
+
     }
 
     return () => {
@@ -81,6 +83,24 @@ const ProductDetails = () => {
     }
   };
 
+  useEffect(() => {
+    const fetchImage = async () => {
+      if (!product?.imageId) return;
+  
+      try {
+        const response = await fetch(`https://localhost:7298/api/File/${product.imageId}`);
+        if (response.ok) {
+          const data = await response.json();
+          setImgUrl(data.url);
+        }
+      } catch (error) {
+        console.error('Şəkil yüklənərkən xəta baş verdi:', error);
+      }
+    };
+  
+    fetchImage();
+  }, [product]);
+
   if (!product) return <p>Product not found!</p>;
 
   return (
@@ -91,7 +111,7 @@ const ProductDetails = () => {
 
       <div className="min-h-screen bg-white text-black flex flex-col md:flex-row gap-8 justify-center items-center">
         <div className="md:w-1/2 flex flex-col">
-          <img src={product.imageUrl} alt={product.name} className="w-[1000px]" />
+          <img src={imgUrl} alt={product.name} className="w-[1000px]" />
         </div>
         <div className="md:w-1/2 space-y-6 flex flex-col mb-[150px] items-center text-center">
           <span className="bg-gray-200 text-gray-700 px-3 py-1 text-xs font-semibold rounded-full">NEW</span>
@@ -143,22 +163,11 @@ const ProductDetails = () => {
                 <button onClick={() => setIsModalOpen(false)} className="text-3xl cursor-pointer">&times;</button>
               </div>
               <div className="p-6 flex-1 overflow-y-auto">
-                <h2 className="font-bold">WAKE AND SHAKE</h2>
+                <h2 className="font-bold">{product.name}</h2>
                 <p>
-                  Shake, shred and succeed. The ideal shaker bottle for pre-workouts, post-workouts and hydrating in between.
-                  Take advantage of the content measurements to keep track of your hydration throughout your fitness transformation.
-                  Complete with a metal mixer ball for the perfect blend.
+                  {product.description}
                 </p>
-                <p className="font-bold">Note:</p>
-                <p>For hygiene reasons, all our bottles and shakers are non-refundable.</p>
-                <ul className="list-disc pl-5">
-                  <li>14oz protein shaker</li>
-                  <li>Not dishwasher safe</li>
-                  <li>Do not microwave</li>
-                  <li>Material: polypropylene & polyethylene</li>
-                  <li>Shaker size: 3.3in x 7.2in</li>
-                  <li>SKU: I13A3A-BBBB</li>
-                </ul>
+                
               </div>
             </div>
           </div>
