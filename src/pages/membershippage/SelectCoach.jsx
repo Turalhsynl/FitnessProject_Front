@@ -189,8 +189,15 @@ const SelectCoach = () => {
           <div
             key={coach.id}
             className="relative w-[300px] h-[400px] cursor-pointer group"
-            onClick={() => navigate(`/coach/${coach.id}`)}
-
+            onClick={() =>
+              navigate(`/coach/${coach.id}`, {
+                state: {
+                  selectedPlanId,
+                  maxProgramsAllowed,
+                },
+              })
+            }
+            
           >
             <div className="w-full h-full overflow-hidden  shadow-lg relative">
               <img
