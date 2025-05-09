@@ -12,10 +12,13 @@ const Cart = ({
   handleRemoveFromFavorites
 }) => {
   const [activeTab, setActiveTab] = useState("cart");
+  const [loading, setLoading] = useState(null);
+  const [cartId, setCartId] = useState(null);
+  const [added, setAdded] = useState(null);
   const [favorites, setFavorites] = useState([]);
   const [loadingFavorites, setLoadingFavorites] = useState(false);
   const [productImages, setProductImages] = useState({}); // productId => url xəritəsi
-
+  const [favoriteStatus, setFavoriteStatus] = useState({});
   const accessToken = Cookies.get("accessToken");
   let userId = null;
 
@@ -27,6 +30,37 @@ const Cart = ({
       console.error("Token çözümlenemedi:", err);
     }
   }
+
+  const handleFavoriteClick = (productId) => {
+    const isFav = favoriteStatus[productId] || false;
+    const url = isFav
+      ? "https://localhost:7298/api/Favorite/remove"
+      : "https://localhost:7298/api/Favorite/add";
+
+    const body = {
+      userId,
+      productId,
+    };
+
+    fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify(body),
+    })
+      .then((res) => {
+        if (res.ok) {
+          setFavoriteStatus((prev) => ({
+            ...prev,
+            [productId]: !isFav,
+          }));
+        }
+      })
+      .catch((err) => console.error("Favori değiştirilemedi:", err));
+  };
+
 
   useEffect(() => {
     if (activeTab === "favorites" && userId && accessToken) {
@@ -105,6 +139,58 @@ const Cart = ({
     }
   }, [cartItems, favorites, activeTab]);
 
+  useEffect(() => {
+    if (favorites.length > 0) {
+      const statusMap = {};
+      favorites.forEach((item) => {
+        statusMap[item.product.id] = true;
+      });
+      setFavoriteStatus(statusMap);
+    }
+  }, [favorites]);
+
+ const handleAddToCart = (productId) => {
+  setLoading(productId);
+  setAdded(null);
+
+  console.log("CartId:", cartId);
+  console.log("AccessToken:", accessToken);
+
+  fetch("https://localhost:7298/api/Cart/add-product", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify({
+      CartId: cartId,
+      ProductId: productId,
+      Quantity: 1,
+    }),
+  })
+    .then((res) => {
+      if (!res.ok) {
+        return res.json().then((err) => {
+          console.error("API hatası:", err);
+          throw new Error("API hatası");
+        });
+      }
+      return res.json();
+    })
+    .then(() => {
+      setLoading(null);
+      setAdded(productId);
+      setTimeout(() => setAdded(null), 2000);
+    })
+    .catch((err) => {
+      console.error("Hata oluştu:", err);
+      setLoading(null);
+    });
+};
+
+  
+  
+
   return (
     <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black/70 z-50">
       <div className="fixed top-0 right-0 w-full md:w-[400px] h-full bg-white shadow-lg z-50 transition-transform transform translate-x-0">
@@ -162,19 +248,30 @@ const Cart = ({
                       className="w-32 h-38 rounded cursor-pointer"
                     />
                     <div className="flex-1 ml-4">
-                      <p className="font-medium text-gray-600 cursor-pointer">{item.productName}</p>
-                      <p className="text-gray-500 text-sm">{item.product.description}</p>
+                      <p className="font-medium text-gray-600 mb-2 cursor-pointer">{item.productName}</p>
+                      {/* <p className="text-gray-500 text-sm">{item.product.color}</p> */}
                       <p className="font-bold">${item.product.price}</p>
                       <div className="flex mt-2 justify-between">
-                        <p className="text-black font-bold mt-6 cursor-pointer">
-                          Qty: {item.quantity}
-                        </p>
-                        <button
+                      <button
                           className="mt-4 p-2 cursor-pointer"
                           onClick={() => handleRemoveFromCart(item.product.id)}
                         >
-                          <Trash2 className="text-red-500" size={20} />
+                          <Trash2 className="text-gray-500" size={20} />
                         </button>
+                        <button
+                      onClick={() => handleFavoriteClick(item.product.id)}
+                      className=" text-gray-600 text-xl mr-24 mt-4"
+                    >
+                      {favoriteStatus[item.product.id] ? (
+                        <i className="fa-solid fa-heart"></i>
+                      ) : (
+                        <i className="fa-regular fa-heart"></i>
+                      )}
+                    </button>
+                        <p className="text-black font-bold mt-6 cursor-pointer">
+                          Qty: {item.quantity}
+                        </p>
+                        
                       </div>
                     </div>
                   </div>
@@ -193,18 +290,43 @@ const Cart = ({
                     <img
                       src={productImages[item.product.id]}  // burada şəkil çəkiləcək
                       alt={item.product.name}
-                      className="w-24 h-24 rounded"
+                      className="w-32 h-38 cursor-pointer rounded"
                     />
                     <div className="flex-1 ml-4">
-                      <p className="font-medium text-gray-700">{item.product.name}</p>
-                      <p className="text-gray-500 text-sm">{item.product.description}</p>
-                      <p className="font-bold">${item.product.price}</p>
+                      <p className="font-medium mb-2 text-gray-700">{item.product.name}</p>
+                      {/* <p className="text-gray-500 text-sm">{item.product.description}</p> */}
+                      <p className="font-bold mb-8">${item.product.price}</p>
                       <button
-                        className="mt-2 text-red-500 text-sm"
-                        onClick={() => handleRemoveFromFavorites(item.id)}
-                      >
-                        Remove
-                      </button>
+                      onClick={() => handleFavoriteClick(item.product.id)}
+                      className=" text-gray-600 text-xl  mt-4"
+                    >
+                      {favoriteStatus[item.product.id] ? (
+                        <i className="fa-solid fa-heart"></i>
+                      ) : (
+                        <i className="fa-regular fa-heart"></i>
+                      )}
+                    </button>
+                      
+                      {/* <button
+  className="mt-4 text-red-500 cursor-pointer"
+  onClick={() => handleRemoveFromFavorites(item.product.id)}
+>
+  <Trash2 className="text-gray-500" size={20} />
+</button> */}
+
+
+
+                      <button
+  onClick={() => handleAddToCart(item.product.id)}
+  className="ml-4 bg-white text-black rounded-full cursor-pointer"
+>
+  <ShoppingBag size={18} />
+</button>
+
+
+
+
+                     
                     </div>
                   </div>
                 ))

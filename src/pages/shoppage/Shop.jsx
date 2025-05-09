@@ -272,13 +272,19 @@ useEffect(() => {
             ) : (
               products.map((product) => (
                 <div key={product.id} className="relative overflow-hidden group">
-                  <div className="relative">
-                    <img
-                      src={productImages[product.id]}
-                      alt={product.name}
-                      className="w-full cursor-pointer"
-                      onClick={() => handleProductClick(product)}
-                    />
+                  <div className="relative w-full h-64 md:h-[480px] bg-gray-100 flex items-center justify-center">
+  {productImages[product.id] ? (
+    <img
+      src={productImages[product.id]}
+      alt={product.name}
+      className="w-full h-full object-cover cursor-pointer"
+      onClick={() => handleProductClick(product)}
+    />
+  ) : (
+    <Loader2 className="animate-spin text-gray-500" size={36} />
+  )}
+
+
                     <button
                       onClick={() => handleAddToCart(product.id)}
                       className="absolute h-[50px] w-full bottom-0 bg-black text-white font-bold opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-300 hidden lg:flex"

@@ -54,7 +54,8 @@ const FilterSort = ({ setSelectedCategory, setSortBy, categories, colors, onColo
   }, [selectedColorIds, onColorSelect]);
 
   return (
-    <div className="w-full sm:w-64 p-4 bg-white text-sm mt-20">
+    <div className="w-full sm:w-64 p-4 bg-white text-sm mt-20 sticky top-24">
+
       {/* Sort By */}
       <div>
         <button
