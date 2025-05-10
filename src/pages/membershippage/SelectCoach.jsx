@@ -1,115 +1,3 @@
-// import React, { useEffect, useState } from "react";
-// import Cookies from "js-cookie";
-// import { useLocation, useNavigate } from "react-router-dom";
-
-// const SelectCoach = () => {
-//   const [coaches, setCoaches] = useState([]);
-//   const [selectedCoachId, setSelectedCoachId] = useState(null);
-//   const [programs, setPrograms] = useState([]);
-//   const [selectedPrograms, setSelectedPrograms] = useState([]);
-//   const location = useLocation();
-//   const navigate = useNavigate();
-//   const { maxProgramsAllowed, selectedPlanId } = location.state || {};
-//   const [allowedProgramsCount, setAllowedProgramsCount] = useState(maxProgramsAllowed || 1);
-//   const accessToken = Cookies.get("accessToken");
-
-//   useEffect(() => {
-//     const fetchCoaches = async () => {
-//       try {
-//         const response = await fetch("https://localhost:7298/api/User/GetAll", {
-//           headers: { Authorization: `Bearer ${accessToken}` },
-//         });
-//         const result = await response.json();
-//         const coachList = result.filter(user => user.userRole === 4) || [];
-//         setCoaches(coachList);
-//       } catch (error) {
-//         console.error("Failed to fetch coaches", error);
-//       }
-//     };
-
-//     fetchCoaches();
-//   }, []);
-
-//   useEffect(() => {
-//     const fetchPrograms = async () => {
-//       if (!selectedCoachId) return;
-//       try {
-//         const response = await fetch(`https://localhost:7298/api/FitnessProgram/GetMyFitnessPrograms/${selectedCoachId}`, {
-//           headers: { Authorization: `Bearer ${accessToken}` },
-//         });
-//         const result = await response.json();
-//         setPrograms(result.data || []);
-//       } catch (error) {
-//         console.error("Failed to fetch programs", error);
-//       }
-//     };
-
-//     fetchPrograms();
-//   }, [selectedCoachId]);
-
-//   const toggleProgramSelection = (programId) => {
-//     if (selectedPrograms.includes(programId)) {
-//       setSelectedPrograms(prev => prev.filter(id => id !== programId));
-//     } else {
-//       if (selectedPrograms.length < allowedProgramsCount) {
-//         setSelectedPrograms(prev => [...prev, programId]);
-//       } else {
-//         alert(`Siz maksimum ${allowedProgramsCount} proqram seçə bilərsiniz`);
-//       }
-//     }
-//   };
-
-//   const handleNext = () => {
-//     if (selectedPrograms.length === 0) {
-//       alert("Ən azı bir proqram seçin.");
-//       return;
-//     }
-//     navigate("/checkout", { state: { selectedPrograms } });
-//   };
-
-//   return (
-//     <div>
-//       <h2>Meet Our Trainers</h2>
-//       <div>
-//         {coaches.map((coach) => (
-//           <div key={coach.id} onClick={() => setSelectedCoachId(coach.id)}>
-//             <img
-//               src="https://max-themes.net/demos/gym/gym/gym/upload/iStock-1149242325-1-600x800.jpg"
-//               alt={coach.firstname}
-//             />
-//             <div>
-//               <p>{coach.firstname} {coach.lastname}</p>
-//               <p>Senior Trainer & Instructor</p>
-//             </div>
-//           </div>
-//         ))}
-//       </div>
-
-//       {selectedCoachId && (
-//         <div>
-//           <h3>Coach’s Programs</h3>
-//           <div>
-//             {programs.map((program) => (
-//               <div
-//                 key={program.id}
-//                 onClick={() => toggleProgramSelection(program.id)}
-//               >
-//                 <p>{program.name}</p>
-//                 <p>{program.description}</p>
-//               </div>
-//             ))}
-//           </div>
-//           <button onClick={handleNext}>
-//             Next
-//           </button>
-//         </div>
-//       )}
-//     </div>
-//   );
-// };
-
-// export default SelectCoach;
-
 import React, { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -126,19 +14,44 @@ const SelectCoach = () => {
   const [allowedProgramsCount, setAllowedProgramsCount] = useState(maxProgramsAllowed || 1);
   const accessToken = Cookies.get("accessToken");
 
+const fetchImageUrl = async (imageId) => {
+  try {
+    const response = await fetch(`https://localhost:7298/api/File/${imageId}`, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+    const data = await response.json();
+    return data.url;
+  } catch (error) {
+    console.error("Failed to fetch image", error);
+    return null;
+  }
+};
+
   useEffect(() => {
     const fetchCoaches = async () => {
-      try {
-        const response = await fetch("https://localhost:7298/api/User/GetAll", {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        });
-        const result = await response.json();
-        const coachList = result.filter(user => user.userRole === 4) || [];
-        setCoaches(coachList);
-      } catch (error) {
-        console.error("Failed to fetch coaches", error);
-      }
-    };
+  try {
+    const response = await fetch("https://localhost:7298/api/User/GetAll", {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+    const result = await response.json();
+    const coachList = result.filter(user => user.userRole === 4) || [];
+
+    // Şəkil URL-ləri üçün ayrıca fetch
+    const coachesWithImages = await Promise.all(
+      coachList.map(async (coach) => {
+        const imageUrl = coach.profileImageId
+          ? await fetchImageUrl(coach.profileImageId)
+          : null;
+        return { ...coach, imageUrl };
+      })
+    );
+
+    setCoaches(coachesWithImages);
+  } catch (error) {
+    console.error("Failed to fetch coaches", error);
+  }
+};
+
 
     fetchCoaches();
   }, []);
@@ -188,7 +101,7 @@ const SelectCoach = () => {
         {coaches.map((coach) => (
           <div
             key={coach.id}
-            className="relative w-[300px] h-[400px] cursor-pointer group"
+            className="relative w-[300px] h-[400px] cursor-pointer group mb-24"
             onClick={() =>
               navigate(`/coach/${coach.id}`, {
                 state: {
@@ -199,9 +112,9 @@ const SelectCoach = () => {
             }
             
           >
-            <div className="w-full h-full overflow-hidden  shadow-lg relative">
+            <div className="w-full h-full overflow-hidden  shadow-lg relative ">
               <img
-                src="https://max-themes.net/demos/gym/gym/gym/upload/iStock-1149242325-1-600x800.jpg"
+                src={coach.imageUrl}
                 alt={`${coach.firstname} ${coach.lastname}`}
                 className="w-full h-full object-cover "
               />
