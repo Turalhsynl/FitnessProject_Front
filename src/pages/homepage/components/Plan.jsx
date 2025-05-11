@@ -165,8 +165,9 @@ const Plan = () => {
 
         <button
           onClick={handleNextStep}
-          className="mt-6 bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-semibold w-full md:w-auto"
+          className="mt-6 flex items-center gap-2 bg-[#4c00ff] hover:bg-purple-700 text-white px-6 py-3 -skew-x-12   font-medium transition-all"
         >
+          
           Next Step →
         </button>
       </div>

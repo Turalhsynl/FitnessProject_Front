@@ -237,7 +237,7 @@ const CoachDetail = () => {
         <div className="mt-12 flex justify-center">
           <button
             onClick={handleNext}
-            className="bg-[#4c00ff] text-white px-8 py-3 font-semibold flex items-center gap-2 rounded-lg"
+            className="mt-6 flex items-center gap-2 bg-[#4c00ff] hover:bg-purple-700 text-white px-6 py-3 -skew-x-12   font-medium transition-all"
           >
             Continue <ArrowRight />
           </button>
