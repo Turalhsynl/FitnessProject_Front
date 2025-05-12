@@ -10,7 +10,7 @@ const CoachDetail = () => {
   const location = useLocation();
   const accessToken = Cookies.get("accessToken");
   const [coachImageUrl, setCoachImageUrl] = useState(null);
-
+const [programImages, setProgramImages] = useState({});
 
   const [coach, setCoach] = useState(null);
   const [programs, setPrograms] = useState([]);
@@ -31,6 +31,18 @@ const fetchCoachImage = async (imageId) => {
     setCoachImageUrl(data.url);
   } catch (err) {
     console.error("Coach image fetch error", err);
+  }
+};
+
+const fetchProgramImage = async (imageId, programId) => {
+  try {
+    const res = await fetch(`https://localhost:7298/api/File/${imageId}`, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+    const data = await res.json();
+    setProgramImages((prev) => ({ ...prev, [programId]: data.url }));
+  } catch (err) {
+    console.error(`Program image fetch error for program ${programId}`, err);
   }
 };
 
@@ -57,22 +69,30 @@ const fetchCoachImage = async (imageId) => {
   }, [id]);
 
   useEffect(() => {
-    const fetchPrograms = async () => {
-      if (!id) return;
-      try {
-        const response = await fetch(
-          `https://localhost:7298/api/FitnessProgram/GetMyFitnessPrograms/${id}`,
-          { headers: { Authorization: `Bearer ${accessToken}` } }
-        );
-        const result = await response.json();
-        setPrograms(result.data || []);
-      } catch (error) {
-        console.error("Failed to fetch programs", error);
-      }
-    };
+  const fetchPrograms = async () => {
+    if (!id) return;
+    try {
+      const response = await fetch(
+        `https://localhost:7298/api/FitnessProgram/GetMyFitnessPrograms/${id}`,
+        { headers: { Authorization: `Bearer ${accessToken}` } }
+      );
+      const result = await response.json();
+      const fetchedPrograms = result.data || [];
+      setPrograms(fetchedPrograms);
 
-    fetchPrograms();
-  }, [id]);
+      fetchedPrograms.forEach((program) => {
+        if (program.imageId) {
+          fetchProgramImage(program.imageId, program.id);
+        }
+      });
+    } catch (error) {
+      console.error("Failed to fetch programs", error);
+    }
+  };
+
+  fetchPrograms();
+}, [id]);
+
 
   useEffect(() => {
     localStorage.setItem("selectedPrograms", JSON.stringify(selectedPrograms));
@@ -157,7 +177,7 @@ const fetchCoachImage = async (imageId) => {
                   : "hover:scale-105"
                 }`}
               style={{
-                backgroundImage: `linear-gradient(to top, rgba(76, 0, 255, 0.7), rgba(76, 0, 255, 0.7)), url('https://max-themes.net/demos/gym/gym/gym/upload/iStock-1149242325-1-600x800.jpg')`,
+                backgroundImage: `linear-gradient(to top, rgba(76, 0, 255, 0.7), rgba(76, 0, 255, 0.7)), url(${programImages[program.id]})`,
               }}
             >
               <div

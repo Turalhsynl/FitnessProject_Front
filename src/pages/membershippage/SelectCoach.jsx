@@ -101,7 +101,7 @@ const fetchImageUrl = async (imageId) => {
         {coaches.map((coach) => (
           <div
             key={coach.id}
-            className="relative w-[300px] h-[400px] cursor-pointer group mb-24"
+            className="relative w-[300px] h-[450px] cursor-pointer group mb-24"
             onClick={() =>
               navigate(`/coach/${coach.id}`, {
                 state: {
@@ -116,7 +116,7 @@ const fetchImageUrl = async (imageId) => {
               <img
                 src={coach.imageUrl}
                 alt={`${coach.firstname} ${coach.lastname}`}
-                className="w-full h-full object-cover "
+                className="w-full h-full object-fit"
               />
               <div className="absolute inset-0 bg-purple-700/70 bg-opacity-60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-300">
                 <div className="flex flex-col items-center space-y-4 text-white text-xl">
