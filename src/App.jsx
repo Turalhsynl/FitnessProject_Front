@@ -27,6 +27,7 @@ import Plans from "./pages/plans/Plans";
 import Age from "./pages/plans/Age";
 import Gender from "./pages/plans/Gender";
 import  Goal  from "./pages/plans/Goal";
+import BodyTypeSelector from "./pages/plans/BodyType";
 const App = () => {
   const { accessToken } = useStore(useAuthStore);
 
@@ -55,6 +56,7 @@ const App = () => {
         <Route path="/plans/age" element={<Age />} />
         <Route path="/gender" element={<Gender/>} />
         <Route path="/goal" element={<Goal/>} />
+        <Route path="/bodytype" element={<BodyTypeSelector/>} />
       </Routes>
       <Footer />
     </Router>
