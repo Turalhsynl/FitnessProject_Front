@@ -26,6 +26,7 @@ import CoachDetail from "./pages/membershippage/CoachDetail";
 import Plans from "./pages/plans/Plans";
 import Age from "./pages/plans/Age";
 import Gender from "./pages/plans/Gender";
+import  Goal  from "./pages/plans/Goal";
 const App = () => {
   const { accessToken } = useStore(useAuthStore);
 
@@ -53,6 +54,7 @@ const App = () => {
         <Route path="/plans" element={<Plans />} />
         <Route path="/plans/age" element={<Age />} />
         <Route path="/gender" element={<Gender/>} />
+        <Route path="/goal" element={<Goal/>} />
       </Routes>
       <Footer />
     </Router>
