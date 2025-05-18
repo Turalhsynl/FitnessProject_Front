@@ -28,12 +28,15 @@ import Age from "./pages/plans/Age";
 import Gender from "./pages/plans/Gender";
 import  Goal  from "./pages/plans/Goal";
 import BodyTypeSelector from "./pages/plans/BodyType";
+import { WorkoutProvider } from "../src/pages/plans/WorkoutContext";
+import SubmitPlan from "./pages/plans/SubmitPlan";
 const App = () => {
   const { accessToken } = useStore(useAuthStore);
 
   return (
     <Router>
       <Header />
+      <WorkoutProvider>
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/contact" element={<Contact />} />
@@ -57,7 +60,9 @@ const App = () => {
         <Route path="/gender" element={<Gender/>} />
         <Route path="/goal" element={<Goal/>} />
         <Route path="/bodytype" element={<BodyTypeSelector/>} />
+        <Route path="//submit-plan" element={<SubmitPlan/>} />
       </Routes>
+      </WorkoutProvider>
       <Footer />
     </Router>
   );
