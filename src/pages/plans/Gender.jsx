@@ -70,12 +70,12 @@
 
 
 import React from "react";
-import { useWorkout } from "./WorkoutContext"; // context dosyan
+import { useWorkout } from "./WorkoutContext"; 
 import { useNavigate } from "react-router-dom";
 
 export default function Gender() {
   const { formData, updateData } = useWorkout();
-  const navigate = useNavigate();
+  const navigate = useNavigate("/bodytype");
 
   const genders = [
     { label: "Female", icon: "🙋‍♀️", value: "female" },
@@ -84,7 +84,7 @@ export default function Gender() {
 
   const handleSelect = (value) => {
     updateData({ gender: value });
-    navigate("/submit-plan"); // seçince direkt submit-plan sayfasına geç
+    navigate("/goal");
   };
 
   return (

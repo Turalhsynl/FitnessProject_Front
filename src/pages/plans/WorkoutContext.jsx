@@ -7,17 +7,28 @@ const WorkoutContext = createContext();
 
 export const WorkoutProvider = ({ children }) => {
   const [formData, setFormData] = useState({
-    fitnessCategory: "",
-    age: "",
-    gender: "",
-    userId: "", // kullanıcı ID'si burada tutulacak
+     fitnessCategory: "",
+  age: "",
+  gender: "",
+  userId: "",
+  bodyType: "",
+  goals: [],
+  bodyGoal: "",
+  level: "",
+  weight: "",
+  unit: "",
+  height: "",
+  heightUnit: "",
+  sleep: "",
+  daysPerWeek: "",
+  targetZones: [],
   });
 
   const updateData = (newData) => {
     setFormData((prev) => ({ ...prev, ...newData }));
   };
 
-  // İlk renderda accessToken varsa decode et ve userId'yi al
+  
   useEffect(() => {
     const accessToken = Cookies.get("accessToken");
     if (accessToken) {

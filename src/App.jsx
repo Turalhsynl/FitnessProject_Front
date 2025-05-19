@@ -30,6 +30,13 @@ import  Goal  from "./pages/plans/Goal";
 import BodyTypeSelector from "./pages/plans/BodyType";
 import { WorkoutProvider } from "../src/pages/plans/WorkoutContext";
 import SubmitPlan from "./pages/plans/SubmitPlan";
+import BodyGoalSelector from "./pages/plans/BodyGoalSelector";
+import TargetZones from "./pages/plans/TargetZones";
+import Level from "./pages/plans/Level";
+import SleepSelection from "./pages/plans/Sleep";
+import WorkoutDays from "./pages/plans/WorkoutDays";
+import WeightInput from "./pages/plans/WeightInput";
+import HeightInput from "./pages/plans/HeightInput";
 const App = () => {
   const { accessToken } = useStore(useAuthStore);
 
@@ -60,7 +67,14 @@ const App = () => {
         <Route path="/gender" element={<Gender/>} />
         <Route path="/goal" element={<Goal/>} />
         <Route path="/bodytype" element={<BodyTypeSelector/>} />
-        <Route path="//submit-plan" element={<SubmitPlan/>} />
+        <Route path="/submit-plan" element={<SubmitPlan/>} />
+        <Route path="/bodygoal" element={<BodyGoalSelector/>} />
+        <Route path="/targetzone" element={<TargetZones/>} />
+        <Route path="/level" element={<Level/>} />
+        <Route path="/sleep" element={<SleepSelection/>} />
+        <Route path="/workoutdays" element={<WorkoutDays/>} />
+        <Route path="/weightinput" element={<WeightInput/>} />
+        <Route path="/heightinput" element={<HeightInput/>} />
       </Routes>
       </WorkoutProvider>
       <Footer />
