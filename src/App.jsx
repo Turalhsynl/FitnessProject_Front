@@ -37,6 +37,7 @@ import SleepSelection from "./pages/plans/Sleep";
 import WorkoutDays from "./pages/plans/WorkoutDays";
 import WeightInput from "./pages/plans/WeightInput";
 import HeightInput from "./pages/plans/HeightInput";
+// import Timetable from "./pages/plans/Timetable"
 const App = () => {
   const { accessToken } = useStore(useAuthStore);
 
@@ -75,6 +76,7 @@ const App = () => {
         <Route path="/workoutdays" element={<WorkoutDays/>} />
         <Route path="/weightinput" element={<WeightInput/>} />
         <Route path="/heightinput" element={<HeightInput/>} />
+        {/* <Route path="/timetable" element={<Timetable/>} /> */}
       </Routes>
       </WorkoutProvider>
       <Footer />

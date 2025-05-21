@@ -160,3 +160,64 @@ export default function SubmitPlan() {
     </div>
   );
 }
+
+
+
+
+// import Timetable from "./Timetable"; // düzgün path ilə dəyişin
+// import React, { useState, useEffect } from "react";
+// import { useWorkout } from "../plans/WorkoutContext";
+
+
+// export default function SubmitPlan() {
+//   const { formData } = useWorkout();
+//   const [result, setResult] = useState("");
+
+//   const handleSubmit = async () => {
+//     const response = await fetch("https://localhost:7298/api/WorkoutPlan/generate-workout", {
+//       method: "POST",
+//       headers: { "Content-Type": "application/json" },
+//       body: JSON.stringify({
+//         userId: parseInt(formData.userId),
+//         fitnessCategory: formData.fitnessCategory || "Yoga",
+//         age: parseInt(formData.age),
+//         gender: formData.gender,
+//         goal: formData.goals?.[0] || "Arıqlamaq",
+//         level: formData.level || "Başlanğıc",
+//         daysPerWeek: formData.daysPerWeek?.[0] || 3,
+//         bodyType: formData.bodyType || "Normal",
+//         dreamBody: formData.bodyGoal || "Əzələli",
+//         targetZone: formData.targetZones?.[0] || "Bütün bədən",
+//         sleepTime: formData.sleep || "6-8 saat",
+//         height: parseFloat(formData.height),
+//         weight: parseFloat(formData.weight),
+//       }),
+//     });
+
+//     if (!response.ok) {
+//       const errorText = await response.text();
+//       console.error("API Error:", errorText);
+//       return;
+//     }
+
+//     const data = await response.json();
+//     setResult(data.content);
+//   };
+
+//   useEffect(() => {
+//     handleSubmit();
+//   }, []);
+
+//   return (
+//     <div className="max-w-[1000px] mx-auto p-6 text-center mt-20">
+//       <h1 className="text-3xl font-bold text-purple-800">Planı Yarat</h1>
+//       {result ? (
+//         <>
+//           <Timetable plan={result} />
+//         </>
+//       ) : (
+//         <p className="mt-8 text-purple-600">Plan hazırlanır...</p>
+//       )}
+//     </div>
+//   );
+// }
