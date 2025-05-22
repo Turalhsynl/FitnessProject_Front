@@ -112,11 +112,12 @@ const hours = Array.from({ length: 13 }, (_, i) => {
   return `${hour.toString().padStart(2, "0")}:00`;
 });
 
-// AI response-u parse edən funksiya
+// AI cavabındakı strukturu parse edən funksiya (':'-dən təmizlənmiş gün adları ilə)
 function parseAIContent(content) {
   const weeks = {};
-  const weekRegex = /#### (\d+)\. Həftə:[\s\S]*?(?=####|\Z)/g;
-  const dayRegex = /- \*\*(.*?)\*\*\n([\s\S]*?)(?=\n- \*\*|$)/g;
+  const weekRegex = /#### (\d+)\.? Həftə:[\s\S]*?(?=####|\Z)/g;
+  // Gün adlarından sonundakı ':' silinir, '\n' ilə bitir
+  const dayRegex = /- \*\*(.*?)\*\*:\n([\s\S]*?)(?=\n- \*\*|$)/g;
 
   let weekMatch;
   while ((weekMatch = weekRegex.exec(content)) !== null) {
@@ -126,7 +127,10 @@ function parseAIContent(content) {
 
     let dayMatch;
     while ((dayMatch = dayRegex.exec(weekContent)) !== null) {
-      const dayName = dayMatch[1]; // ex: "Bazar ertəsi (Yoga)"
+      let dayName = dayMatch[1].trim(); // misal: "Bazar ertəsi"
+      // Təhlükəsizlik üçün ':' varsa kəs
+      if (dayName.endsWith(":")) dayName = dayName.slice(0, -1);
+
       const exercises = dayMatch[2]
         .split("\n")
         .map((e) => e.replace(/^[-•*]\s*/, "").trim())
@@ -139,28 +143,38 @@ function parseAIContent(content) {
   return weeks;
 }
 
+// Azərbaycan gün adlarını ingiliscəyə map edən funksiya
+const dayMap = {
+  "Bazar ertəsi": "Monday",
+  "Çərşənbə axşamı": "Tuesday",
+  "Çərşənbə": "Wednesday",
+  "Cümə axşamı": "Thursday",
+  "Cümə": "Friday",
+  "Şənbə": "Saturday",
+  "Bazar": "Sunday",
+};
 
-// Parsed datanı günlərə böl
 function getDayData(parsedData) {
   const mapped = {};
 
-  // Bütün günləri sıralı şəkildə yığırıq
-  const allDays = [];
-
   Object.entries(parsedData).forEach(([week, days]) => {
-    Object.entries(days).forEach(([day, exercises]) => {
-      allDays.push({ week, day, exercises });
+    Object.entries(days).forEach(([dayName, exercises]) => {
+      // dayName starts with azərbaycan dili gün adı olmalıdır
+      const dayKey = Object.keys(dayMap).find((azDay) => dayName.startsWith(azDay));
+      if (dayKey) {
+        const enDay = dayMap[dayKey];
+        mapped[enDay] = { week, day: dayName, exercises };
+      }
     });
   });
 
-  // İlk 7 günə Monday - Sunday veririk
-  days.forEach((dayName, index) => {
-    mapped[dayName] = allDays[index] || null;
+  // Bütün ingilis günlərini yoxla, yoxdursa null qoy
+  days.forEach((dayName) => {
+    if (!mapped[dayName]) mapped[dayName] = null;
   });
 
   return mapped;
 }
-
 
 export default function SubmitPlan() {
   const { formData } = useWorkout();
@@ -181,7 +195,7 @@ export default function SubmitPlan() {
           gender: formData.gender,
           goal: formData.goals?.[0] || "Arıqlamaq",
           level: formData.level || "Başlanğıc",
-          daysPerWeek: formData.daysPerWeek?.[0] || 3,
+          daysPerWeek: formData.daysPerWeek?.join(", ") || "Monday, Wednesday, Friday",
           bodyType: formData.bodyType || "Normal",
           dreamBody: formData.bodyGoal || "Əzələli",
           targetZone: formData.targetZones?.[0] || "Bütün bədən",
@@ -198,11 +212,15 @@ export default function SubmitPlan() {
       }
 
       const data = await response.json();
-      console.log(data.content); // test üçün baxış
+      console.log("Raw AI content:", data.content);
       setResult(data.content);
 
       const parsed = parseAIContent(data.content);
+      console.log("Parsed AI content:", parsed);
+
       const dayData = getDayData(parsed);
+      console.log("Mapped day data:", dayData);
+
       setStructuredData(dayData);
     } catch (error) {
       console.error("Əlaqə xətası:", error);
@@ -216,7 +234,6 @@ export default function SubmitPlan() {
   useEffect(() => {
     console.log("Structured:", structuredData);
   }, [structuredData]);
-  
 
   return (
     <div className="max-w-6xl mx-auto p-6 mt-20">
@@ -230,7 +247,10 @@ export default function SubmitPlan() {
             {/* Header */}
             <div className="bg-gray-200 p-2 font-semibold text-center border border-gray-300">Saat</div>
             {days.map((day) => (
-              <div key={day} className="bg-gray-200 p-2 font-semibold text-center border border-gray-300">
+              <div
+                key={day}
+                className="bg-gray-200 p-2 font-semibold text-center border border-gray-300"
+              >
                 {day}
               </div>
             ))}
@@ -240,7 +260,7 @@ export default function SubmitPlan() {
               <React.Fragment key={hour}>
                 <div className="p-2 text-sm text-center border border-gray-200">{hour}</div>
                 {days.map((day) => {
-                  const data = structuredData[day];
+                  const data = structuredData?.[day];
                   const item = data?.exercises?.[rowIdx];
                   return (
                     <div key={`${day}-${hour}`} className="p-2 text-xs border border-gray-100">
@@ -256,6 +276,7 @@ export default function SubmitPlan() {
     </div>
   );
 }
+
 
 
 
