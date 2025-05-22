@@ -2,15 +2,12 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useWorkout } from "./WorkoutContext";
 
-// const daysOfWeek = [
-//   "Sunday", "Monday", "Tuesday", "Wednesday",
-//   "Thursday", "Friday", "Saturday"
-// ];
-
-
 const daysOfWeek = [
-  1
+  "Sunday", "Monday", "Tuesday", "Wednesday",
+  "Thursday", "Friday", "Saturday"
 ];
+
+
 
 export default function WorkoutDays() {
   const [selectedDays, setSelectedDays] = useState([]);

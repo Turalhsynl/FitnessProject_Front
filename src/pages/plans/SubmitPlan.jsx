@@ -106,60 +106,157 @@
 import React, { useState, useEffect } from "react";
 import { useWorkout } from "../plans/WorkoutContext";
 
+const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+const hours = Array.from({ length: 13 }, (_, i) => {
+  const hour = 8 + i;
+  return `${hour.toString().padStart(2, "0")}:00`;
+});
+
+// AI response-u parse edən funksiya
+function parseAIContent(content) {
+  const weeks = {};
+  const weekRegex = /#### (\d+)\. Həftə:[\s\S]*?(?=####|\Z)/g;
+  const dayRegex = /- \*\*(.*?)\*\*\n([\s\S]*?)(?=\n- \*\*|$)/g;
+
+  let weekMatch;
+  while ((weekMatch = weekRegex.exec(content)) !== null) {
+    const weekTitle = `Həftə ${weekMatch[1]}`;
+    const weekContent = weekMatch[0];
+    weeks[weekTitle] = {};
+
+    let dayMatch;
+    while ((dayMatch = dayRegex.exec(weekContent)) !== null) {
+      const dayName = dayMatch[1]; // ex: "Bazar ertəsi (Yoga)"
+      const exercises = dayMatch[2]
+        .split("\n")
+        .map((e) => e.replace(/^[-•*]\s*/, "").trim())
+        .filter(Boolean);
+
+      weeks[weekTitle][dayName] = exercises;
+    }
+  }
+
+  return weeks;
+}
+
+
+// Parsed datanı günlərə böl
+function getDayData(parsedData) {
+  const mapped = {};
+
+  // Bütün günləri sıralı şəkildə yığırıq
+  const allDays = [];
+
+  Object.entries(parsedData).forEach(([week, days]) => {
+    Object.entries(days).forEach(([day, exercises]) => {
+      allDays.push({ week, day, exercises });
+    });
+  });
+
+  // İlk 7 günə Monday - Sunday veririk
+  days.forEach((dayName, index) => {
+    mapped[dayName] = allDays[index] || null;
+  });
+
+  return mapped;
+}
+
+
 export default function SubmitPlan() {
   const { formData } = useWorkout();
   const [result, setResult] = useState("");
+  const [structuredData, setStructuredData] = useState({});
 
   const handleSubmit = async () => {
-    console.log("Current Form Data:", formData);
+    console.log(formData);
 
-    const response = await fetch("https://localhost:7298/api/WorkoutPlan/generate-workout", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        userId: parseInt(formData.userId),
-        fitnessCategory: formData.fitnessCategory || "Yoga",
-        age: parseInt(formData.age),
-        gender: formData.gender,
-        goal: formData.goals?.[0] || "Arıqlamaq", // sadece ilkini gönder
-        level: formData.level || "Başlanğıc",
-        daysPerWeek: formData.daysPerWeek?.[0] || 3,
-        bodyType: formData.bodyType || "Normal",
-        dreamBody: formData.bodyGoal || "Əzələli",
-        targetZone: formData.targetZones?.[0] || "Bütün bədən",
-        sleepTime: formData.sleep || "6-8 saat",
-        height: parseFloat(formData.height),
-        weight: parseFloat(formData.weight),
-      }),
-    });
+    try {
+      const response = await fetch("https://localhost:7298/api/WorkoutPlan/generate-workout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: parseInt(formData.userId),
+          fitnessCategory: formData.fitnessCategory || "Yoga",
+          age: parseInt(formData.age),
+          gender: formData.gender,
+          goal: formData.goals?.[0] || "Arıqlamaq",
+          level: formData.level || "Başlanğıc",
+          daysPerWeek: formData.daysPerWeek?.[0] || 3,
+          bodyType: formData.bodyType || "Normal",
+          dreamBody: formData.bodyGoal || "Əzələli",
+          targetZone: formData.targetZones?.[0] || "Bütün bədən",
+          sleepTime: formData.sleep || "6-8 saat",
+          height: parseFloat(formData.height),
+          weight: parseFloat(formData.weight),
+        }),
+      });
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error("API Error:", errorText);
-      return;
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("API Error:", errorText);
+        return;
+      }
+
+      const data = await response.json();
+      console.log(data.content); // test üçün baxış
+      setResult(data.content);
+
+      const parsed = parseAIContent(data.content);
+      const dayData = getDayData(parsed);
+      setStructuredData(dayData);
+    } catch (error) {
+      console.error("Əlaqə xətası:", error);
     }
-
-    const data = await response.json();
-    setResult(data.content);
   };
 
   useEffect(() => {
     handleSubmit();
   }, []);
 
+  useEffect(() => {
+    console.log("Structured:", structuredData);
+  }, [structuredData]);
+  
+
   return (
-    <div className="max-w-[800px] mx-auto p-6 text-center mt-20">
-      <h1 className="text-3xl font-bold text-purple-800">Planı Yarat</h1>
-      {result ? (
-        <div className="mt-10 bg-gray-100 p-6 rounded-lg text-left whitespace-pre-wrap">
-          {result}
-        </div>
+    <div className="max-w-6xl mx-auto p-6 mt-20">
+      <h1 className="text-3xl font-bold text-purple-800 text-center">Planı Yarat</h1>
+
+      {!result ? (
+        <p className="mt-8 text-purple-600 text-center">Plan hazırlanır...</p>
       ) : (
-        <p className="mt-8 text-purple-600">Plan hazırlanıyor...</p>
+        <div className="overflow-x-auto mt-10">
+          <div className="grid grid-cols-8 border border-gray-300">
+            {/* Header */}
+            <div className="bg-gray-200 p-2 font-semibold text-center border border-gray-300">Saat</div>
+            {days.map((day) => (
+              <div key={day} className="bg-gray-200 p-2 font-semibold text-center border border-gray-300">
+                {day}
+              </div>
+            ))}
+
+            {/* Rows */}
+            {hours.map((hour, rowIdx) => (
+              <React.Fragment key={hour}>
+                <div className="p-2 text-sm text-center border border-gray-200">{hour}</div>
+                {days.map((day) => {
+                  const data = structuredData[day];
+                  const item = data?.exercises?.[rowIdx];
+                  return (
+                    <div key={`${day}-${hour}`} className="p-2 text-xs border border-gray-100">
+                      {item || ""}
+                    </div>
+                  );
+                })}
+              </React.Fragment>
+            ))}
+          </div>
+        </div>
       )}
     </div>
   );
 }
+
 
 
 
