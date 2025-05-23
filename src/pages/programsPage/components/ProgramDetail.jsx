@@ -156,7 +156,7 @@ const ProgramDetails = () => {
             <iframe
               width="100%"
               height="450"
-              src={getYouTubeEmbedUrl()}
+              src={getYouTubeEmbedUrl(program.videoUrl)}
               title="Program Video"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
