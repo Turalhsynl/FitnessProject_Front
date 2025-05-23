@@ -592,8 +592,270 @@
 ///heleki esas budu yuxaridaki
 
 
-import React, { useEffect, useState, useRef } from "react";
+// import React, { useEffect, useState, useRef } from "react";
+// import Cookies from "js-cookie";
+// import smoothie1 from "../../assets/Background.png";
+// import smoothie2 from "../../assets/Smoothie.png";
+
+// export default function RecipeApp() {
+//   const [recipes, setRecipes] = useState([]);
+//   const [filtered, setFiltered] = useState([]);
+//   const [selectedRecipe, setSelectedRecipe] = useState(null);
+//   const [typedText, setTypedText] = useState("");
+//   const [index, setIndex] = useState(0);
+//   const [calorieMin, setCalorieMin] = useState(0);
+//   const [calorieMax, setCalorieMax] = useState(1000);
+//   const [ingredient, setIngredient] = useState("");
+//   const [mealType, setMealType] = useState("");
+//   const [selectedSort, setSelectedSort] = useState(null);
+//   const [rotate, setRotate] = useState(false);
+//   const accessToken = Cookies.get("accessToken");
+//   const [recipeImageUrl, setRecipeImageUrl] = useState(null)
+//   const [recipeImages, setRecipeImages] = useState({});
+
+
+// useEffect(() => {
+//   const fetchAllImages = async () => {
+//     if (!accessToken || recipes.length === 0) return;
+
+//     const imageMap = {};
+//     for (const recipe of recipes) {
+//       try {
+//         const res = await fetch(`https://localhost:7298/api/File/${recipe.imageId}`, {
+//           headers: { Authorization: `Bearer ${accessToken}` },
+//         });
+//         const data = await res.json();
+//         imageMap[recipe.id] = data.url;
+//       } catch (err) {
+//         console.error("Error loading image for recipe:", recipe.id, err);
+//       }
+//     }
+
+//     setRecipeImages(imageMap);
+//   };
+
+//   fetchAllImages();
+// }, [recipes, accessToken]);
+
+//   useEffect(() => {
+//     if (!accessToken) return;
+
+//     fetch("https://localhost:7298/api/Recipe", {
+//       headers: { Authorization: `Bearer ${accessToken}` },
+//     })
+//       .then((res) => res.json())
+//       .then((data) => {
+//         setRecipes(data);
+//         setFiltered(data);
+//         setSelectedRecipe(data[0]);
+//       })
+      
+      
+//   }, [accessToken]);
+
+//   useEffect(() => {
+//     if (selectedRecipe?.description) {
+//       setTypedText("");
+//       setIndex(0);
+//     }
+//   }, [selectedRecipe]);
+
+//   useEffect(() => {
+//     if (selectedRecipe?.description && index < selectedRecipe.description.length) {
+//       const timeout = setTimeout(() => {
+//         setTypedText((prev) => prev + selectedRecipe.description[index]);
+//         setIndex((prev) => prev + 1);
+//       }, 20);
+//       return () => clearTimeout(timeout);
+//     }
+//   }, [index, selectedRecipe]);
+
+// const fetchRecipeImage = async (imageId) => {
+//   try {
+//     const res = await fetch(`https://localhost:7298/api/File/${imageId}`, {
+//       headers: { Authorization: `Bearer ${accessToken}` },
+//     });
+//     const data = await res.json();
+//     setRecipeImageUrl(data.url);
+//   } catch (err) {
+//     console.error("Coach image fetch error", err);
+//   }
+// };
+
+//   const handleSort = (sortType) => {
+//     if (!accessToken) return;
+
+//     let url = "";
+
+//     switch (sortType) {
+//       case "calories":
+//         url = `https://localhost:7298/api/Recipe/by-calories?minCalories=${calorieMin}&maxCalories=${calorieMax}`;
+//         break;
+//       case "ingredient":
+//         url = `https://localhost:7298/api/Recipe/by-ingredient?ingredient=${ingredient}`;
+//         break;
+//       default:
+//         return;
+//     }
+
+//     fetch(url, {
+//       headers: { Authorization: `Bearer ${accessToken}` },
+//     })
+//       .then((res) => res.json())
+//       .then((data) => {
+//         setFiltered(data);
+//         setSelectedRecipe(data[0]);
+//       });
+//   };
+
+//   const handleRecipeClick = (recipe) => {
+//     setRotate(true);
+//     setTimeout(() => {
+//       setSelectedRecipe(recipe);
+//       fetchRecipeImage(recipe.imageId);
+//       setRotate(false);
+//     }, 500);
+//   };
+
+//   return (
+//     <div className="min-h-screen bg-[#d9cae1] font-sans">
+
+//        <img src={smoothie1} className="" alt="Smoothie" />
+// <img src={smoothie2} className="" alt="Smoothie" />
+//       <div className="grid grid-cols-1 md:grid-cols-2 items-center p-10">
+//         <div className="text-left">
+//           <h1 className="text-6xl font-bold text-white">SMOOTHIES</h1>
+//           <h2 className="text-4xl text-white mt-2">RAISIN</h2>
+//           <p className="text-white mt-4 w-4/5 leading-relaxed">{typedText}</p>
+
+//           <div className="flex space-x-4 mt-6">
+//             {filtered.slice(0, 4).map((recipe) => (
+//               <img
+//                 key={recipe.id}
+//                 onClick={() => handleRecipeClick(recipe)}
+//                 src={recipeImages[recipe.id]}
+//                 alt={recipe.name}
+//                 className={`w-16 h-16 rounded-full border-4 cursor-pointer transition-transform transform hover:scale-110 ${
+//                   selectedRecipe?.id === recipe.id ? "border-yellow-500" : "border-white"
+//                 }`}
+//               />
+//             ))}
+//           </div>
+//         </div>
+
+//         {selectedRecipe && (
+//   <div className="flex flex-col items-center  justify-center space-y-4">
+//     <img
+//       src={recipeImages[selectedRecipe.id]}
+//       alt={selectedRecipe.name}
+//       className={`rounded-full w-[400px] h-[400px] border-2 object-cover transition-transform duration-500 ${
+//         rotate ? "animate-spin-slow" : ""
+//       }`}
+//     />
+//     <div className="text-center">
+//       <h3 className="text-2xl font-bold text-white">{selectedRecipe.name}</h3>
+//       <p className="text-white mt-1 text-sm">{selectedRecipe.calories} calories</p>
+//     </div>
+//   </div>
+// )}
+
+//       </div>
+
+//       <div className="mt-10 p-6 bg-white max-w-md mx-auto rounded-2xl shadow-xl">
+//         <div className="flex justify-between items-center">
+//           <span className="bg-orange-400 text-white px-3 py-1 rounded text-xl font-bold">4.9</span>
+//           <span className="text-gray-400 text-sm">Overview | Ingredients</span>
+//         </div>
+//         <h3 className="text-lg font-semibold mt-4">Chef Feny</h3>
+//         <p className="text-sm text-gray-600 mt-2">
+//           Kau terindah kan selalu terindah, apalagi masakanmu. Ahayy malah nge gombal si abang.
+//         </p>
+//         <div className="text-sm text-gray-500 mt-4">❤️ 96 likes</div>
+
+//         <div className="mt-4">
+//           <button
+//             onClick={() => setSelectedSort("calories")}
+//             className={`w-full px-4 py-2 rounded mb-2 ${selectedSort === "calories" ? "bg-black text-white" : "bg-gray-100"}`}
+//           >
+//             Sort by Calories
+//           </button>
+
+//           {selectedSort === "calories" && (
+//             <div className="space-y-2">
+//               <input
+//                 type="number"
+//                 placeholder="Min Calories"
+//                 value={calorieMin}
+//                 onChange={(e) => setCalorieMin(e.target.value)}
+//                 className="w-full px-2 py-1 border border-gray-300 rounded"
+//               />
+//               <input
+//                 type="number"
+//                 placeholder="Max Calories"
+//                 value={calorieMax}
+//                 onChange={(e) => setCalorieMax(e.target.value)}
+//                 className="w-full px-2 py-1 border border-gray-300 rounded"
+//               />
+//               <button
+//                 onClick={() => handleSort("calories")}
+//                 className="w-full px-4 py-1 bg-orange-500 text-white rounded"
+//               >
+//                 Apply
+//               </button>
+//             </div>
+//           )}
+
+//           <button
+//             onClick={() => setSelectedSort("ingredient")}
+//             className={`w-full px-4 py-2 rounded mt-2 ${selectedSort === "ingredient" ? "bg-black text-white" : "bg-gray-100"}`}
+//           >
+//             Sort by Ingredient
+//           </button>
+
+//           {selectedSort === "ingredient" && (
+//             <div className="mt-2 space-y-2">
+//               <input
+//                 type="text"
+//                 placeholder="Ingredient"
+//                 value={ingredient}
+//                 onChange={(e) => setIngredient(e.target.value)}
+//                 className="w-full px-2 py-1 border border-gray-300 rounded"
+//               />
+//               <button
+//                 onClick={() => handleSort("ingredient")}
+//                 className="w-full px-4 py-1 bg-orange-500 text-white rounded"
+//               >
+//                 Apply
+//               </button>
+//             </div>
+//           )}
+//         </div>
+//       </div>
+
+//       <style>{`
+//         .animate-spin-slow {
+//           animation: spin 0.5s linear;
+//         }
+
+//         @keyframes spin {
+//           0% {
+//             transform: rotate(0deg);
+//           }
+//           100% {
+//             transform: rotate(360deg);
+//           }
+//         }
+//       `}</style>
+//     </div>
+//   );
+// }
+
+
+import React, { useEffect, useState } from "react";
 import Cookies from "js-cookie";
+import smoothie1 from "../../assets/Background.png";
+import smoothie2 from "../../assets/Smoothie.png";
+import { data } from "react-router-dom";
 
 export default function RecipeApp() {
   const [recipes, setRecipes] = useState([]);
@@ -604,36 +866,33 @@ export default function RecipeApp() {
   const [calorieMin, setCalorieMin] = useState(0);
   const [calorieMax, setCalorieMax] = useState(1000);
   const [ingredient, setIngredient] = useState("");
-  const [mealType, setMealType] = useState("");
   const [selectedSort, setSelectedSort] = useState(null);
   const [rotate, setRotate] = useState(false);
   const accessToken = Cookies.get("accessToken");
-  const [recipeImageUrl, setRecipeImageUrl] = useState(null)
   const [recipeImages, setRecipeImages] = useState({});
 
+  useEffect(() => {
+    const fetchAllImages = async () => {
+      if (!accessToken || recipes.length === 0) return;
 
-useEffect(() => {
-  const fetchAllImages = async () => {
-    if (!accessToken || recipes.length === 0) return;
-
-    const imageMap = {};
-    for (const recipe of recipes) {
-      try {
-        const res = await fetch(`https://localhost:7298/api/File/${recipe.imageId}`, {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        });
-        const data = await res.json();
-        imageMap[recipe.id] = data.url;
-      } catch (err) {
-        console.error("Error loading image for recipe:", recipe.id, err);
+      const imageMap = {};
+      for (const recipe of recipes) {
+        try {
+          const res = await fetch(`https://localhost:7298/api/File/${recipe.imageId}`, {
+            headers: { Authorization: `Bearer ${accessToken}` },
+          });
+          const data = await res.json();
+          imageMap[recipe.id] = data.url;
+        } catch (err) {
+          console.error("Error loading image for recipe:", recipe.id, err);
+        }
       }
-    }
 
-    setRecipeImages(imageMap);
-  };
+      setRecipeImages(imageMap);
+    };
 
-  fetchAllImages();
-}, [recipes, accessToken]);
+    fetchAllImages();
+  }, [recipes, accessToken]);
 
   useEffect(() => {
     if (!accessToken) return;
@@ -646,9 +905,7 @@ useEffect(() => {
         setRecipes(data);
         setFiltered(data);
         setSelectedRecipe(data[0]);
-      })
-      
-      
+      });
   }, [accessToken]);
 
   useEffect(() => {
@@ -667,18 +924,6 @@ useEffect(() => {
       return () => clearTimeout(timeout);
     }
   }, [index, selectedRecipe]);
-
-const fetchRecipeImage = async (imageId) => {
-  try {
-    const res = await fetch(`https://localhost:7298/api/File/${imageId}`, {
-      headers: { Authorization: `Bearer ${accessToken}` },
-    });
-    const data = await res.json();
-    setRecipeImageUrl(data.url);
-  } catch (err) {
-    console.error("Coach image fetch error", err);
-  }
-};
 
   const handleSort = (sortType) => {
     if (!accessToken) return;
@@ -710,30 +955,34 @@ const fetchRecipeImage = async (imageId) => {
     setRotate(true);
     setTimeout(() => {
       setSelectedRecipe(recipe);
-      fetchRecipeImage(recipe.imageId);
+      
       setRotate(false);
     }, 500);
   };
 
   return (
-    <div className="min-h-screen bg-[#d9cae1] font-sans">
-      <nav className="flex justify-between items-center p-6">
-        <div className="flex items-center space-x-4">
-          <span className="text-xl font-bold text-white">🥤 Fresh Smoothies</span>
-        </div>
-        <div className="flex space-x-8 text-black font-medium">
-          <span>Products</span>
-          <span>About</span>
-          <span>Contact</span>
-          <span>Account</span>
-        </div>
-      </nav>
+    <div className="min-h-screen bg-gradient-to-br from-purple-200 to-pink-100 font-sans">
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0">
+        
+        <img src={smoothie1} alt="Smoothie" className="" />
+        <img
+  src={smoothie2}
+  className="absolute bottom-0 right-0  z-0"
+  alt="Smoothie Decorative"
+/>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 items-center p-10">
-        <div className="text-left">
-          <h1 className="text-6xl font-bold text-white">SMOOTHIES</h1>
-          <h2 className="text-4xl text-white mt-2">RAISIN</h2>
-          <p className="text-white mt-4 w-4/5 leading-relaxed">{typedText}</p>
+
+      </div>
+
+      <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 items-center p-10 gap-8">
+        <div className="ml-[40px]">
+          <h1 className="text-[90px] font-bold text-white drop-shadow">{data.name}</h1>
+         <p className="text-white text-[20px]">{data.calories} calories</p>
+          <p className="text-white mt-4 w-4/6 leading-relaxed text-lg font-light">{typedText}</p>
+
+          {/* <h1 className="text-[120px] font-bold text-white drop-shadow">{selectedRecipe.name}</h1>
+         <p className="text-white text-[20px]">{selectedRecipe.calories} calories</p>
+          <p className="text-white mt-4 w-4/5 leading-relaxed text-lg font-light">{typedText}</p> */}
 
           <div className="flex space-x-4 mt-6">
             {filtered.slice(0, 4).map((recipe) => (
@@ -742,8 +991,8 @@ const fetchRecipeImage = async (imageId) => {
                 onClick={() => handleRecipeClick(recipe)}
                 src={recipeImages[recipe.id]}
                 alt={recipe.name}
-                className={`w-16 h-16 rounded-full border-4 cursor-pointer transition-transform transform hover:scale-110 ${
-                  selectedRecipe?.id === recipe.id ? "border-yellow-500" : "border-white"
+                className={`w-24 h-24 rounded-full border-4 cursor-pointer transition-transform transform hover:scale-110 shadow-md ${
+                  selectedRecipe?.id === recipe.id ? "border-purple-500" : "border-white"
                 }`}
               />
             ))}
@@ -751,24 +1000,26 @@ const fetchRecipeImage = async (imageId) => {
         </div>
 
         {selectedRecipe && (
-  <div className="flex flex-col items-center  justify-center space-y-4">
-    <img
-      src={recipeImages[selectedRecipe.id]}
-      alt={selectedRecipe.name}
-      className={`rounded-full w-[400px] h-[400px] border-2 object-cover transition-transform duration-500 ${
-        rotate ? "animate-spin-slow" : ""
-      }`}
-    />
-    <div className="text-center">
-      <h3 className="text-2xl font-bold text-white">{selectedRecipe.name}</h3>
-      <p className="text-white mt-1 text-sm">{selectedRecipe.calories} calories</p>
-    </div>
-  </div>
-)}
+          
+          <div className="flex flex-col items-center justify-center">
+            <div className="">
+              
+            </div>
+              
+            <img
+  src={recipeImages[selectedRecipe.id]}
+  alt={selectedRecipe.name}
+  className={`rounded-full w-[350px] mt-[130px] h-[350px] lg:w-[600px] lg:h-[600px] border-[16px] border-purple-400 object-cover transition-transform duration-700 shadow-2xl hover:scale-105 ${
+    rotate ? "animate-spin-slow" : ""
+  }`}
+/>
 
+           
+          </div>
+        )}
       </div>
 
-      <div className="mt-10 p-6 bg-white max-w-md mx-auto rounded-2xl shadow-xl">
+      {/* <div className="relative z-10 mt-10 p-6 bg-white max-w-md mx-auto rounded-2xl shadow-xl">
         <div className="flex justify-between items-center">
           <span className="bg-orange-400 text-white px-3 py-1 rounded text-xl font-bold">4.9</span>
           <span className="text-gray-400 text-sm">Overview | Ingredients</span>
@@ -785,9 +1036,9 @@ const fetchRecipeImage = async (imageId) => {
             className={`w-full px-4 py-2 rounded mb-2 ${selectedSort === "calories" ? "bg-black text-white" : "bg-gray-100"}`}
           >
             Sort by Calories
-          </button>
+          </button> */}
 
-          {selectedSort === "calories" && (
+          {/* {selectedSort === "calories" && (
             <div className="space-y-2">
               <input
                 type="number"
@@ -810,15 +1061,15 @@ const fetchRecipeImage = async (imageId) => {
                 Apply
               </button>
             </div>
-          )}
-
+          )} */}
+{/* 
           <button
             onClick={() => setSelectedSort("ingredient")}
             className={`w-full px-4 py-2 rounded mt-2 ${selectedSort === "ingredient" ? "bg-black text-white" : "bg-gray-100"}`}
           >
             Sort by Ingredient
-          </button>
-
+          </button> */}
+{/* 
           {selectedSort === "ingredient" && (
             <div className="mt-2 space-y-2">
               <input
@@ -837,7 +1088,7 @@ const fetchRecipeImage = async (imageId) => {
             </div>
           )}
         </div>
-      </div>
+      </div> */}
 
       <style>{`
         .animate-spin-slow {
@@ -856,8 +1107,6 @@ const fetchRecipeImage = async (imageId) => {
     </div>
   );
 }
-
-
 
 
 
