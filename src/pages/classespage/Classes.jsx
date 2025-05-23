@@ -608,6 +608,32 @@ export default function RecipeApp() {
   const [selectedSort, setSelectedSort] = useState(null);
   const [rotate, setRotate] = useState(false);
   const accessToken = Cookies.get("accessToken");
+  const [recipeImageUrl, setRecipeImageUrl] = useState(null)
+  const [recipeImages, setRecipeImages] = useState({});
+
+
+useEffect(() => {
+  const fetchAllImages = async () => {
+    if (!accessToken || recipes.length === 0) return;
+
+    const imageMap = {};
+    for (const recipe of recipes) {
+      try {
+        const res = await fetch(`https://localhost:7298/api/File/${recipe.imageId}`, {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        });
+        const data = await res.json();
+        imageMap[recipe.id] = data.url;
+      } catch (err) {
+        console.error("Error loading image for recipe:", recipe.id, err);
+      }
+    }
+
+    setRecipeImages(imageMap);
+  };
+
+  fetchAllImages();
+}, [recipes, accessToken]);
 
   useEffect(() => {
     if (!accessToken) return;
@@ -620,7 +646,9 @@ export default function RecipeApp() {
         setRecipes(data);
         setFiltered(data);
         setSelectedRecipe(data[0]);
-      });
+      })
+      
+      
   }, [accessToken]);
 
   useEffect(() => {
@@ -639,6 +667,18 @@ export default function RecipeApp() {
       return () => clearTimeout(timeout);
     }
   }, [index, selectedRecipe]);
+
+const fetchRecipeImage = async (imageId) => {
+  try {
+    const res = await fetch(`https://localhost:7298/api/File/${imageId}`, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+    const data = await res.json();
+    setRecipeImageUrl(data.url);
+  } catch (err) {
+    console.error("Coach image fetch error", err);
+  }
+};
 
   const handleSort = (sortType) => {
     if (!accessToken) return;
@@ -670,6 +710,7 @@ export default function RecipeApp() {
     setRotate(true);
     setTimeout(() => {
       setSelectedRecipe(recipe);
+      fetchRecipeImage(recipe.imageId);
       setRotate(false);
     }, 500);
   };
@@ -699,7 +740,7 @@ export default function RecipeApp() {
               <img
                 key={recipe.id}
                 onClick={() => handleRecipeClick(recipe)}
-                src={recipe.imageUrl}
+                src={recipeImages[recipe.id]}
                 alt={recipe.name}
                 className={`w-16 h-16 rounded-full border-4 cursor-pointer transition-transform transform hover:scale-110 ${
                   selectedRecipe?.id === recipe.id ? "border-yellow-500" : "border-white"
@@ -712,7 +753,7 @@ export default function RecipeApp() {
         {selectedRecipe && (
   <div className="flex flex-col items-center  justify-center space-y-4">
     <img
-      src={selectedRecipe.imageUrl}
+      src={recipeImages[selectedRecipe.id]}
       alt={selectedRecipe.name}
       className={`rounded-full w-[400px] h-[400px] border-2 object-cover transition-transform duration-500 ${
         rotate ? "animate-spin-slow" : ""
