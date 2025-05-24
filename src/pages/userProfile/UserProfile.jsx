@@ -295,8 +295,8 @@ export default function Dashboard() {
         <div className="flex-1 p-6">
         <div className="bg-[#E8E6FF] rounded-xl p-4 md:p-6 flex flex-col md:flex-row items-center justify-between mb-6 gap-4">
   <div>
-    <h2 className="text-2xl font-bold mb-1">Salam, {user.firstname}!</h2>
-    <p className="text-sm text-gray-600">Bugünkü hədəflərə hazırsanmı?</p>
+    <h2 className="text-2xl font-bold mb-1">Hello, {user.firstname}!</h2>
+    <p className="text-sm text-gray-600">Are you ready for today's goals?</p>
   </div>
   <div className="relative w-20 h-20">
     <img
@@ -366,7 +366,7 @@ export default function Dashboard() {
                   type="submit"
                   className="w-full bg-[#1E2E50] text-white py-2 rounded hover:bg-[#3E60A1]"
                 >
-                  Dəyiş
+                  Change
                 </button>
               </form>
             </div>
@@ -375,8 +375,8 @@ export default function Dashboard() {
 
           {selectedItem === "Product CRUD" && isAdmin && (
             <div className="bg-white p-6 rounded-xl shadow-md">
-              <h2 className="text-xl font-bold mb-4">Product CRUD</h2>
-              <p>Burada məhsulların idarə olunması olacaq.</p>
+              <h2 className="text-xl font-bold mb-4">Product edit</h2>
+              <p>This will be where the products will be managed.</p>
               <Products />
 
             </div>
@@ -384,30 +384,30 @@ export default function Dashboard() {
 
           {selectedItem === "User CRUD" && isAdmin && (
             <div className="bg-white p-6 rounded-xl shadow-md">
-              <h2 className="text-xl font-bold mb-4">User CRUD</h2>
-              <p>Burada istifadəçilərin idarə olunması olacaq.</p>
+              <h2 className="text-xl font-bold mb-4">User edit</h2>
+              <p>This will be where user management will take place.</p>
               <Users />
             </div>
           )}
 
           {selectedItem === "Recipes CRUD" && isAdmin && (
             <div className="bg-white p-6 rounded-xl shadow-md">
-              <h2 className="text-xl font-bold mb-4">Recipes CRUD</h2>
-              <p>Burada reseptlərin idarə olunması olacaq.</p>
+              <h2 className="text-xl font-bold mb-4">Recipes edit</h2>
+              <p>This will be where the recipes will be managed.</p>
               <Recipes />
             </div>
           )}
 
           {selectedItem === "Categories CRUD" && isAdmin && (
             <div className="bg-white p-6 rounded-xl shadow-md">
-              <h2 className="text-xl font-bold mb-4">Categories CRUD</h2>
-              <p>Burada kateqoriyaların idarə olunması olacaq.</p>
+              <h2 className="text-xl font-bold mb-4">Categories edit</h2>
+              <p>This will be where the categories will be managed.</p>
               <Categories />
             </div>
           )}
 
           <div className="mt-10 max-w-7xl mx-auto px-4">
-            <h3 className="text-3xl font-bold text-center text-gray-800 mb-8">Proqramlarım</h3>
+            <h3 className="text-3xl font-bold text-center text-gray-800 mb-8">My Programs</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
               {programs.map((program, i) => (
                 <div
