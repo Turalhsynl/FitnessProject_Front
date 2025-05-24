@@ -69,16 +69,17 @@ const Login = () => {
     }
   };
 
- const handleGoogleLogin = () => {
-  const clientId = '706476981084-mbsfnu6d5llv665n9nic7bfd73i2li2l.apps.googleusercontent.com';
-  const redirectUri = 'https://localhost:7298/api/GoogleAuth/google-callback';
-  const scope = 'openid%20email%20profile';
-  const responseType = 'code';
+  const handleGoogleLogin = () => {
+    const clientId = '706476981084-mbsfnu6d5llv665n9nic7bfd73i2li2l.apps.googleusercontent.com';
+    const redirectUri = 'http://localhost:5173/google-callback';
+    const scope = 'openid%20email%20profile';
+    const responseType = 'code';
 
-  const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=${responseType}&scope=${scope}`;
+    const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=${responseType}&scope=${scope}`;
 
-  window.location.href = googleAuthUrl;
-};
+    window.location.href = googleAuthUrl;
+  };
+
 
 
 
@@ -122,13 +123,13 @@ const Login = () => {
             Login
           </button>
           <div className="my-4 flex justify-center">
-  <button
-    onClick={handleGoogleLogin}
-    className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg"
-  >
-    Login with Google
-  </button>
-</div>
+            <button
+              onClick={handleGoogleLogin}
+              className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg"
+            >
+              Login with Google
+            </button>
+          </div>
 
           <p className="text-gray-400 text-sm text-center mt-4">
             Don't have an account? <span className="text-purple-400 hover:underline cursor-pointer" onClick={() => navigate("/register")}>Sign Up</span>
