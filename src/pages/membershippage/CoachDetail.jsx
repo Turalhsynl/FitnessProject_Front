@@ -1,59 +1,21 @@
-
-
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import Cookies from "js-cookie";
 import { FaFacebookF, FaPinterest, FaTwitter, FaInstagram, FaArrowRight } from "react-icons/fa";
 import { ArrowRight } from "lucide-react";
+import CheckoutButton from "./CheckoutButton"; // və ya doğru path
+import CheckoutModal from "./CheckoutModal";
+
 
 const CoachDetail = () => {
-  // const { id } = useParams();
-  // const navigate = useNavigate();
-  // const [coach, setCoach] = useState(null);
-  // const [programs, setPrograms] = useState([]);
-  // const accessToken = Cookies.get("accessToken");
-
-  // useEffect(() => {
-  //   const fetchCoach = async () => {
-  //     try {
-  //       const res = await fetch("https://localhost:7298/api/User/GetAll", {
-  //         headers: { Authorization: `Bearer ${accessToken}` },
-  //       });
-  //       const data = await res.json();
-  //       const selected = data.find((u) => u.id === parseInt(id));
-  //       setCoach(selected);
-  //     } catch (err) {
-  //       console.error("Coach getirme hatası", err);
-  //     }
-  //   };
-
-  //   fetchCoach();
-  // }, [id]);
-
-  // useEffect(() => {
-  //   const fetchPrograms = async () => {
-  //     if (!id) return;
-  //     try {
-  //       const response = await fetch(`https://localhost:7298/api/FitnessProgram/GetMyFitnessPrograms/${id}`, {
-  //         headers: { Authorization: `Bearer ${accessToken}` },
-  //       });
-  //       const result = await response.json();
-  //       setPrograms(result.data || []);
-  //     } catch (error) {
-  //       console.error("Failed to fetch programs", error);
-  //     }
-  //   };
-
-  //   fetchPrograms();
-  // }, [id]);
-
-  // if (!coach) return <div className="text-white text-center py-20">Yükleniyor...</div>;
-
-
   const { id } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
   const accessToken = Cookies.get("accessToken");
+  const [coachImageUrl, setCoachImageUrl] = useState(null);
+  const [programImages, setProgramImages] = useState({});
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
 
   const [coach, setCoach] = useState(null);
   const [programs, setPrograms] = useState([]);
@@ -65,6 +27,31 @@ const CoachDetail = () => {
   const { maxProgramsAllowed, selectedPlanId } = location.state || {};
   const [allowedProgramsCount] = useState(maxProgramsAllowed || 1);
 
+  const fetchCoachImage = async (imageId) => {
+    try {
+      const res = await fetch(`https://localhost:7298/api/File/${imageId}`, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+      const data = await res.json();
+      setCoachImageUrl(data.url);
+    } catch (err) {
+      console.error("Coach image fetch error", err);
+    }
+  };
+
+  const fetchProgramImage = async (imageId, programId) => {
+    try {
+      const res = await fetch(`https://localhost:7298/api/File/${imageId}`, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+      const data = await res.json();
+      setProgramImages((prev) => ({ ...prev, [programId]: data.url }));
+    } catch (err) {
+      console.error(`Program image fetch error for program ${programId}`, err);
+    }
+  };
+
+
   useEffect(() => {
     const fetchCoach = async () => {
       try {
@@ -74,10 +61,14 @@ const CoachDetail = () => {
         const data = await res.json();
         const selected = data.find((u) => u.id === parseInt(id));
         setCoach(selected);
+        if (selected?.profileImageId) {
+          fetchCoachImage(selected.profileImageId);
+        }
       } catch (err) {
         console.error("Coach fetch error", err);
       }
     };
+
 
     fetchCoach();
   }, [id]);
@@ -91,7 +82,14 @@ const CoachDetail = () => {
           { headers: { Authorization: `Bearer ${accessToken}` } }
         );
         const result = await response.json();
-        setPrograms(result.data || []);
+        const fetchedPrograms = result.data || [];
+        setPrograms(fetchedPrograms);
+
+        fetchedPrograms.forEach((program) => {
+          if (program.imageId) {
+            fetchProgramImage(program.imageId, program.id);
+          }
+        });
       } catch (error) {
         console.error("Failed to fetch programs", error);
       }
@@ -99,6 +97,7 @@ const CoachDetail = () => {
 
     fetchPrograms();
   }, [id]);
+
 
   useEffect(() => {
     localStorage.setItem("selectedPrograms", JSON.stringify(selectedPrograms));
@@ -121,8 +120,9 @@ const CoachDetail = () => {
       alert("Please select at least one program.");
       return;
     }
-    navigate("/checkout", { state: { selectedPrograms, selectedPlanId } });
+    setIsModalOpen(true); // Modalı açır
   };
+
 
   if (!coach) return <div className="text-white text-center py-20">Loading...</div>;
 
@@ -131,7 +131,7 @@ const CoachDetail = () => {
       <div className="max-w-6xl w-full bg-transparent flex flex-col md:flex-row items-center relative">
         <div className="w-full md:w-1/2 relative z-10">
           <img
-            src="https://max-themes.net/demos/gym/gym/gym/upload/iStock-1149242325-1-600x800.jpg"
+            src={coachImageUrl}
             alt="coach"
             className="w-full rounded-lg shadow-lg"
           />
@@ -167,38 +167,7 @@ const CoachDetail = () => {
         </div>
         <div className="w-48 h-[3px] bg-purple-600 mt-4 rounded-full"></div>
       </div>
-      {/* <div className="max-w-6xl w-full mt-24">
-        <div className="text-left mb-12">
-          <p className="uppercase text-purple-500 tracking-widest text-sm">—</p>
-          <h2 className="text-6xl font-extrabold italic -skew-x-12">THE <br /> CLASSES</h2>
-        </div>
-        <div className="flex flex-col md:flex-row justify-center gap-6">
-          {programs.map((program) => (
-            <div
-              key={program.id}
-              className="relative w-full md:w-[300px] h-[400px] bg-cover bg-center rounded-lg overflow-hidden"
-              style={{
-                backgroundImage: `linear-gradient(to top, rgba(76, 0, 255, 0.7), rgba(76, 0, 255, 0.7)), url('https://max-themes.net/demos/gym/gym/gym/upload/iStock-1149242325-1-600x800.jpg')`,
-              }}
-            >
-              <div className="flex items-center justify-center h-full">
-                <h3 className="text-2xl font-bold italic text-white">{program.name}</h3>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div className="mt-12 flex justify-center">
-          <button
-            onClick={() => navigate("/all-classes")}
-            className="bg-[#4c00ff] text-white px-8 py-3 font-semibold flex items-center gap-2"
-          >
-            All Classes <ArrowRight />
-          </button>
-        </div>
-      </div> */}
-
-<div className="max-w-6xl w-full mt-24">
+      <div className="max-w-6xl w-full mt-24">
         <div className="text-left mb-12">
           <p className="uppercase text-purple-500 tracking-widest text-sm">—</p>
           <h2 className="text-6xl font-extrabold italic -skew-x-12">THE <br /> CLASSES</h2>
@@ -209,21 +178,19 @@ const CoachDetail = () => {
             <div
               key={program.id}
               onClick={() => toggleProgramSelection(program.id)}
-              className={`relative h-[300px] bg-cover bg-center rounded-lg overflow-hidden cursor-pointer transition-all duration-300 ${
-                selectedPrograms.includes(program.id)
-                  ? ""
-                  : "hover:scale-105"
-              }`}
+              className={`relative h-[300px] bg-cover bg-center rounded-lg overflow-hidden cursor-pointer transition-all duration-300 ${selectedPrograms.includes(program.id)
+                ? ""
+                : "hover:scale-105"
+                }`}
               style={{
-                backgroundImage: `linear-gradient(to top, rgba(76, 0, 255, 0.7), rgba(76, 0, 255, 0.7)), url('https://max-themes.net/demos/gym/gym/gym/upload/iStock-1149242325-1-600x800.jpg')`,
+                backgroundImage: `linear-gradient(to top, rgba(76, 0, 255, 0.7), rgba(76, 0, 255, 0.7)), url(${programImages[program.id]})`,
               }}
             >
               <div
-                className={`absolute top-3 left-3 w-5 h-5 rounded-full border ${
-                  selectedPrograms.includes(program.id)
-                    ? "bg-purple-500 "
-                    : "border-white"
-                }`}
+                className={`absolute top-3 left-3 w-5 h-5 rounded-full border ${selectedPrograms.includes(program.id)
+                  ? "bg-purple-500 "
+                  : "border-white"
+                  }`}
               />
               <div className="flex items-center justify-center h-full">
                 <h3 className="text-2xl font-bold italic text-white text-center">
@@ -235,19 +202,20 @@ const CoachDetail = () => {
         </div>
 
         <div className="mt-12 flex justify-center">
-          <button
-            onClick={handleNext}
-            className="mt-6 flex items-center gap-2 bg-[#4c00ff] hover:bg-purple-700 text-white px-6 py-3 -skew-x-12   font-medium transition-all"
-          >
-            Continue <ArrowRight />
-          </button>
+          <button onClick={handleNext} className="mt-6 flex items-center gap-2 bg-[#4c00ff] hover:bg-purple-700 text-white px-6 py-3 -skew-x-12   font-medium transition-all">
+        Continue
+        </button>
         </div>
+        {isModalOpen && (
+          <CheckoutModal
+            selectedPrograms={selectedPrograms}
+            selectedPlanId={selectedPlanId}
+            onClose={() => setIsModalOpen(false)}
+          />
+        )}
       </div>
     </div>
   );
 };
 
 export default CoachDetail;
-
-
-

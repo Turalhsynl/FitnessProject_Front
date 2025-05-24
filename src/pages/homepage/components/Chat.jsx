@@ -833,6 +833,7 @@ import * as signalR from "@microsoft/signalr";
 import jwt_decode from "jwt-decode";
 import Cookies from "js-cookie";
 import { motion, AnimatePresence } from "framer-motion";
+import { useLocation } from "react-router-dom";
 
 export default function Chat() {
   const [connection, setConnection] = useState(null);
@@ -841,6 +842,7 @@ export default function Chat() {
   const [receiverId, setReceiverId] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const messageRef = useRef();
+  const location = useLocation();
   const [hasUnreadMessage, setHasUnreadMessage] = useState(false);
 
   const accessToken = Cookies.get("accessToken");
@@ -882,6 +884,14 @@ export default function Chat() {
 
     fetchConversation();
   }, [receiverId]);
+
+  useEffect(() => {
+    if (location.pathname === "/") {
+      setReceiverId("-1"); // Home Page: AI ilə söhbət
+    } else {
+      setReceiverId("2");  // Başqa səhifələr: receiverId = 2
+    }
+  }, [location.pathname]);
 
   useEffect(() => {
     if (!accessToken || !userId) return;
