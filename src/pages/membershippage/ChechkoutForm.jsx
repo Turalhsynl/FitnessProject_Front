@@ -1,10 +1,16 @@
 import React, { useState } from "react";
 import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import Cookies from "js-cookie";
+import jwt_decode from "jwt-decode";
+
 
 const CheckoutForm = ({ selectedPrograms, selectedPlanId }) => {
   const stripe = useStripe();
   const elements = useElements();
+    const accessToken = Cookies.get("accessToken");
+    const decodedToken = jwt_decode(accessToken);
+    const userId = decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"];
+    
 
   const [email, setEmail] = useState("");
 
@@ -58,10 +64,28 @@ const CheckoutForm = ({ selectedPrograms, selectedPlanId }) => {
     const data2 = await res2.json();
 
     if (data2.status === "Payment successful") {
-      alert("Payment completed succesfully");
+      alert("Payment completed successfully");
+      selectedPrograms.forEach(programId => {
+        fetch("https://localhost:7298/api/UserProgram/add", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`
+          },
+          body: JSON.stringify({ userId, programId })
+        })
+        .then(res => {
+          if (!res.ok) throw new Error(`Failed for program ID ${programId}`);
+          return res.json();
+        })
+        .catch(err => {
+          console.error(`Error assigning program ${programId}:`, err);
+        });
+      });
     } else {
-      alert("Payment Error! try again");
+      alert("Payment Error! Try again.");
     }
+  
   };
 
   return (

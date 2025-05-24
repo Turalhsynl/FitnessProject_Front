@@ -17,10 +17,10 @@ const ProfileDropdown = ({ userData, setUserData }) => {
         if (!response.ok) throw new Error("Şəkil tapılmadı");
 
         const data = await response.json();
-        setProfileImageUrl(data.url); // serverdən qaytarılan şəkil URL-i
+        setProfileImageUrl(data.url);
       } catch (error) {
         console.error("Şəkil yüklənə bilmədi:", error);
-        setProfileImageUrl(null); // error olsa placeholder işləsin
+        setProfileImageUrl(null);
       }
     };
 

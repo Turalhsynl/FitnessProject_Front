@@ -19,7 +19,6 @@ export default function Chat() {
   const decodedToken = jwt_decode(accessToken);
   const userId = decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"];
   const { id } = useParams();
-  console.log(id)
 
   const playNotificationSound = () => {
     const audio = new Audio("/notification.mp3");
