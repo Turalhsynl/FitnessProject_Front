@@ -38,11 +38,13 @@ import SleepSelection from "./pages/plans/Sleep";
 import WorkoutDays from "./pages/plans/WorkoutDays";
 import WeightInput from "./pages/plans/WeightInput";
 import HeightInput from "./pages/plans/HeightInput";
+import { GoogleOAuthProvider } from '@react-oauth/google';
 // import Timetable from "./pages/plans/Timetable"
 const App = () => {
   const { accessToken } = useStore(useAuthStore);
 
   return (
+    <GoogleOAuthProvider clientId="706476981084-mbsfnu6d5llv665n9nic7bfd73i2li2l.apps.googleusercontent.com">
     <Router>
       <Header />
       <WorkoutProvider>
@@ -83,6 +85,7 @@ const App = () => {
       </WorkoutProvider>
       <Footer />
     </Router>
+    </GoogleOAuthProvider>
   );
 };
 
