@@ -221,10 +221,6 @@ const Shop = () => {
 
   return (
     <div className="min-h-screen bg-white text-black">
-      {/* <header className="relative bg-cover bg-center h-[610px] bg-[url('https://max-themes.net/demos/gym/gym/gym/upload/page-title.jpg')] text-white flex flex-col justify-center items-center">
-        <h1 className="text-6xl font-bold italic">SHOP</h1>
-        
-      </header> */}
 
       <div
         style={{
@@ -235,7 +231,7 @@ const Shop = () => {
         className="py-40 bg-cover bg-center h-[610px] px-1 md:px-8 text-center relative text-white font-bold text-2xl md:text-3xl overflow-auto"
       >
         <h1 className="text-6xl font-bold italic">SHOP</h1>
-        <SearchBar accessToken={accessToken}/>
+        <SearchBar accessToken={accessToken} />
       </div>
 
 
@@ -253,35 +249,35 @@ const Shop = () => {
         </div>
 
         <div className="flex-1 py-12 px-4">
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 cursor pointer md:grid-cols-4 lg:grid-cols-4 gap-4">
             {products.length === 0 ? (
               <p>No products found...</p>
             ) : (
               products.map((product) => (
                 <div key={product.id} className="relative overflow-hidden group">
                   <div className="relative w-full h-64 md:h-[480px] bg-gray-100 flex items-center justify-center">
-  {productImages[product.id] ? (
-    <img
-      src={productImages[product.id]}
-      alt={product.name}
-      className="w-full h-full object-cover cursor-pointer"
-      onClick={() => handleProductClick(product)}
-    />
-  ) : (
-    <Loader2 className="animate-spin text-gray-500" size={36} />
-  )}
+                    {productImages[product.id] ? (
+                      <img
+                        src={productImages[product.id]}
+                        alt={product.name}
+                        className="w-full h-full object-cover cursor-pointer"
+                        onClick={() => handleProductClick(product)}
+                      />
+                    ) : (
+                      <Loader2 className="animate-spin text-gray-500" size={36} />
+                    )}
 
 
                     <button
                       onClick={() => handleAddToCart(product.id)}
-                      className="absolute h-[50px] w-full bottom-0 bg-black text-white font-bold opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-300 hidden lg:flex"
+                      className="cursor-pointer absolute h-[50px] w-full bottom-0 bg-black text-white font-bold opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-300 hidden lg:flex"
                     >
                       {loading === product.id ? (
                         <Loader2 className="animate-spin" size={24} />
                       ) : added === product.id ? (
-                        <i className="fa-solid fa-check fa-2xl" style={{ color: "#fafafa" }}></i>
+                        <i className="fa-solid fa-check fa-2xl cursor-pointer" style={{ color: "#fafafa" }}></i>
                       ) : (
-                        <p className="cursor-pointer hover:text-purple-500">ADD TO CART</p>
+                        <p className="cursor-pointer hover:text-purple-500 cursor-pointer">ADD TO CART</p>
                       )}
                     </button>
 
