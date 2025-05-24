@@ -23,6 +23,7 @@ import AboutUs from "./pages/aboutUs/AboutUs";
 import CheckoutPage from "./pages/checkout/Checkout";
 import SelectCoach from "./pages/membershippage/SelectCoach";
 import CoachDetail from "./pages/membershippage/CoachDetail";
+import CoachDetail1 from "./pages/membershippage/CoachDetail1";
 import Plans from "./pages/plans/Plans";
 import Age from "./pages/plans/Age";
 import Gender from "./pages/plans/Gender";
@@ -63,6 +64,7 @@ const App = () => {
         <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/select-coach" element={<SelectCoach />} />
         <Route path="/coach/:id" element={<CoachDetail />} />
+        <Route path="/coach1/:id" element={<CoachDetail1 />} />
         <Route path="/plans" element={<Plans />} />
         <Route path="/plans/age" element={<Age />} />
         <Route path="/gender" element={<Gender/>} />

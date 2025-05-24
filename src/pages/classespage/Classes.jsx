@@ -860,7 +860,7 @@ import { data } from "react-router-dom";
 export default function RecipeApp() {
   const [recipes, setRecipes] = useState([]);
   const [filtered, setFiltered] = useState([]);
-  const [selectedRecipe, setSelectedRecipe] = useState(null);
+  const [selectedRecipe, setSelectedRecipe] = useState(1);
   const [typedText, setTypedText] = useState("");
   const [index, setIndex] = useState(0);
   const [calorieMin, setCalorieMin] = useState(0);
@@ -976,8 +976,8 @@ export default function RecipeApp() {
 
       <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 items-center p-10 gap-8">
         <div className="ml-[40px]">
-          <h1 className="text-[90px] font-bold text-white drop-shadow">{data.name}</h1>
-         <p className="text-white text-[20px]">{data.calories} calories</p>
+          <h1 className="text-[90px] font-bold text-white drop-shadow">{selectedRecipe.name}</h1>
+         <p className="text-white text-[20px]">{selectedRecipe.calories} calories</p>
           <p className="text-white mt-4 w-4/6 leading-relaxed text-lg font-light">{typedText}</p>
 
           {/* <h1 className="text-[120px] font-bold text-white drop-shadow">{selectedRecipe.name}</h1>
