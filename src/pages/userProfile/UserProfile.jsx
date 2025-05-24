@@ -115,6 +115,7 @@ export default function Dashboard() {
       fetchProfileImage();
     }
   }, [user?.profileImageId]);
+  
 
   const updateUserField = async (field, value) => {
     try {
