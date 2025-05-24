@@ -7,6 +7,7 @@ import { useAuthStore } from "../../common/Store";
 const Register = () => {
   const { setTokens } = useStore(useAuthStore);
   const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     firstname: "",
     lastname: "",
@@ -15,6 +16,9 @@ const Register = () => {
     email: "",
     password: "",
   });
+
+  const [showCodeModal, setShowCodeModal] = useState(false);
+  const [codeInput, setCodeInput] = useState("");
 
   const handleChange = (e) => {
     setFormData({
@@ -25,8 +29,9 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
-      const response = await fetch("https://localhost:7298/api/User/Register", {
+      const registerResponse = await fetch("https://localhost:7298/api/User/Register", {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -36,14 +41,53 @@ const Register = () => {
         body: JSON.stringify(formData),
       });
 
-      const data = await response.json();
+
+      if (!registerResponse.ok) {
+        const errorData = await registerResponse.json();
+        throw new Error(errorData.message || "Qeydiyyat uğursuz oldu.");
+      }
+
+      const codeResponse = await fetch("https://localhost:7298/api/GoogleAuth/send-email-code", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email: formData.email }),
+      });
+
+      if (!codeResponse.ok) {
+        const errorData = await codeResponse.json();
+        throw new Error(errorData.message || "Kod göndərilə bilmədi.");
+      }
+
+      setShowCodeModal(true);
+    } catch (err) {
+      console.error("Xəta:", err.message);
+    }
+  };
+
+  const handleVerifyCode = async () => {
+    try {
+      const response = await fetch("https://localhost:7298/api/GoogleAuth/verify-email-code", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          code: codeInput,
+        }),
+      });
 
       if (!response.ok) {
-        throw new Error(data.message || "Registration failed");
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Code is incorrect.");
       }
+
+      setShowCodeModal(false);
       navigate("/login");
-    } catch (error) {
-      console.error("Register error:", error.message);
+    } catch (err) {
+      console.error("Code doesn't checked:", err.message);
     }
   };
 
@@ -62,8 +106,7 @@ const Register = () => {
               name="firstname"
               value={formData.firstname}
               onChange={handleChange}
-              className="w-full p-3 rounded-lg bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
-              placeholder="Enter your first name"
+              className="w-full p-3 rounded-lg bg-gray-700 text-white"
               required
             />
           </div>
@@ -74,8 +117,7 @@ const Register = () => {
               name="lastname"
               value={formData.lastname}
               onChange={handleChange}
-              className="w-full p-3 rounded-lg bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
-              placeholder="Enter your last name"
+              className="w-full p-3 rounded-lg bg-gray-700 text-white"
               required
             />
           </div>
@@ -85,7 +127,7 @@ const Register = () => {
               name="gender"
               value={formData.gender}
               onChange={handleChange}
-              className="w-full p-3 rounded-lg bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="w-full p-3 rounded-lg bg-gray-700 text-white"
               required
             >
               <option value="">Select gender</option>
@@ -101,8 +143,7 @@ const Register = () => {
               name="age"
               value={formData.age}
               onChange={handleChange}
-              className="w-full p-3 rounded-lg bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
-              placeholder="Enter your age"
+              className="w-full p-3 rounded-lg bg-gray-700 text-white"
               required
               min="0"
             />
@@ -114,8 +155,7 @@ const Register = () => {
               name="email"
               value={formData.email}
               onChange={handleChange}
-              className="w-full p-3 rounded-lg bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
-              placeholder="Enter your email"
+              className="w-full p-3 rounded-lg bg-gray-700 text-white"
               required
             />
           </div>
@@ -126,8 +166,7 @@ const Register = () => {
               name="password"
               value={formData.password}
               onChange={handleChange}
-              className="w-full p-3 rounded-lg bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
-              placeholder="Enter your password"
+              className="w-full p-3 rounded-lg bg-gray-700 text-white"
               required
             />
           </div>
@@ -145,6 +184,27 @@ const Register = () => {
           </p>
         </form>
       </div>
+
+      {showCodeModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/80 bg-opacity-50">
+          <div className="bg-white p-6 w-[500px] h-[200px] rounded shadow-lg w-80">
+            <h3 className="text-lg font-semibold mb-4 text-center">Enter 6 digit code from Email</h3>
+            <input
+              type="text"
+              value={codeInput}
+              onChange={(e) => setCodeInput(e.target.value)}
+              className="border border-gray-300 p-2 rounded w-full mb-4"
+              placeholder="Code"
+            />
+            <button
+              onClick={handleVerifyCode}
+              className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded w-full"
+            >
+              Confirm
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -38,6 +38,7 @@ import SleepSelection from "./pages/plans/Sleep";
 import WorkoutDays from "./pages/plans/WorkoutDays";
 import WeightInput from "./pages/plans/WeightInput";
 import HeightInput from "./pages/plans/HeightInput";
+import GoogleCallback from "./pages/loginpage/GoogleCallback";
 
 // import Timetable from "./pages/plans/Timetable"
 const App = () => {
@@ -80,7 +81,9 @@ const App = () => {
         <Route path="/workoutdays" element={<WorkoutDays/>} />
         <Route path="/weightinput" element={<WeightInput/>} />
         <Route path="/heightinput" element={<HeightInput/>} />
-        
+
+        <Route path="/google-callback" element={<GoogleCallback />} />
+
         {/* <Route path="/timetable" element={<Timetable/>} /> */}
       </Routes>
       </WorkoutProvider>

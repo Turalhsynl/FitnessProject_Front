@@ -117,6 +117,32 @@ export default function Dashboard() {
   }, [user?.profileImageId]);
   
 
+  useEffect(() => {
+  const fetchProgramImages = async () => {
+    try {
+      const updatedPrograms = await Promise.all(
+        programs.map(async (program) => {
+          if (!program.imageId) return { ...program, imageUrl: null };
+
+          const response = await fetch(`https://localhost:7298/api/File/${program.imageId}`);
+          if (!response.ok) throw new Error("Program şəkli tapılmadı");
+          const data = await response.json();
+
+          return { ...program, imageUrl: data.url };
+        })
+      );
+      setPrograms(updatedPrograms);
+    } catch (error) {
+      console.error("Program şəkilləri yüklənə bilmədi:", error);
+    }
+  };
+
+  if (programs.length > 0) {
+    fetchProgramImages();
+  }
+}, [programs]);
+
+
   const updateUserField = async (field, value) => {
     try {
       const accessToken = Cookies.get("accessToken");
