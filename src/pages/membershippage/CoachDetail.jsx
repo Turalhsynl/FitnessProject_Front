@@ -3,6 +3,9 @@ import { useParams, useNavigate, useLocation } from "react-router-dom";
 import Cookies from "js-cookie";
 import { FaFacebookF, FaPinterest, FaTwitter, FaInstagram, FaArrowRight } from "react-icons/fa";
 import { ArrowRight } from "lucide-react";
+import CheckoutButton from "./CheckoutButton"; // və ya doğru path
+import CheckoutModal from "./CheckoutModal";
+
 
 const CoachDetail = () => {
   const { id } = useParams();
@@ -10,7 +13,9 @@ const CoachDetail = () => {
   const location = useLocation();
   const accessToken = Cookies.get("accessToken");
   const [coachImageUrl, setCoachImageUrl] = useState(null);
-const [programImages, setProgramImages] = useState({});
+  const [programImages, setProgramImages] = useState({});
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
 
   const [coach, setCoach] = useState(null);
   const [programs, setPrograms] = useState([]);
@@ -22,76 +27,76 @@ const [programImages, setProgramImages] = useState({});
   const { maxProgramsAllowed, selectedPlanId } = location.state || {};
   const [allowedProgramsCount] = useState(maxProgramsAllowed || 1);
 
-const fetchCoachImage = async (imageId) => {
-  try {
-    const res = await fetch(`https://localhost:7298/api/File/${imageId}`, {
-      headers: { Authorization: `Bearer ${accessToken}` },
-    });
-    const data = await res.json();
-    setCoachImageUrl(data.url);
-  } catch (err) {
-    console.error("Coach image fetch error", err);
-  }
-};
+  const fetchCoachImage = async (imageId) => {
+    try {
+      const res = await fetch(`https://localhost:7298/api/File/${imageId}`, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+      const data = await res.json();
+      setCoachImageUrl(data.url);
+    } catch (err) {
+      console.error("Coach image fetch error", err);
+    }
+  };
 
-const fetchProgramImage = async (imageId, programId) => {
-  try {
-    const res = await fetch(`https://localhost:7298/api/File/${imageId}`, {
-      headers: { Authorization: `Bearer ${accessToken}` },
-    });
-    const data = await res.json();
-    setProgramImages((prev) => ({ ...prev, [programId]: data.url }));
-  } catch (err) {
-    console.error(`Program image fetch error for program ${programId}`, err);
-  }
-};
+  const fetchProgramImage = async (imageId, programId) => {
+    try {
+      const res = await fetch(`https://localhost:7298/api/File/${imageId}`, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+      const data = await res.json();
+      setProgramImages((prev) => ({ ...prev, [programId]: data.url }));
+    } catch (err) {
+      console.error(`Program image fetch error for program ${programId}`, err);
+    }
+  };
 
 
   useEffect(() => {
     const fetchCoach = async () => {
-  try {
-    const res = await fetch("https://localhost:7298/api/User/GetAll", {
-      headers: { Authorization: `Bearer ${accessToken}` },
-    });
-    const data = await res.json();
-    const selected = data.find((u) => u.id === parseInt(id));
-    setCoach(selected);
-    if (selected?.profileImageId) {
-      fetchCoachImage(selected.profileImageId);
-    }
-  } catch (err) {
-    console.error("Coach fetch error", err);
-  }
-};
+      try {
+        const res = await fetch("https://localhost:7298/api/User/GetAll", {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        });
+        const data = await res.json();
+        const selected = data.find((u) => u.id === parseInt(id));
+        setCoach(selected);
+        if (selected?.profileImageId) {
+          fetchCoachImage(selected.profileImageId);
+        }
+      } catch (err) {
+        console.error("Coach fetch error", err);
+      }
+    };
 
 
     fetchCoach();
   }, [id]);
 
   useEffect(() => {
-  const fetchPrograms = async () => {
-    if (!id) return;
-    try {
-      const response = await fetch(
-        `https://localhost:7298/api/FitnessProgram/GetMyFitnessPrograms/${id}`,
-        { headers: { Authorization: `Bearer ${accessToken}` } }
-      );
-      const result = await response.json();
-      const fetchedPrograms = result.data || [];
-      setPrograms(fetchedPrograms);
+    const fetchPrograms = async () => {
+      if (!id) return;
+      try {
+        const response = await fetch(
+          `https://localhost:7298/api/FitnessProgram/GetMyFitnessPrograms/${id}`,
+          { headers: { Authorization: `Bearer ${accessToken}` } }
+        );
+        const result = await response.json();
+        const fetchedPrograms = result.data || [];
+        setPrograms(fetchedPrograms);
 
-      fetchedPrograms.forEach((program) => {
-        if (program.imageId) {
-          fetchProgramImage(program.imageId, program.id);
-        }
-      });
-    } catch (error) {
-      console.error("Failed to fetch programs", error);
-    }
-  };
+        fetchedPrograms.forEach((program) => {
+          if (program.imageId) {
+            fetchProgramImage(program.imageId, program.id);
+          }
+        });
+      } catch (error) {
+        console.error("Failed to fetch programs", error);
+      }
+    };
 
-  fetchPrograms();
-}, [id]);
+    fetchPrograms();
+  }, [id]);
 
 
   useEffect(() => {
@@ -115,8 +120,9 @@ const fetchProgramImage = async (imageId, programId) => {
       alert("Please select at least one program.");
       return;
     }
-    navigate("/checkout", { state: { selectedPrograms, selectedPlanId } });
+    setIsModalOpen(true); // Modalı açır
   };
+
 
   if (!coach) return <div className="text-white text-center py-20">Loading...</div>;
 
@@ -173,8 +179,8 @@ const fetchProgramImage = async (imageId, programId) => {
               key={program.id}
               onClick={() => toggleProgramSelection(program.id)}
               className={`relative h-[300px] bg-cover bg-center rounded-lg overflow-hidden cursor-pointer transition-all duration-300 ${selectedPrograms.includes(program.id)
-                  ? ""
-                  : "hover:scale-105"
+                ? ""
+                : "hover:scale-105"
                 }`}
               style={{
                 backgroundImage: `linear-gradient(to top, rgba(76, 0, 255, 0.7), rgba(76, 0, 255, 0.7)), url(${programImages[program.id]})`,
@@ -182,8 +188,8 @@ const fetchProgramImage = async (imageId, programId) => {
             >
               <div
                 className={`absolute top-3 left-3 w-5 h-5 rounded-full border ${selectedPrograms.includes(program.id)
-                    ? "bg-purple-500 "
-                    : "border-white"
+                  ? "bg-purple-500 "
+                  : "border-white"
                   }`}
               />
               <div className="flex items-center justify-center h-full">
@@ -196,13 +202,17 @@ const fetchProgramImage = async (imageId, programId) => {
         </div>
 
         <div className="mt-12 flex justify-center">
-          <button
-            onClick={handleNext}
-            className="bg-[#4c00ff] text-white px-8 py-3 font-semibold flex items-center gap-2 rounded-lg"
-          >
-            Continue <ArrowRight />
-          </button>
+          <button onClick={handleNext} className="mt-6 flex items-center gap-2 bg-[#4c00ff] hover:bg-purple-700 text-white px-6 py-3 -skew-x-12   font-medium transition-all">
+        Continue
+        </button>
         </div>
+        {isModalOpen && (
+          <CheckoutModal
+            selectedPrograms={selectedPrograms}
+            selectedPlanId={selectedPlanId}
+            onClose={() => setIsModalOpen(false)}
+          />
+        )}
       </div>
     </div>
   );
