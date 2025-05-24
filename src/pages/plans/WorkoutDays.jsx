@@ -20,12 +20,13 @@ export default function WorkoutDays() {
     );
   };
 
-  const handleNext = () => {
-    if (selectedDays.length > 0) {
-      updateData({ daysPerWeek: selectedDays });
-      navigate("/weightinput"); // değiştirilecek rota
-    }
-  };
+const handleNext = () => {
+  if (selectedDays.length > 0) {
+    updateData({ daysPerWeek: selectedDays.join(", ") });
+    navigate("/weightinput");
+  }
+};
+
 
   return (
     <div className="min-h-screen bg-[#f8f4ff] text-center px-6 py-10">
@@ -56,7 +57,7 @@ export default function WorkoutDays() {
         className={`px-8 py-3 rounded-full text-white font-semibold text-lg transition-all duration-200 ${
           selectedDays.length > 0
             ? "bg-[#9d7fe4] hover:bg-[#7e63c8]"
-            : "bg-[#ccc] cursor-not-allowed"
+            : "bg-[#ccc]"
         }`}
       >
         Next
