@@ -115,6 +115,7 @@ export default function Dashboard() {
       fetchProfileImage();
     }
   }, [user?.profileImageId]);
+  
 
   useEffect(() => {
   const fetchProgramImages = async () => {

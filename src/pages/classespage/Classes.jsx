@@ -3,7 +3,7 @@ import Cookies from "js-cookie";
 import smoothie1 from "../../assets/Background.png";
 import smoothie2 from "../../assets/Smoothie.png";
 import { data } from "react-router-dom";
-
+import { useLocation } from "react-router-dom";
 export default function RecipeApp() {
   const [recipes, setRecipes] = useState([]);
   const [filtered, setFiltered] = useState([]);
@@ -17,6 +17,8 @@ export default function RecipeApp() {
   const [rotate, setRotate] = useState(false);
   const accessToken = Cookies.get("accessToken");
   const [recipeImages, setRecipeImages] = useState({});
+  const location = useLocation();
+  const incomingRecipeId = location.state?.recipeId;
 
   useEffect(() => {
     const fetchAllImages = async () => {
@@ -41,19 +43,25 @@ export default function RecipeApp() {
     fetchAllImages();
   }, [recipes, accessToken]);
 
-  useEffect(() => {
-    if (!accessToken) return;
+ useEffect(() => {
+  if (!accessToken) return;
 
-    fetch("https://localhost:7298/api/Recipe", {
-      headers: { Authorization: `Bearer ${accessToken}` },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setRecipes(data);
-        setFiltered(data);
+  fetch("https://localhost:7298/api/Recipe", {
+    headers: { Authorization: `Bearer ${accessToken}` },
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      setRecipes(data);
+      setFiltered(data);
+
+      if (incomingRecipeId) {
+        const selected = data.find((r) => r.id === incomingRecipeId);
+        setSelectedRecipe(selected || data[0]);
+      } else {
         setSelectedRecipe(data[0]);
-      });
-  }, [accessToken]);
+      }
+    });
+}, [accessToken]);
 
   useEffect(() => {
     if (selectedRecipe?.description) {

@@ -37,6 +37,11 @@ const ProgramDetails = () => {
     }
   }, [program]);
 
+  const handleClick = (recipeId) => {
+  navigate(`/classes`, { state: { recipeId } });
+};
+
+
   const getYouTubeEmbedUrl = (url) => {
     const videoId = url?.split('v=')[1]?.split('&')[0];
     return videoId ? `https://www.youtube.com/embed/${videoId}` : null;
@@ -107,10 +112,10 @@ const ProgramDetails = () => {
                 <p className="text-sm text-gray-400">Gender</p>
                 <p className="text-lg font-semibold text-white">{program.gender}</p>
               </div>
-              <div className="bg-[#2c2c2c] p-4 rounded-xl text-center shadow-md border border-purple-600">
+              {/* <div className="bg-[#2c2c2c] p-4 rounded-xl text-center shadow-md border border-purple-600">
                 <p className="text-sm text-gray-400">Price</p>
                 <p className="text-lg font-semibold text-green-400">{program.price} AZN</p>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
@@ -141,14 +146,14 @@ const ProgramDetails = () => {
   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
     {recipes && recipes.length > 0 ? (
       recipes.map((recipe) => (
-        <div key={recipe.id} className="bg-[#1f1f1f] rounded-xl shadow-md p-4 border border-purple-700">
+        <div key={recipe.id} onClick={() => handleClick(recipe.id)} className="bg-[#1f1f1f] rounded-xl shadow-md p-4 border border-purple-700">
           <img
             src={recipeImages[recipe.id]}
             alt={recipe.name}
-            className="rounded-xl w-full h-40 object-cover mb-4"
+            className="rounded-xl w-full h-90 object-cover mb-4"
           />
           <h3 className="text-xl font-semibold text-purple-300 mb-2">{recipe.name}</h3>
-          <p className="text-gray-400 text-sm">{recipe.description}</p>
+          {/* <p className="text-gray-400 text-sm">{recipe.description}</p> */}
         </div>
       ))
     ) : (
