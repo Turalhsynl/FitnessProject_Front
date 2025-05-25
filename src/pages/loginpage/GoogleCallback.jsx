@@ -13,7 +13,7 @@ const GoogleCallback = () => {
       fetch(`https://localhost:7298/api/GoogleAuth/google-callback?code=${code}`)
         .then(res => res.json())
         .then(data => {
-          // tokenləri localStorage-a yaz və yönləndir
+       
           localStorage.setItem("accessToken", data.accessToken);
           localStorage.setItem("refreshToken", data.refreshToken);
           navigate("/");
@@ -24,7 +24,7 @@ const GoogleCallback = () => {
     }
   }, []);
 
-  return <div>Google ilə daxil olunur...</div>;
+  return <div>Included with Google...</div>;
 };
 
 export default GoogleCallback;

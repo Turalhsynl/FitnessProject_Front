@@ -94,7 +94,7 @@ const Header = () => {
           });
   
           if (!response.ok) {
-            throw new Error(`Səbət ID-si alınmadı, status: ${response.status}`);
+            throw new Error(`Reason ID was not received, status: ${response.status}`);
           }
   
           const data = await response.json();
@@ -111,23 +111,23 @@ const Header = () => {
                 });
   
                 if (!cartResponse.ok) {
-                  throw new Error(`Səbət məlumatları alınmadı, status: ${cartResponse.status}`);
+                  throw new Error(`Cart information not retrieved, status: ${cartResponse.status}`);
                 }
   
                 const cartData = await cartResponse.json();
                 setCartItems(cartData.cartLines || []);
                 setCart(cartData);
               } catch (error) {
-                console.error('Səbət məlumatları alınarkən xəta:', error);
+                console.error('Error retrieving cart information:', error);
               }
             };
   
             fetchCartData();
           } else {
-            console.error("Cart ID mövcud deyil.");
+            console.error("Cart ID does not exist.");
           }
         } catch (error) {
-          console.error('Cart ID alınarkən xəta:', error);
+          console.error('Error getting Cart ID:', error);
         }
       };
   
@@ -161,7 +161,7 @@ const Header = () => {
       if (response.ok) {
         return response.json();
       }
-      throw new Error("Ürün silinemedi.");
+      throw new Error("The product could not be deleted.");
     })
     .then(() => {
       setCartItems(prev => prev.filter(item => item.product.id !== productId));
@@ -171,7 +171,7 @@ const Header = () => {
         totalPrice: prev.totalPrice - (productPrice * productQuantity),
       }));
     })
-    .catch(error => console.error("Silme işlemi sırasında hata:", error));
+    .catch(error => console.error("Error during deletion:", error));
   };
 
   
@@ -181,7 +181,7 @@ const Header = () => {
       <div className="flex justify-between items-center text-white">
         <Logo />
         <Navigation />
-        <div className="text-black"> {/* Və ya istədiyin rəng */}
+        <div className="text-black"> 
     {
       accessToken ? <Chat/> : <></>
     }

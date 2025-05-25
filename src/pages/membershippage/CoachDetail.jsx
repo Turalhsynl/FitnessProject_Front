@@ -3,7 +3,7 @@ import { useParams, useNavigate, useLocation } from "react-router-dom";
 import Cookies from "js-cookie";
 import { FaFacebookF, FaPinterest, FaTwitter, FaInstagram, FaArrowRight } from "react-icons/fa";
 import { ArrowRight } from "lucide-react";
-import CheckoutButton from "./CheckoutButton"; // və ya doğru path
+import CheckoutButton from "./CheckoutButton"; 
 import CheckoutModal from "./CheckoutModal";
 
 
@@ -120,7 +120,7 @@ const CoachDetail = () => {
       alert("Please select at least one program.");
       return;
     }
-    setIsModalOpen(true); // Modalı açır
+    setIsModalOpen(true); 
   };
 
 

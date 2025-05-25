@@ -11,7 +11,7 @@ export default function HeightInput() {
   const handleNext = () => {
     if (height) {
       updateData({ height: Number(height), heightUnit: unit });
-      navigate("/submit-plan"); // Burayı değiştirin
+      navigate("/submit-plan");
     }
   };
 

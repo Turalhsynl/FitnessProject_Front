@@ -17,7 +17,7 @@ const Cart = ({
   const [added, setAdded] = useState(null);
   const [favorites, setFavorites] = useState([]);
   const [loadingFavorites, setLoadingFavorites] = useState(false);
-  const [productImages, setProductImages] = useState({}); // productId => url xəritəsi
+  const [productImages, setProductImages] = useState({}); 
   const [favoriteStatus, setFavoriteStatus] = useState({});
   const accessToken = Cookies.get("accessToken");
   let userId = null;
@@ -27,7 +27,7 @@ const Cart = ({
       const decodedToken = jwt_decode(accessToken);
       userId = decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"];
     } catch (err) {
-      console.error("Token çözümlenemedi:", err);
+      console.error("Token could not be parsed:", err);
     }
   }
 
@@ -58,7 +58,7 @@ const Cart = ({
           }));
         }
       })
-      .catch((err) => console.error("Favori değiştirilemedi:", err));
+      .catch((err) => console.error("Favorite could not be changed:", err));
   };
 
 
@@ -75,13 +75,13 @@ const Cart = ({
         .then((res) => {
           if (!res.ok) {
             console.error("HTTP Status:", res.status);
-            throw new Error("API hatası");
+            throw new Error("API error");
           }
           return res.json();
         })
         .then((data) => setFavorites(data))
         .catch((error) => {
-          console.error("Favori ürünler alınamadı:", error);
+          console.error("Favorite products could not be purchased:", error);
         })
         .finally(() => {
           setLoadingFavorites(false);
@@ -93,7 +93,7 @@ const Cart = ({
     const fetchImages = async () => {
       const newImages = {};
 
-      // cartItems üçün şəkil yüklənməsi
+     
       await Promise.all(
         cartItems.map(async (item) => {
           const imageId = item.product?.imageId;
@@ -106,7 +106,7 @@ const Cart = ({
               newImages[item.product.id] = data.url;
             }
           } catch (err) {
-            console.error(`Şəkil yüklənərkən xəta baş verdi:`, err);
+            console.error(`An error occurred while loading the image:`, err);
           }
         })
       );
@@ -125,7 +125,7 @@ const Cart = ({
                 newImages[item.product.id] = data.url;
               }
             } catch (err) {
-              console.error(`Şəkil yüklənərkən xəta baş verdi:`, err);
+              console.error(`An error occurred while loading the image:`, err);
             }
           })
         );
@@ -183,7 +183,7 @@ const Cart = ({
       setTimeout(() => setAdded(null), 2000);
     })
     .catch((err) => {
-      console.error("Hata oluştu:", err);
+      console.error("An error occurred:", err);
       setLoading(null);
     });
 };
@@ -243,7 +243,7 @@ const Cart = ({
                 {cartItems.map((item, index) => (
                   <div key={index} className="flex items-center justify-between border-b pb-4">
                     <img
-                      src={productImages[item.product.id]}  // burada şəkil çəkiləcək
+                      src={productImages[item.product.id]}  
                       alt={item.productName}
                       className="w-32 h-38 rounded cursor-pointer"
                     />
@@ -288,7 +288,7 @@ const Cart = ({
                 favorites.map((item, index) => (
                   <div key={index} className="flex items-center justify-between border-b pb-4">
                     <img
-                      src={productImages[item.product.id]}  // burada şəkil çəkiləcək
+                      src={productImages[item.product.id]}  
                       alt={item.product.name}
                       className="w-32 h-38 cursor-pointer rounded"
                     />

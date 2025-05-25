@@ -122,13 +122,14 @@ const Login = () => {
           >
             Login
           </button>
-          <div className="my-4 flex justify-center">
+          <div className="my-3 flex justify-center">
             <button
-              onClick={handleGoogleLogin}
-              className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg"
-            >
-              Login with Google
-            </button>
+  onClick={handleGoogleLogin}
+  className="flex items-center gap-3 border border-gray-300 bg-white text-gray-700 px-18 py-3 rounded-lg shadow-sm hover:shadow-md transition"
+>
+  <i class="fa-brands fa-google"></i>
+  <span className="text-sm font-medium">Login with Google</span>
+</button>
           </div>
 
           <p className="text-gray-400 text-sm text-center mt-4">

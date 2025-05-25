@@ -74,13 +74,13 @@ export default function Products() {
       body: JSON.stringify(productData),
     })
       .then(() => {
-        // məhsullar yenidən yüklənir
+        
         getProducts();
   
-        // şəkil varsa, məhsul ID tapılmalıdır (ən sonuncunu götürək)
+       
         if (newProduct.image) {
           setTimeout(() => {
-            // Ən son məhsulu tapmaq üçün 500ms sonra products state-dən götürmək
+            
             fetch('https://localhost:7298/api/Product/GetAll', {
               method: 'GET',
               headers: {
@@ -164,7 +164,7 @@ export default function Products() {
             urls[product.id] = data.url;
           }
         } catch (error) {
-          console.error('Şəkil yüklənərkən xəta baş verdi:', error);
+          console.error('An error occurred while loading the image:', error);
         }
       }
     }
@@ -216,7 +216,7 @@ export default function Products() {
         </div>
       )}
 
-      {/* Products Table */}
+      
       <table className="w-full border">
         <thead>
           <tr className="bg-gray-200">

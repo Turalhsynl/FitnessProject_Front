@@ -46,7 +46,7 @@ export default function Chat() {
         if (res.ok && data.isSuccess && Array.isArray(data.data)) {
           setChat(data.data);
         } else {
-          console.error("Söhbət tarixçəsi gətirilə bilmədi:", data);
+          console.error("Chat history could not be retrieved:", data);
         }
       } catch (err) {
         console.error("Error fetching conversation:", err);
@@ -109,14 +109,14 @@ export default function Chat() {
   const sendMessage = async () => {
     const parsedReceiverId = parseInt(receiverId);
     if (!connection || message.trim() === "" || isNaN(parsedReceiverId)) {
-      alert("Mesaj və ya receiverId düzgün deyil.");
+      alert("The message or receiverId is not correct.");
       return;
     }
 
     try {
       // Send message to AI if receiver is AI (AI's ID = -1)
       if (parsedReceiverId === -1) {
-        // Əvvəlcə user's message-i chata əlavə et
+        
         setChat((prev) => [
           ...prev,
           {
@@ -130,7 +130,7 @@ export default function Chat() {
         setMessage("");
         messageRef.current.focus();
       
-        // Sonra AI cavabını əlavə et
+       
         setChat((prev) => [
           ...prev,
           {
@@ -146,7 +146,7 @@ export default function Chat() {
         messageRef.current.focus();
       }
     } catch (err) {
-      console.error("Mesaj göndərilə bilmədi:", err);
+      console.error("The message could not be sent:", err);
     }
   };
 
@@ -177,14 +177,14 @@ export default function Chat() {
   const sendQuickReply = async (text) => {
     const parsedReceiverId = parseInt(receiverId);
     if (!connection || isNaN(parsedReceiverId)) {
-      alert("receiverId düzgün deyil.");
+      alert("receiverId is not correct.");
       return;
     }
 
     try {
       await connection.invoke("SendMessage", parsedReceiverId, text);
     } catch (err) {
-      console.error("Hızlı mesaj göndərilə bilmədi:", err);
+      console.error("It was not possible to send a quick message:", err);
     }
   };
 

@@ -164,7 +164,7 @@ export default function GoalsSelection() {
   const { formData, updateData } = useWorkout();
   const navigate = useNavigate();
 
-  // Başlangıçta split ile stringi array'e çeviriyoruz
+ 
  const [selectedGoals, setSelectedGoals] = useState(() => {
   if (Array.isArray(formData.goals)) return formData.goals;
   if (typeof formData.goals === "string") return formData.goals.split(",").map((g) => g.trim());
@@ -173,7 +173,7 @@ export default function GoalsSelection() {
 
 
   useEffect(() => {
-    // State değişince tek bir string olarak kaydet
+  
     updateData({ goals: selectedGoals.join(", ") });
   }, [selectedGoals]);
 

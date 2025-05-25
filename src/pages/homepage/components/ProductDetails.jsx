@@ -94,7 +94,7 @@ const ProductDetails = () => {
           setImgUrl(data.url);
         }
       } catch (error) {
-        console.error('Şəkil yüklənərkən xəta baş verdi:', error);
+        console.error('While the image was loading, the following error occurred:', error);
       }
     };
   

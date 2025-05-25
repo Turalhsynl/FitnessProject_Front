@@ -131,7 +131,7 @@ export default function WorkoutPlans() {
   const { updateData } = useWorkout();
 
   const handleSelectPlan = (planTitle) => {
-    updateData({ fitnessCategory: planTitle }); // sadece planı güncelliyoruz, userId zaten context içinde
+    updateData({ fitnessCategory: planTitle }); 
     navigate("/plans/age");
   };
 

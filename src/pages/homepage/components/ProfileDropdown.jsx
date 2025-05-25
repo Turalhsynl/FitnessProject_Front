@@ -14,12 +14,12 @@ const ProfileDropdown = ({ userData, setUserData }) => {
         const response = await fetch(
           `https://localhost:7298/api/File/${userData?.profileImageId}`
         );
-        if (!response.ok) throw new Error("Şəkil tapılmadı");
+        if (!response.ok) throw new Error("No figure found");
 
         const data = await response.json();
         setProfileImageUrl(data.url);
       } catch (error) {
-        console.error("Şəkil yüklənə bilmədi:", error);
+        console.error("The image could not be loaded:", error);
         setProfileImageUrl(null);
       }
     };

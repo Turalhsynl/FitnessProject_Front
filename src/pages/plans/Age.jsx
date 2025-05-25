@@ -57,7 +57,7 @@ export default function AgeScreen() {
   const handleNext = () => {
     if (age) {
       updateData({ age: Number(age) });
-      navigate("/gender"); // rotayı kendi yapına göre ayarla
+      navigate("/gender");
     }
   };
 
